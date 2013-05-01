@@ -64,8 +64,14 @@
 <dt>Subtraction corresponds to reverse shortcut <code>and not</code>.</dt>
 <dd><p><code>p-q</code> fails if <code>q</code> succeeds, otherwise matches what <code>p</code> matches. Note that <code>0-p</code> does the same as <code>-p</code>, but <code>p-p</code> does not do the same as <code>0</code>, it does the same as <code>false</code>.</p>
 </dd>
-<dt>Division means use the capture.</dt>
-<dd><p><code>p/s</code> matches what <code>p</code> does, but processes the captures of <code>p</code> as specified by <code>s</code>. There are many variations, for example if <code>p</code> itself contains no captures, <code>p/1</code> creates a capture consisting of the substring matched by <code>p</code>.</p>
+<dt>Division means use the captures.</dt>
+<dd><p><code>p/s</code> matches what <code>p</code> does, and defines a capture for the whole expression by processing the captures of <code>p</code> as specified by <code>s</code>. Call the captures <code>c_1</code>, <code>c_2</code> etc. If <code>p</code> defines no capture, the whole substring matched by <code>p</code> counts as <code>c_1</code>. There are four variations, depending on the type of <code>s</code>.</p>
+<ul>
+<li>number: <code>p/n</code> means the capture is <code>c_n</code>.</li>
+<li>table: <code>p/tbl</code> means the capture <code>tbl[c_1]</code>.</li>
+<li>string: <code>p/str</code> means the capture is the result of replacin in <code>str</code> all instances of <code>&quot;%1&quot;</code> by <code>c_1</code>, <code>&quot;%2&quot;</code> by <code>c_2</code>, etc.</li>
+<li>function: <code>p/fct</code> means the capture (or perhaps several captures) is <code>fct(c_1,c_2,...,c_9)</code>.</li>
+</ul>
 </dd>
 <dt>Exponentiation corresponds to repetition.</dt>
 <dd><p>Not quite exponentiation in the usual sense: <code>p*p</code> means <em>exactly</em> two repetitions of <code>p</code>, which is not the same as <code>p^2</code>.</p>
@@ -91,16 +97,16 @@
 <dd><p><code>R(r)</code>, where <code>r</code> is a two-byte string, matches any byte whose internal numerical code is in the range <code>r:byte(1,2)</code>. You could use characters in <code>r</code>, e.g. R&quot;az&quot; on most systems matches the range of lowercase letters, but see <code>locale</code> for a more portable alternative.</p>
 </dd>
 <dt><code>S</code> for Set</dt>
-<dd><p>S(s), where <code>s</code> is a string, matches any of bytes in <code>s</code>.</p>
+<dd><p>S(s), where <code>s</code> is a string, matches any of the bytes in <code>s</code>.</p>
 </dd>
 <dt><code>locale</code></dt>
 <dd><p><code>locale()</code> returns a table of patterns that match character classes. Recommended method is to examine the keys of the returned table, e.g. <code>locale().lower</code> matches all lower-case letters.</p>
 </dd>
 </dl>
 <h3 id="pattern-methods">Pattern methods</h3>
-<p>When called with <code>p</code> as first argument, these functions will replace <code>p</code> by <code>P(p)</code> before proceeding. When <code>p</code> is already a pattern, hey can also be called the object-oriented way shown below.</p>
+<p>When called with <code>p</code> as first argument, these functions will replace <code>p</code> by <code>P(p)</code> before proceeding. When <code>p</code> is already a pattern, they can also be called the object-oriented way shown below.</p>
 <dl>
-<dt><code>match(p,subject[,init]</code>, <code>p:match(subject[,init])</code></dt>
+<dt><code>match(p,subject[,init])</code>, <code>p:match(subject[,init])</code></dt>
 <dd><p>Tries to match <code>p</code> to <code>subject:sub(init)</code>. <code>init</code> defaults to 1. Returns the captures of the match, or if none specified, the index of the first byte in the subject after the match.</p>
 </dd>
 <dt><code>B(p)</code>, <code>p:B()</code> for Backspace</dt>
@@ -112,7 +118,7 @@
 </dl>
 <h2 id="advanced-topics">Advanced topics</h2>
 <ul>
-<li><p>There are several specialized constructors and methods dealing with captures, many of which involve variations of the division operator.</p></li>
+<li><p>There are several specialized constructors and methods dealing with captures.</p></li>
 <li><p><code>P</code> acting on tables and functions.</p></li>
 <li><p>The LPEG distribution also contains <code>re.lua</code>, an application demonstrating the feasibility of writing a regular expression handler using LPEG.</p></li>
 </ul>
