@@ -1,0 +1,121 @@
+<h2 id="brief-introduction-to-lpeg">Brief introduction to LPEG</h2>
+<p>LPEG is a library for operating on patterns. It is not an alternative to the Lua string library, but it can be used to implement libraries rather like the string library instead of doing it directly in C.</p>
+<p>Some words mean very specific things to LPEG.</p>
+<dl>
+<dt>string</dt>
+<dd><p>A Lua string, consisting of an arbitrary sequence of bytes. On many systems, one could say &quot;characters&quot; instead.</p>
+</dd>
+<dt>pattern</dt>
+<dd><p>A userdata type, containing enough information to characterize a certain property that a string might have. The properties that can be described are rather like the questions solvers of crossword puzzles tend to ask. For example: &quot;seven letters, starts with 'p', has a double letter in it somewere&quot;.</p>
+</dd>
+<dt>subject</dt>
+<dd><p>A string that is presented for examination to an LPEG function. Its bytes are referred to as <code>input</code>.</p>
+</dd>
+<dt>match</dt>
+<dd><p>Not the same as <code>string.match</code>.</p>
+<ol style="list-style-type: decimal">
+<li>If a string has the property determined by a pattern, the pattern is said to <em>match</em> the string. I.e. it is the pattern, not the string, that does the matching.</li>
+<li>The name of an LPEG function that applies a pattern to a subject in an attempt to find a matched substring.</li>
+<li>The string matched by a pattern, especially when it is only a substring of the subject.</li>
+</ol>
+<p>The central function of LPEG.</p>
+</dd>
+<dt>success</dt>
+<dd><p>A pattern <em>succeeds</em> when it matches a substring of the subject at the point where it is applied.</p>
+</dd>
+<dt>failure</dt>
+<dd><p>A pattern <em>fails</em> when it does not match any substring at that point.</p>
+</dd>
+<dt>captures</dt>
+<dd><p>Individually accessible portions of a match.</p>
+</dd>
+<dt>consume</dt>
+<dd><p>A pattern <em>consumes</em> its match if that portion of the subject is not available to any follow-up pattern except a backspace pattern.</p>
+</dd>
+</dl>
+<p>The most spectacular feature of LPEG is the way complicated patterns are built up from simpler ones: <em>Patterns can be used instead of numbers as the values that the variables in an arithmetic expression may take</em>. For example, &quot;x^2+3*x-13&quot; is a perfectly valid LPEG expression when <code>x</code> is a pattern.</p>
+<p>Roberto Ierusalimschy put a lot of thought into allocating useful meanings to the arithmetic operations and constants of Lua. In particular, the priority of operations is such that one often needs no parentheses. Some words of warning, though:</p>
+<ul>
+<li>If you use constants like <code>3</code> or <code>true</code> in a pattern expression, they cannot be combined with each other, only with existing patterns. To make sure, convert them to patterns first by applying <code>lpeg.P</code> (the <code>lpeg.</code> is used only here, it will be just <code>P</code> later).</li>
+<li>The expressions look familiar but that must not mislead you into thinking that the usual commutative, associative and distributive laws of algebra hold. They don't.</li>
+</ul>
+<dl>
+<dt>Nil is not a valid pattern.</dt>
+<dd><p>This goes without saying, but I am nevertheless saying it.</p>
+</dd>
+<dt>Booleans denote success or failure.</dt>
+<dd><p><code>true</code> stands for a pattern that always succeeds, <code>false</code> for a pattern that always fails.</p>
+</dd>
+<dt>Strings correspond to themselves.</dt>
+<dd><p>A string stands for a pattern that matches only that exact string.</p>
+</dd>
+<dt>Integers correspond to string length.</dt>
+<dd><p><code>0</code> stands for a pattern that matches the empty string, positive <code>n</code> for a pattern that matches exactly <code>n</code> bytes, <code>-n</code> for the negation of <code>n</code> (see below).</p>
+</dd>
+<dt>Negation means reversal of fortune.</dt>
+<dd><p><code>-p</code> succeeds when <code>p</code> fails. It consumes no input. The idiom <code>-1</code> matches only the end of the subject.</p>
+</dd>
+<dt>Multiplication corresponds to concatenation.</dt>
+<dd><p>Suppose <code>p</code> and <code>q</code> respectively match <code>a</code> and <code>b</code>, then <code>p*q</code> matches <code>a..b</code>. Note that multiplication is not commutative.</p>
+</dd>
+<dt>Addition corresponds to shortcut <code>or</code>.</dt>
+<dd><p><code>p+q</code> matches what <code>p</code> matches, except when <code>p</code> fails; then it matches what <code>q</code> matches. Note that <code>p+q</code> succeeds if and only if <code>q+p</code> succeeds, but if both <code>p</code> and <code>q</code> would succeed, the match is that of the first pattern. So addition is not quite commutative.</p>
+</dd>
+<dt>Subtraction corresponds to reverse shortcut <code>and not</code>.</dt>
+<dd><p><code>p-q</code> fails if <code>q</code> succeeds, otherwise matches what <code>p</code> matches. Note that <code>0-p</code> does the same as <code>-p</code>, but <code>p-p</code> does not do the same as <code>0</code>, it does the same as <code>false</code>.</p>
+</dd>
+<dt>Division means use the capture.</dt>
+<dd><p><code>p/s</code> matches what <code>p</code> does, but processes the captures of <code>p</code> as specified by <code>s</code>. There are many variations, for example if <code>p</code> itself contains no captures, <code>p/1</code> creates a capture consisting of the substring matched by <code>p</code>.</p>
+</dd>
+<dt>Exponentiation corresponds to repetition.</dt>
+<dd><p>Not quite exponentiation in the usual sense: <code>p*p</code> means <em>exactly</em> two repetitions of <code>p</code>, which is not the same as <code>p^2</code>.</p>
+<ul>
+<li><code>p^n</code> matches <code>n</code> or more repetitions of <code>p</code>.</li>
+<li><code>p^0</code> matches any number of repetitions of <code>p</code>, including the empty string.</li>
+<li><code>p^-n</code> matches not more than <code>n</code> repetitions of <code>p</code>.</li>
+</ul>
+</dd>
+<dt>Length means don't consume.</dt>
+<dd><p><code>#p</code> matches what <code>p</code> matches, but consumes no input. A common idiom: <code>#p*q</code> matches what <code>q</code> matches, provided that <code>p</code> succeeds.</p>
+</dd>
+</dl>
+<p>For example, suppose <code>x=P&quot;abc&quot;</code>. Then <code>x^2+3*x-13</code> means &quot;two or more copies of <code>abc</code>, or any three bytes followed by <code>abc</code>, but not 13 or more bytes long&quot;.</p>
+<h2 id="some-lpeg-functions">Some LPEG functions</h2>
+<p>The introductory <code>lpeg.</code> has been omitted here.</p>
+<h3 id="pattern-constructors">Pattern constructors</h3>
+<dl>
+<dt><code>P</code> for Pattern</dt>
+<dd><p>Apart from nil, boolean, string and number, discussed above, functions and tables can also be converted to patterns, but these are too advanced to discuss here. Existing patterns are unchanged.</p>
+</dd>
+<dt><code>R</code> for Range</dt>
+<dd><p><code>R(r)</code>, where <code>r</code> is a two-byte string, matches any byte whose internal numerical code is in the range <code>r:byte(1,2)</code>. You could use characters in <code>r</code>, e.g. R&quot;az&quot; on most systems matches the range of lowercase letters, but see <code>locale</code> for a more portable alternative.</p>
+</dd>
+<dt><code>S</code> for Set</dt>
+<dd><p>S(s), where <code>s</code> is a string, matches any of bytes in <code>s</code>.</p>
+</dd>
+<dt><code>locale</code></dt>
+<dd><p><code>locale()</code> returns a table of patterns that match character classes. Recommended method is to examine the keys of the returned table, e.g. <code>locale().lower</code> matches all lower-case letters.</p>
+</dd>
+</dl>
+<h3 id="pattern-methods">Pattern methods</h3>
+<p>When called with <code>p</code> as first argument, these functions will replace <code>p</code> by <code>P(p)</code> before proceeding. When <code>p</code> is already a pattern, hey can also be called the object-oriented way shown below.</p>
+<dl>
+<dt><code>match(p,subject[,init]</code>, <code>p:match(subject[,init])</code></dt>
+<dd><p>Tries to match <code>p</code> to <code>subject:sub(init)</code>. <code>init</code> defaults to 1. Returns the captures of the match, or if none specified, the index of the first byte in the subject after the match.</p>
+</dd>
+<dt><code>B(p)</code>, <code>p:B()</code> for Backspace</dt>
+<dd><p>Matches what <code>p</code> does, but matches just before the current position in the subject instead of at it and consumes no input. <code>p</code> is restricted to patterns of fixed length that make no captures.</p>
+</dd>
+<dt><code>C(p)</code>, <code>p:C()</code> for Capture</dt>
+<dd><p>Matches what <code>p</code> does, and returns a capture of the match.</p>
+</dd>
+</dl>
+<h2 id="advanced-topics">Advanced topics</h2>
+<ul>
+<li><p>There are several specialized constructors and methods dealing with captures, many of which involve variations of the division operator.</p></li>
+<li><p><code>P</code> acting on tables and functions.</p></li>
+<li><p>The LPEG distribution also contains <code>re.lua</code>, an application demonstrating the feasibility of writing a regular expression handler using LPEG.</p></li>
+</ul>
+<p>The present author is not yet qualified to write about these.</p>
+<hr />
+<p><em>About this document:</em> Dirk Laurie wrote it in order to teach himself LPEG. All errors in it can be blamed on his inexperience.</p>
