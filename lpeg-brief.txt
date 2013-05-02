@@ -183,19 +183,19 @@ The introductory `lpeg.` has been omitted here.
 
 ### Pattern constructors
 
-__`P`__ (**P**attern)
+__`P`__ (__P__attern)
 ~   Apart from nil, boolean, string and number, discussed above, 
     functions and tables can also be converted to patterns, but these
     are too advanced to discuss here. Existing patterns are unchanged.
 
-__`R`__ (**R**ange)
+__`R`__ (__R__ange)
 ~   `R(r)`, where `r` is a two-byte string, matches any byte whose 
     internal numerical code is in the range `r:byte(1,2)`. You could 
     use characters in `r`, e.g. R"az" on most systems matches the range 
     of lowercase letters, but see `locale` for a more portable 
     alternative.
 
-__`S`__ (**S**et)
+__`S`__ (__S__et)
 ~   S(s), where `s` is a string, matches any of the bytes in `s`.
 
 __`locale`__
@@ -218,12 +218,12 @@ __`match(p,subject[,init]), match(p,subject,init, ...)`__
     when there are extra arguments. Those optional arguments can be 
     accessed as described under [Captures].  
 
-__`B(p), p:B()`__ (**B**ackspace)
+__`B(p), p:B()`__ (__B__ackspace)
 ~   Matches what `p` does, but matches just before the current
     position in the subject instead of at it and consumes no input. 
     `p` is restricted to patterns of fixed length that make no captures.
 
-__`C(p), p:C()`__ (**C**apture)
+__`C(p), p:C()`__ (__C__apture)
 ~   Matches what `p` does, and returns a capture of the match,
     plus all captures that were made.
 
