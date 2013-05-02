@@ -71,10 +71,12 @@ __failure__
     point.
 
 __capture__
-:   1. One of the individually accessible Lua values returned by 
-    some patterns, e.g. a portion of a match.
-    2. To return such a value.
-    3. A capture pattern.
+:   Not just a portion of a match.
+
+    1.  One of the individually accessible Lua values returned by 
+        some patterns.
+    2.  To return such a value.
+    3.  A capture pattern.
 
 __capture pattern__
 ~   A pattern that returns one or more captures when it succeeds.

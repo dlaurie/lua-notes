@@ -48,7 +48,9 @@ A pattern *succeeds* when it matches a substring of the subject at the point whe
 A pattern *fails* when it does not match any substring at that point.
 
 **capture**  
-1.  One of the individually accessible Lua values returned by some patterns, e.g. a portion of a match.
+Not just a portion of a match.
+
+1.  One of the individually accessible Lua values returned by some patterns.
 2.  To return such a value.
 3.  A capture pattern.
 
