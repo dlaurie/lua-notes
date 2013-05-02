@@ -183,19 +183,19 @@ The introductory `lpeg.` has been omitted here.
 
 ### Pattern constructors
 
-__`P`__ (__P__attern)
+__`P`__ (Pattern)
 ~   Apart from nil, boolean, string and number, discussed above, 
     functions and tables can also be converted to patterns, but these
     are too advanced to discuss here. Existing patterns are unchanged.
 
-__`R`__ (__R__ange)
+__`R`__ (Range)
 ~   `R(r)`, where `r` is a two-byte string, matches any byte whose 
     internal numerical code is in the range `r:byte(1,2)`. You could 
     use characters in `r`, e.g. R"az" on most systems matches the range 
     of lowercase letters, but see `locale` for a more portable 
     alternative.
 
-__`S`__ (__S__et)
+__`S`__ (Set)
 ~   S(s), where `s` is a string, matches any of the bytes in `s`.
 
 __`locale`__
@@ -218,12 +218,12 @@ __`match(p,subject[,init]), match(p,subject,init, ...)`__
     when there are extra arguments. Those optional arguments can be 
     accessed as described under [Captures].  
 
-__`B(p), p:B()`__ (__B__ackspace)
+__`B(p), p:B()`__ (Backspace)
 ~   Matches what `p` does, but matches just before the current
     position in the subject instead of at it and consumes no input. 
     `p` is restricted to patterns of fixed length that make no captures.
 
-__`C(p), p:C()`__ (__C__apture)
+__`C(p), p:C()`__ (Capture)
 ~   Matches what `p` does, and returns a capture of the match,
     plus all captures that were made.
 
@@ -270,27 +270,27 @@ __`Carg(n)`__
     `(p1*Carg(1)*p1):match("ab",1,2)` returns `'A',2,'B'` (the 
     `1` is the non-optional `init` argument).
 
-__`Cp()`__ (**p**osition)
+__`Cp()`__ (Position)
 ~   Captures the position in the subject that has been reached, i.e.
     `n+1` when the input up to position `n` has been consumed.
     `(p1*p1*Cp()):match("ab")` returns `'A','B',3`.
 
-__`Cc(...)`__ (**c**onstant)
+__`Cc(...)`__ (Constant)
 ~   Captures all its arguments. `(p1+Cc(math.pi)):match"xyz"`
     returns `3.1415926535898`.
     
-__`Ct(p), p:Ct()`__ (**t**able)
+__`Ct(p), p:Ct()`__ (Table)
 ~   Captures a table containing all the captures of `p`.
     `Ct(p1*Carg(1)*p1):match("ab",1,2)[3]` is `B`.
 
-__`Cs(p), p:Cs()`__ (**s**ubstitute in **s**tring)
+__`Cs(p), p:Cs()`__ (Substitute in String)
 ~   Substitute the matched substring in the full match by its captured 
     value. `Cs(p1*Carg(1)*p1):match("ab",1,2)` returns `A2B`.
     The captures must be strings.
     Note that the substitution applies to the match, not to the full subject: 
     `Cs(p1*Carg(1)*p1):match("abc",1,2)` also returns `A2B`.
 
-__`Cf(p,fct), p:Cf(fct)`__   (**f**old by **f**unction)
+__`Cf(p,fct), p:Cf(fct)`__   (Fold by Function)
 ~   `fct` must be a function of two variables.  Think of it as 
     a left-associative binary operator applied between the captures of 
     `p`. The result is the capture of `Cf(p,fct)`.
@@ -302,7 +302,7 @@ out of scope for this primer.
 
 -----------------
 
-<- _About this document:_ Dirk Laurie wrote it in order to teach himself 
+<! _About this document:_ Dirk Laurie wrote it in order to teach himself 
 LPEG. All errors in it can be blamed on his inexperience. The original
 is `lpeg-brief.txt`, which is written in Pandoc Markdown. The other
-versions were made using Pandoc <http://www.johnmacfarlane.com/pandoc>.
+versions were made using Pandoc <http://www.johnmacfarlane.com/pandoc>. />

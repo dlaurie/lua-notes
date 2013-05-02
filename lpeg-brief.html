@@ -130,13 +130,13 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <p>The introductory <code>lpeg.</code> has been omitted here.</p>
 <h3 id="pattern-constructors">Pattern constructors</h3>
 <dl>
-<dt><strong><code>P</code></strong> (<strong>P</strong>attern)</dt>
+<dt><strong><code>P</code></strong> (Pattern)</dt>
 <dd><p>Apart from nil, boolean, string and number, discussed above, functions and tables can also be converted to patterns, but these are too advanced to discuss here. Existing patterns are unchanged.</p>
 </dd>
-<dt><strong><code>R</code></strong> (<strong>R</strong>ange)</dt>
+<dt><strong><code>R</code></strong> (Range)</dt>
 <dd><p><code>R(r)</code>, where <code>r</code> is a two-byte string, matches any byte whose internal numerical code is in the range <code>r:byte(1,2)</code>. You could use characters in <code>r</code>, e.g. R&quot;az&quot; on most systems matches the range of lowercase letters, but see <code>locale</code> for a more portable alternative.</p>
 </dd>
-<dt><strong><code>S</code></strong> (<strong>S</strong>et)</dt>
+<dt><strong><code>S</code></strong> (Set)</dt>
 <dd><p>S(s), where <code>s</code> is a string, matches any of the bytes in <code>s</code>.</p>
 </dd>
 <dt><strong><code>locale</code></strong></dt>
@@ -149,10 +149,10 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <dt><strong><code>match(p,subject[,init]), match(p,subject,init, ...)</code></strong></dt>
 <dd><p>Tries to match <code>p</code> to <code>subject:sub(init)</code>. <code>init</code> defaults to 1. Returns the captures of the match, or if none specified, the index of the first byte in the subject after the match. As indicated, you may not omit the <code>init</code> argument to <code>match</code> when there are extra arguments. Those optional arguments can be accessed as described under <a href="#captures">Captures</a>.</p>
 </dd>
-<dt><strong><code>B(p), p:B()</code></strong> (<strong>B</strong>ackspace)</dt>
+<dt><strong><code>B(p), p:B()</code></strong> (Backspace)</dt>
 <dd><p>Matches what <code>p</code> does, but matches just before the current position in the subject instead of at it and consumes no input. <code>p</code> is restricted to patterns of fixed length that make no captures.</p>
 </dd>
-<dt><strong><code>C(p), p:C()</code></strong> (<strong>C</strong>apture)</dt>
+<dt><strong><code>C(p), p:C()</code></strong> (Capture)</dt>
 <dd><p>Matches what <code>p</code> does, and returns a capture of the match, plus all captures that were made.</p>
 </dd>
 </dl>
@@ -173,24 +173,28 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <dt><strong><code>Carg(n)</code></strong></dt>
 <dd><p>Captures the <code>n</code>-th extra argument to <code>match</code>. <code>(p1*Carg(1)*p1):match(&quot;ab&quot;,1,2)</code> returns <code>'A',2,'B'</code> (the <code>1</code> is the non-optional <code>init</code> argument).</p>
 </dd>
-<dt><strong><code>Cp()</code></strong> (<strong>p</strong>osition)</dt>
+<dt><strong><code>Cp()</code></strong> (Position)</dt>
 <dd><p>Captures the position in the subject that has been reached, i.e. <code>n+1</code> when the input up to position <code>n</code> has been consumed. <code>(p1*p1*Cp()):match(&quot;ab&quot;)</code> returns <code>'A','B',3</code>.</p>
 </dd>
-<dt><strong><code>Cc(...)</code></strong> (<strong>c</strong>onstant)</dt>
+<dt><strong><code>Cc(...)</code></strong> (Constant)</dt>
 <dd><p>Captures all its arguments. <code>(p1+Cc(math.pi)):match&quot;xyz&quot;</code> returns <code>3.1415926535898</code>.</p>
 </dd>
-<dt><strong><code>Ct(p), p:Ct()</code></strong> (<strong>t</strong>able)</dt>
+<dt><strong><code>Ct(p), p:Ct()</code></strong> (Table)</dt>
 <dd><p>Captures a table containing all the captures of <code>p</code>. <code>Ct(p1*Carg(1)*p1):match(&quot;ab&quot;,1,2)[3]</code> is <code>B</code>.</p>
 </dd>
-<dt><strong><code>Cs(p), p:Cs()</code></strong> (<strong>s</strong>ubstitute in <strong>s</strong>tring)</dt>
+<dt><strong><code>Cs(p), p:Cs()</code></strong> (Substitute in String)</dt>
 <dd><p>Substitute the matched substring in the full match by its captured value. <code>Cs(p1*Carg(1)*p1):match(&quot;ab&quot;,1,2)</code> returns <code>A2B</code>. The captures must be strings. Note that the substitution applies to the match, not to the full subject: <code>Cs(p1*Carg(1)*p1):match(&quot;abc&quot;,1,2)</code> also returns <code>A2B</code>.</p>
 </dd>
-<dt><strong><code>Cf(p,fct), p:Cf(fct)</code></strong> (<strong>f</strong>old by <strong>f</strong>unction)</dt>
+<dt><strong><code>Cf(p,fct), p:Cf(fct)</code></strong> (Fold by Function)</dt>
 <dd><p><code>fct</code> must be a function of two variables. Think of it as a left-associative binary operator applied between the captures of <code>p</code>. The result is the capture of <code>Cf(p,fct)</code>. <code>(C(1)^3):match&quot;361&quot;</code> returns <code>'3','6','1'</code> but <code>Cf(C(1)^3,math.max):match&quot;361&quot;</code> returns <code>6</code>.</p>
 </dd>
 </dl>
 <p>The remaining capture functions: <code>Cg</code>, <code>Cb</code> and <code>Cmt</code>, are definitely out of scope for this primer.</p>
 <hr />
-<p>&lt;- <em>About this document:</em> Dirk Laurie wrote it in order to teach himself LPEG. All errors in it can be blamed on his inexperience. The original is <code>lpeg-brief.txt</code>, which is written in Pandoc Markdown. The other versions were made using Pandoc <a href="http://www.johnmacfarlane.com/pandoc">http://www.johnmacfarlane.com/pandoc</a>.</p>
+<!-- _About this document:_ Dirk Laurie wrote it in order to teach himself 
+LPEG. All errors in it can be blamed on his inexperience. The original
+is `lpeg-brief.txt`, which is written in Pandoc Markdown. The other
+versions were made using Pandoc <http://www.johnmacfarlane.com/pandoc-->
+
 </body>
 </html>
