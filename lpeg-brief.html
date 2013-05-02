@@ -1,3 +1,9 @@
+<style type="text/css">code{white-space: pre;}
+body{font-family: Lucida, Times, serif;}
+h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
+</style>
+
+
 <h2 id="brief-introduction-to-lpeg">Brief introduction to LPEG</h2>
 <p>LPEG is a library for operating on patterns. It is not an alternative to the Lua string library, but it can be used to implement libraries rather like the string library instead of doing it directly in C.</p>
 <p>Some words mean very specific things to LPEG.</p>
@@ -69,8 +75,8 @@
 <ul>
 <li>number: <code>p/n</code> means the capture is <code>c_n</code>.</li>
 <li>table: <code>p/tbl</code> means the capture <code>tbl[c_1]</code>.</li>
-<li>string: <code>p/str</code> means the capture is the result of replacin in <code>str</code> all instances of <code>&quot;%1&quot;</code> by <code>c_1</code>, <code>&quot;%2&quot;</code> by <code>c_2</code>, etc.</li>
-<li>function: <code>p/fct</code> means the capture (or perhaps several captures) is <code>fct(c_1,c_2,...,c_9)</code>.</li>
+<li>string: <code>p/str</code> means the capture is the result of replacing in <code>str</code> all instances of <code>&quot;%1&quot;</code> by <code>c_1</code>, <code>&quot;%2&quot;</code> by <code>c_2</code>, etc. This feature can only handle nine captures.</li>
+<li>function: <code>p/fct</code> means the capture (or perhaps several captures) is <code>fct(c_1,c_2,...)</code>.</li>
 </ul>
 </dd>
 <dt>Exponentiation corresponds to repetition.</dt>
@@ -124,4 +130,4 @@
 </ul>
 <p>The present author is not yet qualified to write about these.</p>
 <hr />
-<p><em>About this document:</em> Dirk Laurie wrote it in order to teach himself LPEG. All errors in it can be blamed on his inexperience.</p>
+<p>&lt;- <em>About this document:</em> Dirk Laurie wrote it in order to teach himself LPEG. All errors in it can be blamed on his inexperience. The original is <code>lpeg-brief.txt</code>, which is written in Pandoc Markdown. The HTML version was made using Pandoc <a href="http://www.johnmacfarlane.com/pandoc">http://www.johnmacfarlane.com/pandoc</a>.</p>
