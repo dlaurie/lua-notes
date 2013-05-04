@@ -10,7 +10,7 @@ About beginner's notes in general
 
 -   Once you have learnt it, you can never recapture the difficulty you had in understanding the original.
 
--   I promise not to re-work these notes to elegance when I know the material well.
+-   I promise not to re-work these notes to elegance when I know the material well. I will correct errors, though.
 
 -   They are mainly for my own use, especially when I need the information ater not having worked with it for a long time.
 
@@ -36,16 +36,16 @@ A string that is presented for examination to an LPEG function. Its bytes are re
 Not the same as `string.match`. In fact, it may be a good idea to forget everything you know about the Lua string library while coming to grips with LPEG.
 
 1.  If a string has the property determined by a pattern, the pattern is said to *match* the string. I.e. it is the pattern, not the string, that does the matching.
-2.  The name of an LPEG function that applies a pattern to a subject in an attempt to find a matched substring.
-3.  The string matched by a pattern, especially when it is only a substring of the subject.
+2.  The string matched by a pattern, especially when it is only a substring of the subject.
+3.  The name of an LPEG function that applies a pattern to a subject in an attempt to find a matched substring. E.g `lpeg.match(p,"abcdef",2)` applies the pattern `p` at position 2 of "abcdef".
 
-The central function of LPEG.
+The central concept of LPEG.
 
 **success**  
-A pattern *succeeds* when it matches a substring of the subject at the point where it is applied.
+A pattern *succeeds* when it matches a substring of the subject at the position where it is applied. Matching the empty string also counts as success, if the pattern allows it.
 
 **failure**  
-A pattern *fails* when it does not match any substring at that point.
+A pattern *fails* when it does not match any substring at that position, not even the empty string.
 
 **capture**  
 Not just a portion of a match.
@@ -55,7 +55,7 @@ Not just a portion of a match.
 3.  A capture pattern.
 
 **capture pattern**  
-A pattern that returns one or more captures when it succeeds.
+A pattern designed to return one or more captures when it succeeds.
 
 **consume**  
 A pattern *consumes* its match if that portion of the subject is not available to any follow-up pattern except a backspace pattern.
@@ -64,7 +64,10 @@ The most spectacular feature of LPEG is the way complicated patterns are built u
 
 Roberto Ierusalimschy put a lot of thought into allocating useful meanings to the arithmetic operations and constants of Lua. In particular, the priority of operations is such that one often needs no parentheses. Some words of warning, though:
 
--   If you use constants like `3` or `true` in a pattern expression, they cannot be combined with each other, only with existing patterns. To make sure, convert them to patterns first by applying `lpeg.P` (the `lpeg.` is used only here, it will be just `P` later).
+-   To make a pattern actually do anything, it must be passed to the function `match`.
+
+-   Constants like `3` or `true` in a pattern expression are special shorthand notations. They are recognized as patterns only when a pattern is expected, e.g. as the first argument to `match`, or when combined with existing patterns. To combine two constants, first convert at least one of them to a pattern by `lpeg.P` (the `lpeg.` is used only here, it will be just `P` later). I.e. if Lua will think `3` is just a number, say `P(3)` instead of just `3`.
+
 -   The expressions look familiar but that must not mislead you into thinking that the usual commutative, associative and distributive laws of algebra hold. They don't.
 
 *Nil is not a valid pattern.*  
@@ -96,15 +99,15 @@ A common idiom: `#p*q` matches what `q` matches, provided that `p` succeeds.
 *Subtraction corresponds to reverse shortcut `and not`.*  
 `p-q` fails if `q` succeeds, otherwise matches what `p` matches. Note that `0-p` does the same as `-p`, but `p-p` does not do the same as `0`, it does the same as `false`.
 
-*Division means process the captures.*  
-`p/s` matches what `p` does, and defines a capture for the whole expression by processing the captures of `p` as specified by `s`. Call the captures `c_1`, `c_2` etc. If `p` defines no capture, the whole substring matched by `p` counts as `c_1`. There are four variations, depending on the type of `s`.
+*Division means make or process captures.*  
+`p/s` matches what `p` does, and defines a capture for the whole expression by processing the captures of `p` as specified by `s`. It can also turn a non-capture pattern into a capture pattern. Here are the simplest cases, assuming that `p` is a non-capture pattern that has matched the non-nil value named `match`.
 
--   number: `p/n` means the capture is `c_n`.
--   table: `p/tbl` means the capture is `tbl[c_1]`.
--   string: `p/str` means the capture is the result of replacing in `str` all instances of `"%1"` by `c_1`, `"%2"` by `c_2`, etc. This feature can only handle nine captures.
--   function: `p/fct` means the capture (or perhaps several captures) is `fct(c_1,c_2,...)`.
+-   number: `p/1` captures `match`.
+-   table: `p/tbl` captures `tbl[match]` if it is not nil.
+-   string: `p/str` means the capture is the result of replacing in `str` all instances of `"%0"` by `match`.
+-   function: `p/fct` means the capture is `fct(match)`.
 
-This is the easiest way to make a pattern that returns captures. There is much more below under [Captures](#captures).
+For the fallbacks when `match` or `tbl[match]` is nil, and for what happens when `p` is already a capture pattern, see [Captures](#captures).
 
 *Exponentiation corresponds to repetition.*  
 Not quite exponentiation in the usual sense: `p*p` means *exactly* two repetitions of `p`, which is not the same as `p^2`.
@@ -113,7 +116,7 @@ Not quite exponentiation in the usual sense: `p*p` means *exactly* two repetitio
 -   `p^0` matches any number of repetitions of `p`.
 -   `p^-n` matches not more than `n` repetitions of `p`.
 
-The pattern `p` must not match the empty string.
+`p^0` and `p^-n` match the empty string, but `p` itself is restricted to patterns that do not match the empty string.
 
 For example, suppose `x=P"abc"`. Then `x^2+3*x-13` means "two or more copies of `abc`, or any three bytes followed by `abc`, but not 13 or more bytes long".
 
@@ -128,10 +131,10 @@ The introductory `lpeg.` has been omitted here.
 Apart from nil, boolean, string and number, discussed above, functions and tables can also be converted to patterns, but these are too advanced to discuss here. Existing patterns are unchanged.
 
 **`R`** (Range)  
-`R(r)`, where `r` is a two-byte string, matches any byte whose internal numerical code is in the range `r:byte(1,2)`. You could use characters in `r`, e.g. R"az" on most systems matches the range of lowercase letters, but see `locale` for a more portable alternative.
+`R(r)`, where `r` is a two-byte string, matches any byte whose internal numerical code is in the range `r:byte(1,2)`. You could use characters in `r`, e.g. `R"az"` on most systems matches the range of lowercase letters (but see `locale` for a more portable alternative).
 
 **`S`** (Set)  
-S(s), where `s` is a string, matches any of the bytes in `s`.
+`S(s)`, where `s` is a string, matches any of the bytes in `s`.
 
 **`locale`**  
 `locale()` returns a table of patterns that match character classes. Recommended method is to examine the keys of the returned table, e.g. `locale().lower` matches all lower-case letters.
@@ -141,10 +144,12 @@ S(s), where `s` is a string, matches any of the bytes in `s`.
 When called with `p` as first argument, these functions will replace `p` by `P(p)` before proceeding. When `p` is already a pattern, they can also be called in an object-oriented way, as occasionally shown below.
 
 **`match(p,subject[,init]), match(p,subject,init, ...)`**  
-Tries to match `p` to `subject:sub(init)`. `init` defaults to 1. Returns the captures of the match, or if none specified, the index of the first byte in the subject after the match. As indicated, you may not omit the `init` argument to `match` when there are extra arguments. Those optional arguments can be accessed as described under [Captures](#captures).
+Tries to match `p` to `subject:sub(init)`. `init` defaults to 1. Returns the captures of the match, or if none specified, the next position, i.e. the index of the first byte in the subject after the match. Returns `nil` only when the capture fails.
+
+As indicated, you may not omit the `init` argument to `match` when there are extra arguments. Those optional arguments can be accessed as described under [Captures](#captures).
 
 **`B(p), p:B()`** (Backspace)  
-Matches what `p` does, but matches just before the current position in the subject instead of at it and consumes no input. `p` is restricted to patterns of fixed length that make no captures.
+Matches what `p` does, but matches just before the next position instead of at it and consumes no input. `p` is restricted to patterns of fixed length that make no captures.
 
 **`C(p), p:C()`** (Capture)  
 Matches what `p` does, and returns a capture of the match, plus all captures that were made.
@@ -166,7 +171,7 @@ The present author is not yet qualified to write about these. He is probably not
 
 Captures made by a subexpression automatically become captures of the whole expression, and are eventually returned by `match`, unless modified by the division operator and the capture methods.
 
-The patterns made by `P` acting on a non-pattern do not capture anything. They can be made to do so with the four options provided by the division operator. In principle one can do almost anything that way, since one of the options is to process everything by a function of one's own choosing.
+The patterns made by `P` acting on a non-pattern do not capture anything. They can be made to do so with the four options provided by the division operator. In principle one can do almost anything that way, since one of the options is to process the match by a function of one's own choosing.
 
 In practice some tasks are so common that it is useful to have additional capture functions predefined. We are reaching the limits of this primer here, and there is really no substitute for reading the official LPEG documentation, but at the risk of saying too much but not enough, here are some of them.
 
@@ -176,13 +181,13 @@ The pattern `p1=P'a'/"A"+P'b'/"B"+P'c'/"C"`, which matches lower-case `a`, `b` o
 Captures the `n`-th extra argument to `match`. `(p1*Carg(1)*p1):match("ab",1,2)` returns `'A',2,'B'` (the `1` is the non-optional `init` argument).
 
 **`Cp()`** (Position)  
-Captures the position in the subject that has been reached, i.e. `n+1` when the input up to position `n` has been consumed. `(p1*p1*Cp()):match("ab")` returns `'A','B',3`.
+Captures the next position, i.e. `n+1` when the input up to position `n` has been consumed. `(p1*p1*Cp()):match("ab")` returns `'A','B',3`.
 
 **`Cc(...)`** (Constant)  
 Captures all its arguments. `(p1+Cc(math.pi)):match"xyz"` returns `3.1415926535898`.
 
 **`Ct(p), p:Ct()`** (Table)  
-Captures a table containing all the captures of `p`. `Ct(p1*Carg(1)*p1):match("ab",1,2)[3]` is `B`.
+Captures a table containing all the captures of `p`. `Ct(p1*Carg(1)*p1):match("ab",1,2)` is `{A,2,B}`.
 
 **`Cs(p), p:Cs()`** (Substitute in String)  
 Substitute the matched substring in the full match by its captured value. `Cs(p1*Carg(1)*p1):match("ab",1,2)` returns `A2B`. The captures must be strings. Note that the substitution applies to the match, not to the full subject: `Cs(p1*Carg(1)*p1):match("abc",1,2)` also returns `A2B`.
@@ -190,7 +195,20 @@ Substitute the matched substring in the full match by its captured value. `Cs(p1
 **`Cf(p,fct), p:Cf(fct)`** (Fold by Function)  
 `fct` must be a function of two variables. Think of it as a left-associative binary operator applied between the captures of `p`. The result is the capture of `Cf(p,fct)`. `(C(1)^3):match"361"` returns `'3','6','1'` but `Cf(C(1)^3,math.max):match"361"` returns `6`.
 
-The remaining capture functions: `Cg`, `Cb` and `Cmt`, are definitely out of scope for this primer.
+The remaining capture functions: `Cg`, `Cb` and `Cmt`, are definitely too advanced for this primer.
+
+### More about the division operator
+
+When `p` has been successful but produced no capture, `p:match` returns the next position (see `Cp()`, above). The next position is also the default value for some applications of the division operator.
+
+If `p` is a capture pattern but has not actually produced any captures, it acts like a non-capture pattern, as discussed before.
+
+Assume that there is at least one capture, and call the captures `c_1`, `c_2` etc.
+
+-   number: `p/0` captures the next position; `p/n` captures `c_n`.
+-   table: `p/tbl` captures `tbl[c_1]` except when this is nil, in which case the capture is the next position.
+-   string: `p/str` means the capture is the result of replacing in `str` all instances of `"%n"` by `c_n`, where `n` runs from 0 to 9. `c_0` means the whole match. This feature can only handle nine captures.
+-   function: `p/fct` means the capture (or perhaps several captures) is `fct(c_1,c_2,...)`.
 
 * * * * *
 
