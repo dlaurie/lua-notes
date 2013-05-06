@@ -17,14 +17,15 @@
 <style type="text/css">code{white-space: pre;}
 body{font-family: Lucida, Times, serif;}
 h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
+
 </style>
 
 <h2 id="about-beginners-notes-in-general">About beginner's notes in general</h2>
 <ul>
 <li><p>Writing a topic up for oneself is one of the best ways of learning it.</p></li>
 <li><p>Once you have learnt it, you can never recapture the difficulty you had in understanding the original.</p></li>
-<li><p>I promise not to re-work these notes to elegance when I know the material well. I will correct errors, though.</p></li>
-<li><p>They are mainly for my own use, especially when I need the information ater not having worked with it for a long time.</p></li>
+<li><p>I promise not to re-work these notes to elegance when I know the material well. I will add stuff and correct errors, though. Thanks to members of the Lua list for helping me here, particularly Pierre-Yves Gérardy.</p></li>
+<li><p>They are mainly for my own use, especially when I need the information ater not having worked with it for a long time. If anyone else finds them helpful, it is a bonus.</p></li>
 <li><p>They are not intended to be comprehensive, only to flatten the learning curve until the reader knows enough not to be daunted by the official documentation.</p></li>
 </ul>
 <h2 id="brief-introduction-to-lpeg">Brief introduction to LPEG</h2>
@@ -35,7 +36,7 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <dd><p>A Lua string, consisting of an arbitrary sequence of bytes. On many systems, one could say &quot;characters&quot; instead.</p>
 </dd>
 <dt><strong>pattern</strong></dt>
-<dd><p>A userdata type, containing enough information to characterize a certain property that a string might have. The properties that can be described are rather like the questions solvers of crossword puzzles tend to ask. For example: &quot;seven letters, starts with 'p', has a double letter in it somewere&quot;.</p>
+<dd><p>A userdata type, containing enough information to characterize a certain property that a string might have. The properties that can be described are rather like the questions solvers of crossword puzzles tend to ask. For example: &quot;seven letters, starts with 'p', has a double letter in it somewhere&quot;.</p>
 </dd>
 <dt><strong>subject</strong></dt>
 <dd><p>A string that is presented for examination to an LPEG function. Its bytes are referred to as &quot;input&quot;.</p>
@@ -74,7 +75,7 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <p>Roberto Ierusalimschy put a lot of thought into allocating useful meanings to the arithmetic operations and constants of Lua. In particular, the priority of operations is such that one often needs no parentheses. Some words of warning, though:</p>
 <ul>
 <li><p>To make a pattern actually do anything, it must be passed to the function <code>match</code>.</p></li>
-<li><p>Constants like <code>3</code> or <code>true</code> in a pattern expression are special shorthand notations. They are recognized as patterns only when a pattern is expected, e.g. as the first argument to <code>match</code>, or when combined with existing patterns. To combine two constants, first convert at least one of them to a pattern by <code>lpeg.P</code> (the <code>lpeg.</code> is used only here, it will be just <code>P</code> later). I.e. if Lua will think <code>3</code> is just a number, say <code>P(3)</code> instead of just <code>3</code>.</p></li>
+<li><p>Constants like <code>3</code> or <code>true</code> in a pattern expression are special shorthand notations. They are recognized as patterns only when a pattern is expected, e.g. as an argument to <code>match</code> or another LPEG function, or when combined with existing patterns. To combine two constants, first convert at least one of them to a pattern by <code>lpeg.P</code> (the <code>lpeg.</code> is used only here, it will be just <code>P</code> later). I.e. if Lua will think <code>3</code> is just a number, say <code>P(3)</code> instead of just <code>3</code>.</p></li>
 <li><p>The expressions look familiar but that must not mislead you into thinking that the usual commutative, associative and distributive laws of algebra hold. They don't.</p></li>
 </ul>
 <dl>
@@ -90,15 +91,20 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <dt><em>Integers correspond to string length.</em></dt>
 <dd><p><code>0</code> stands for a pattern that matches the empty string, positive <code>n</code> for a pattern that matches exactly <code>n</code> bytes, <code>-n</code> for the negation of <code>n</code> (see next item).</p>
 </dd>
+<dt><em>Functions mean user-defined patterns.</em></dt>
+<dd><p>A function <code>fct</code> stands for a pattern that fails when <code>fct</code> returns a Lua false value (i.e. <code>false</code>, <code>nil</code> or none) and succeeds when it returns <code>true</code> or a new valid position. See <code>Cmt</code> under <a href="#captures">Captures</a> for a specification of <code>fct</code>.</p>
+</dd>
+<dt><em>Tables mean composite patterns.</em></dt>
+<dd><p>A table stands for a <em>grammar</em>, i.e. a pattern based on a collection of local patterns that are allowed to refer to each other recursively. See <a href="#grammars">Grammars</a>.</p>
+</dd>
 <dt><em>Negation means reversal of fortune.</em></dt>
-<dd><p><code>-p</code> succeeds when <code>p</code> fails. It consumes no input. <code>-n</code> succeeds when there are fewer than <code>n</code> bytes of input left. In particular, the idiom <code>-1</code> matches only the end of the subject.</p>
+<dd><p><code>-p</code> succeeds when <code>p</code> fails. It consumes no input. <code>-n</code> succeeds when there are fewer than <code>n</code> bytes of input left.</p>
 </dd>
 <dt><em>Length means don't consume.</em></dt>
 <dd><p><code>#p</code> matches what <code>p</code> matches, but consumes no input.</p>
 </dd>
 <dt><em>Multiplication corresponds to concatenation.</em></dt>
 <dd><p>Suppose <code>p</code> and <code>q</code> respectively match <code>a</code> and <code>b</code>, then <code>p*q</code> matches <code>a..b</code>. Note that multiplication is not commutative.</p>
-<p>A common idiom: <code>#p*q</code> matches what <code>q</code> matches, provided that <code>p</code> succeeds.</p>
 </dd>
 <dt><em>Addition corresponds to shortcut <code>or</code>.</em></dt>
 <dd><p><code>p+q</code> matches what <code>p</code> matches, except when <code>p</code> fails; then it matches what <code>q</code> matches. Note that <code>p+q</code> succeeds if and only if <code>q+p</code> succeeds, but if both <code>p</code> and <code>q</code> would succeed, the match is that of the first pattern. So addition is not quite commutative.</p>
@@ -121,18 +127,19 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <ul>
 <li><code>p^n</code> matches <code>n</code> or more repetitions of <code>p</code>.</li>
 <li><code>p^0</code> matches any number of repetitions of <code>p</code>.</li>
-<li><code>p^-n</code> matches not more than <code>n</code> repetitions of <code>p</code>.</li>
+<li><code>p^-n</code> matches not more than <code>n</code> repetitions of <code>p</code>. If there are more, <code>p^-n</code> still succeeds; the other repetitions are still there for follow-up patterns to examine.</li>
 </ul>
 <p><code>p^0</code> and <code>p^-n</code> match the empty string, but <code>p</code> itself is restricted to patterns that do not match the empty string.</p>
 </dd>
 </dl>
-<p>For example, suppose <code>x=P&quot;abc&quot;</code>. Then <code>x^2+3*x-13</code> means &quot;two or more copies of <code>abc</code>, or any three bytes followed by <code>abc</code>, but not 13 or more bytes long&quot;.</p>
+<p>For example, suppose <code>x=P&quot;abc&quot;</code>. Then <code>x^2+3*x-13</code> means &quot;two or more copies of <code>abc</code>, or any three bytes followed by <code>abc</code>, but shorter than 13 bytes&quot;.</p>
 <h2 id="some-lpeg-functions">Some LPEG functions</h2>
 <p>The introductory <code>lpeg.</code> has been omitted here.</p>
 <h3 id="pattern-constructors">Pattern constructors</h3>
 <dl>
 <dt><strong><code>P</code></strong> (Pattern)</dt>
-<dd><p>Apart from nil, boolean, string and number, discussed above, functions and tables can also be converted to patterns, but these are too advanced to discuss here. Existing patterns are unchanged.</p>
+<dd><p><code>P(v)</code> converts to a pattern a value <code>v</code> of any Lua type except thread or non-pattern userdata, as described above. Existing patterns are returned unchanged. It is not advisable for <code>v</code> to have a metatable.</p>
+<p><code>P</code> is seldom explicitly needed; the LPEG functions invoke <code>P</code> automatically when expecting a pattern.</p>
 </dd>
 <dt><strong><code>R</code></strong> (Range)</dt>
 <dd><p><code>R(r)</code>, where <code>r</code> is a two-byte string, matches any byte whose internal numerical code is in the range <code>r:byte(1,2)</code>. You could use characters in <code>r</code>, e.g. <code>R&quot;az&quot;</code> on most systems matches the range of lowercase letters (but see <code>locale</code> for a more portable alternative).</p>
@@ -159,21 +166,16 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 </dd>
 </dl>
 <h2 id="advanced-topics">Advanced topics</h2>
-<p>The official documentation has material on:</p>
-<ul>
-<li><p><code>P</code> acting on tables and functions.</p></li>
-<li><p>Grammars.</p></li>
-</ul>
-<p>The LPEG distribution also contains <code>re.lua</code>, an application demonstrating the feasibility of writing a regular expression handler using LPEG.</p>
-<p>The present author is not yet qualified to write about these. He is probably not qualified to write about the topics below either, but he wants to be.</p>
+<p>The LPEG distribution contains <code>re.lua</code>, an application demonstrating the feasibility of writing a regular expression handler using LPEG. The present author is not yet qualified to write about that. He is probably not qualified to write about the topics below either, but he pretends to be.</p>
 <h3 id="captures">Captures</h3>
 <p>Captures made by a subexpression automatically become captures of the whole expression, and are eventually returned by <code>match</code>, unless modified by the division operator and the capture methods.</p>
 <p>The patterns made by <code>P</code> acting on a non-pattern do not capture anything. They can be made to do so with the four options provided by the division operator. In principle one can do almost anything that way, since one of the options is to process the match by a function of one's own choosing.</p>
 <p>In practice some tasks are so common that it is useful to have additional capture functions predefined. We are reaching the limits of this primer here, and there is really no substitute for reading the official LPEG documentation, but at the risk of saying too much but not enough, here are some of them.</p>
 <p>The pattern <code>p1=P'a'/&quot;A&quot;+P'b'/&quot;B&quot;+P'c'/&quot;C&quot;</code>, which matches lower-case <code>a</code>, <code>b</code> or <code>c</code> and captures the upper-case equivalent, is used in some of the examples.</p>
+<p>All the capture constructors are pattern modifiers: they affect what happens after a given pattern succeeds. For all except <code>Cmt</code>, success or failure is determined by the pattern, and the capture constructor merely determines which captures will be produced. As in table constructors, return lists etc, nil captures are significant as placeholders.</p>
 <dl>
 <dt><strong><code>Carg(n)</code></strong></dt>
-<dd><p>Captures the <code>n</code>-th extra argument to <code>match</code>. <code>(p1*Carg(1)*p1):match(&quot;ab&quot;,1,2)</code> returns <code>'A',2,'B'</code> (the <code>1</code> is the non-optional <code>init</code> argument).</p>
+<dd><p>Captures the <code>n</code>-th extra argument to <code>match</code>. <code>(p1*Carg(1)*p1):match(&quot;ab&quot;,1,2)</code> returns <code>'A',2,'B'</code> (the <code>1</code> is <code>init</code>, which is non-optional if you want to use extra arguments).</p>
 </dd>
 <dt><strong><code>Cp()</code></strong> (Position)</dt>
 <dd><p>Captures the next position, i.e. <code>n+1</code> when the input up to position <code>n</code> has been consumed. <code>(p1*p1*Cp()):match(&quot;ab&quot;)</code> returns <code>'A','B',3</code>.</p>
@@ -190,18 +192,221 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <dt><strong><code>Cf(p,fct), p:Cf(fct)</code></strong> (Fold by Function)</dt>
 <dd><p><code>fct</code> must be a function of two variables. Think of it as a left-associative binary operator applied between the captures of <code>p</code>. The result is the capture of <code>Cf(p,fct)</code>. <code>(C(1)^3):match&quot;361&quot;</code> returns <code>'3','6','1'</code> but <code>Cf(C(1)^3,math.max):match&quot;361&quot;</code> returns <code>6</code>.</p>
 </dd>
+<dt><strong><code>Cmt(p,fct)</code></strong> (Match-Time iMmediaTe)</dt>
+<dd><p>Makes a new match immediately after <code>p</code> reports success. This does more than define captures for <code>p</code>, it overrules everything that <code>p</code> did: whether the match fails despite the success of <code>p</code>, and in the case of success, what the new position after the match is, and what captures the modified pattern returns.</p>
+<p>The call to <code>fct</code> supplies arguments <code>subj,pos,...</code>, where the <code>pos</code> is the next position after the match of <code>p</code> and the vararg list contains all the captures that <code>p</code> made. The first return value must be one of:</p>
+<ul>
+<li><code>false</code>, <code>nil</code> or none if the match fails;</li>
+<li><code>true</code>, if the match succeeds but consumes no input;</li>
+<li>the new position, which must be in the range <code>pos</code> to <code>#subj+1</code>.</li>
+</ul>
+<p>In the case of success, further return values of <code>fct</code> become captures of <code>Cmt(p,fct)</code>.</p>
+<p>This specification of function <code>fct</code> is also applicable when <code>P(fct)</code> is used to create a user-defined pattern.</p>
+</dd>
 </dl>
-<p>The remaining capture functions: <code>Cg</code>, <code>Cb</code> and <code>Cmt</code>, are definitely too advanced for this primer.</p>
+<p>Finally we are in a position to use LPEG to test for the property mentioned when we defined &quot;pattern&quot;: &quot;seven letters, starts with 'p', has a double letter in it somewhere&quot;.</p>
+<pre><code>dbl = function(s,p) 
+  while p&lt;#s do 
+    if s:sub(p,p)==s:sub(p+1,p+1) then return p+1 end
+    p=p+1
+  end
+end
+pat = #P(dbl)*#P&quot;p&quot;*P(7)</code></pre>
+<p>The remaining capture functions: <code>Cg</code> and <code>Cb</code>, are definitely too advanced for this primer.</p>
 <h3 id="more-about-the-division-operator">More about the division operator</h3>
-<p>When <code>p</code> has been successful but produced no capture, <code>p:match</code> returns the next position (see <code>Cp()</code>, above). The next position is also the default value for some applications of the division operator.</p>
-<p>If <code>p</code> is a capture pattern but has not actually produced any captures, it acts like a non-capture pattern, as discussed before.</p>
+<p>When <code>p</code> succeeds without producing a capture, <code>p:match</code> returns the next position (see <code>Cp()</code>, above). The division operator cannot negate success: if it discards all captures, the match still succeeds and <code>p/whatever</code> still returns the next position.</p>
+<p>If <code>p</code> is a capture pattern but has not actually produced any captures, it acts like a non-capture pattern, as discussed when division was first decribed.</p>
 <p>Assume that there is at least one capture, and call the captures <code>c_1</code>, <code>c_2</code> etc.</p>
 <ul>
-<li>number: <code>p/0</code> captures the next position; <code>p/n</code> captures <code>c_n</code>.</li>
-<li>table: <code>p/tbl</code> captures <code>tbl[c_1]</code> except when this is nil, in which case the capture is the next position.</li>
+<li>number: <code>p/n</code> captures <code>c_n</code>, <code>p/0</code> means there is no capture.</li>
+<li>table: <code>p/tbl</code> captures <code>tbl[c_1]</code> except when this is nil, in which case there is no capture.</li>
 <li>string: <code>p/str</code> means the capture is the result of replacing in <code>str</code> all instances of <code>&quot;%n&quot;</code> by <code>c_n</code>, where <code>n</code> runs from 0 to 9. <code>c_0</code> means the whole match. This feature can only handle nine captures.</li>
 <li>function: <code>p/fct</code> means the capture (or perhaps several captures) is <code>fct(c_1,c_2,...)</code>.</li>
 </ul>
+<h3 id="grammars">Grammars</h3>
+<p>A grammar is a pattern constructed out of a table <code>tbl</code> of named patterns, called &quot;rules&quot;, that may refer to each other recursively. One of the patterns, known as the &quot;initial rule&quot;, becomes the pattern created by <code>P(tbl)</code>; it must either be <code>tbl[1]</code> or its key must be stored as <code>tbl[1]</code>.</p>
+<p>The rules look very much like BNF notation. For example, a simple arithmetic expression might be defined as:</p>
+<pre><code>expr ::= term | expr+term | expr-term
+term ::= factor | term*factor | term/factor</code></pre>
+<p>One would like to translate this to LPEG as:</p>
+<pre><code>expr = term + expr * &#39;+&#39; * term + expr * &#39;-&#39; * term
+term = factor + term * &#39;*&#39; * factor + term * &#39;/&#39; * factor</code></pre>
+<p>but that would not work, because when the right-hand sides are evaluated, the required values are not known yet. Instead, we put everything inside a table, and use the pattern constructor <code>V</code> (for Variable) to refer to rules.</p>
+<pre><code>tbl = { &quot;expr&quot;,
+expr =  V&quot;term&quot; + V&quot;term&quot; * &quot;+&quot; * V&quot;expr&quot; + V&quot;term&quot; * &quot;-&quot; * V&quot;expr&quot;;
+term = factor + factor*&quot;*&quot;*V&quot;term&quot; + factor*&quot;/&quot;*V&quot;term&quot;  
+}</code></pre>
+<p>What then happens is quite similar to the distinction between code inside a Lua function definition and outside it. In the following Lua code, the expression <code>x+a</code> is not equivalent to <code>x+1</code>; instead, it generates code to be executed later for adding the values that <code>x</code> and <code>a</code> have when the function is executed.</p>
+<pre><code>local a = 1
+function f(x)
+   return x+a
+end</code></pre>
+<p>Similarly, when <code>V(key)</code> is invoked, the current value of <code>tbl[key]</code> is not relevant: code is generated that will use the future value of <code>tbl[key]</code> at the stage when the table is turned into a pattern. This happens once only: the actual userdata in <code>tbl[key]</code> mutates, after which it is fixed.</p>
+<p>For recursive grammars, it is very important that at least one byte of input is consumed before the same rule is applied again, otherwise the pattern goes into an infinite loop. Actually, the first time round, the above definition of <code>tbl</code> did not work because I put the operations in the wrong order: <code>V&quot;expr&quot; * &quot;+&quot; * V&quot;term&quot;</code> instead of <code>V&quot;term&quot; * &quot;+&quot; * V&quot;expr&quot;</code>, etc. (The BNF itself is already wrong, of course.) <code>P(tbl)</code> will in most cases detect such loops and refuse to construct the grammar.</p>
+<h2 id="idioms">Idioms</h2>
+<p>Certain subexpressions occur so often in pattern expressions that one gets to recognize them at a glance.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center">This...</th>
+<th align="left">matches...</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><code>-1</code></td>
+<td align="left">the end of the subject.</td>
+</tr>
+<tr class="even">
+<td align="center"><code>#p*q</code></td>
+<td align="left">what <code>q</code> matches, provided that <code>p</code> succeeds.</td>
+</tr>
+<tr class="odd">
+<td align="center"><code>(1-p)^0</code></td>
+<td align="left">everything up to where <code>p</code> would succeed.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="aq-once-asked-questions">1AQ: Once-asked questions</h2>
+<p>(I can't tell whether they will be frequently asked.)</p>
+<ol style="list-style-type: decimal">
+<li><em>How do you match anywhere, as the Lua string library does?</em></li>
+</ol>
+<p>The easiest way is to use an idiom to skip over the non-matching part: <code>(1-p)^0*Cp()*p*Cp()</code> is a pattern that returns the first position where <code>p</code> succeeds and the position after the match.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><em>Can one do a <code>sed</code>-style <code>gsub</code>?</em></li>
+</ol>
+<p>The point of the question is that if <code>pattern</code> is a greedy pattern that can match the empty string, <code>string.gsub(s,pattern,repl)</code> produces an empty match for every nonempty match, and in some situations this is not what one wants. For example, <code>(string.gsub(&quot;;a;&quot;,&quot;a*&quot;,&quot;ITEM&quot;))</code> returns <code>&quot;ITEM;ITEMITEM;ITEM&quot;</code> whereas <code>&quot;ITEM;ITEM;ITEM&quot;</code> as returned by the <code>sed</code> command <code>s/a*/ITEM/</code> is more convenient in applications like string splitting.</p>
+<p><code>p^0</code> (where <code>p=P&quot;a&quot;</code>) emulates the Lua pattern <code>&quot;a*&quot;</code>, but one cannot use it by itself in a loop because it matches the empty string. The trick here is to do the possibly empty first match outside the loop, and let the loop include the non-match in between, which must be non-empty. Let <code>q=p^0/&quot;ITEM&quot;</code>, then <code>Cs(q*((1-p)*q)^0)</code> does the job: the outer <code>Cs</code> substitutes the captures instead of returning them.</p>
+<p>In general, suppose that <code>q=s/r</code>, where <code>s</code> is a non-capture pattern and <code>r</code> the replacement. This solution needs a pattern <code>p</code> that succeeds only when <code>s</code> produces a non-empty match.</p>
+<pre><code>f=function(str,pos,cap) if cap and #cap&gt;0 then return true end end
+p=Cmt(s,f)</code></pre>
+<p>It is not possible to construct <code>p</code> given only <code>q</code>: the information whether the match was empty has been lost.</p>
+<h2 id="case-study-an-apl-to-lua-compiler">Case study: an APL-to-Lua compiler</h2>
+<p>APL is a language in which expressions look something like this:</p>
+<pre><code>((⍴X)⍴⍋⍋X⍳X,Y)⍳(⍴Y)⍴⍋⍋X⍳(Y←1 2 3),X←2 3 4</code></pre>
+<p>APL has the following properties, simplified slightly for the present purpose.</p>
+<ol style="list-style-type: decimal">
+<li>There are no keywords. Numerous curiously shaped symbols are used to define the language itself. The letters of the alphabet are used only to form names.</li>
+<li>Everything can be thought of as a function, a value or a name. Functions may be monadic or dyadic (i.e. they take one or two arguments), and return one value. Values can be literal, an evaluated expression or a looked-up name.</li>
+<li>For some functions, called operators, the arguments as well as the result are functions.</li>
+<li>One and the same symbol may denote either a monadic or a dyadic function, depending on the presence or absence of a second argument. It may even mean either a function or an operator, depending on the type of that argument. It is known at compile time whether a name refers to a value, a function or an operator, and the syntax depends on that information.</li>
+<li>Infix notation is used, the first argument of a function (which is always present) being the value of the whole expression to the right, and the second argument (in the case of a dyadic function) being the value to the left of it. Operators are different: the first argument (which is always present) is the function to the left, and the second argument (in the case of a dyadic operator) is the function to the right.</li>
+<li>Blanks are insignificant, except as separators in a vector of numbers, which is thought of as a single value.</li>
+<li>Parentheses have their usual meaning.</li>
+<li>Brackets are used for subscripts as in Lua, but two-index subscripts, separated by a semicolon, are allowed.</li>
+</ol>
+<p>It is a substantial but straightforward task to write a Lua library in which the functions do what the APL functions do. For example, <code>⍳6</code> in APL means &quot;the integers 1 to 6&quot;, and <code>iota(6)</code> could do that; <code>2 3⍴A</code> means &quot;form a 2×3 matrix out of the contents of A&quot;, and <code>rho(A,{2,3})</code> could do that. Thus <code>2 3⍴⍳6</code> which means &quot;form a 2×3 matrix out of the integers 1 to 6&quot; would translate to the Lua expression <code>rho(iota(6),{2,3})</code>.</p>
+<p>The APL expression with which we started, would become</p>
+<pre><code>iota(rho(gradeup(gradeup(iota(comma(assign({2,3,4},&#39;X&#39;),
+assign({1,2,3},&#39;Y&#39;)),_V.X))),rho(_V.Y)),rho(gradeup(gradeup(
+iota(comma(_V.Y,_V.X),_V.X))),rho(_V.X)))</code></pre>
+<p>This is getting to be quite daunting. It is quite obvious that such a library will never catch on if Lua users are expected to compose expressions like that for themselves. With the aid of LPEG, a function <code>apl2lua</code> could be written that generates the above Lua code from the original APL code. From there to functions <code>loadapl</code> and <code>doapl</code> is easy, so that the Lua user could write</p>
+<pre><code>doapl&quot;(((⍴X)⍴⍋⍋X⍳X,Y)⍳(⍴Y)⍴⍋⍋X⍳(Y←1 2 3),X←2 3 4)&quot;</code></pre>
+<p>I'm not saying that is perfectly unobfuscated either, but at least it is no more so than the original APL code is. It's a listed idiom from <a href="http://aplwiki.com/FinnAplIdiomLibrary">an APL website</a>, so it's safe to assume that regular APL users would not be fazed by it.</p>
+<p>APL syntax is pretty straightforward to express in BNF and that in turn can be expressed directly as a Lua grammar. Add the desired Lua translations via the division operator, and there's our APL compiler.</p>
+<pre><code>local apl_expr = P{ &quot;expr&quot;;
+   expr = 
+      V&#39;func&#39;*V&#39;expr&#39;/&quot;%1(%2)&quot; +
+      V&#39;leftarg&#39;*V&#39;func&#39;*V&#39;expr&#39;/&quot;%2(%3,%1)&quot; + 
+      V&quot;variable&quot;*&#39;←&#39;*V&quot;expr&quot;/&quot;assign(%2,&#39;%1&#39;)&quot; + 
+      V&quot;leftarg&quot;;
+   func = 
+      funcname*operator*funcname/&quot;%2(%1,%3)&quot; + 
+      funcname*operator/&quot;%2(%1)&quot; + 
+      funcname;
+   leftarg = V&quot;value&quot; + &#39;(&#39;*V&quot;expr&quot;*&#39;)&#39;/1;
+   value = vector/numbers + V&quot;variable&quot;/&quot;_V.%1&quot;; 
+   variable = varname*&#39;[&#39;*V&quot;indices&quot;*&#39;]&#39;/&quot;%1[%2]&quot; + varname;
+   index = V&quot;expr&quot;+space^0/&quot;nil&quot;;
+   indices = V&quot;index&quot;*&#39;;&#39;*V&quot;index&quot;/&quot;{%1;%2}&quot; + V&quot;expr&quot;;
+   }</code></pre>
+<p>Wow. Was that easy or was that easy? The only subtlety is that parenthesized expressions in APL need not be parenthesized in Lua, because these expressions will be arguments of a function call.</p>
+<p>Actually, that was just the easy part; the rest is harder. We have terminals <code>funcname</code>, <code>operator</code>, <code>vector</code> and <code>varname</code> to supply, plus the function <code>numbers</code> that converts a <code>vector</code> to Lua syntax.</p>
+<p><code>numbers</code> is a list containing decimal numbers separated by whitespace, formatted as in Lua except that minus signs are replaced by APL's high minus, and optional plus signs are not allowed. This can be coded in LPEG as follows, with a little fancy footwork to disallow a lone decimal point.</p>
+<pre><code>local space = S&quot; \n\t&quot;              -- one character of whitespace
+local dec = R&quot;09&quot;^1                    -- positive decimal integer
+local sign = P&quot;¯&quot;^-1                        -- optional high minus
+local fixed = dec*P&quot;.&quot;*dec^-1 + (dec^-1*P&quot;.&quot;)^-1*dec  -- %f number
+local number = sign*fixed*(S&quot;eE&quot;*sign*dec)^-1         -- %e number 
+local vector = space^0*number*(space^1*number)^0</code></pre>
+<p>The <code>numbers</code> function has very little to do, since LPEG has already verified the syntactic correctness of the individual numbers by the time <code>numbers</code> is invoked. We can do it with the Lua string library (no need to be pedantic and do everything in LPEG).</p>
+<pre><code>local numbers = function(str)
+   str=str:gsub(&quot;¯&quot;,&quot;-&quot;)
+   local v,n = str:gsub(&quot;%s+&quot;,&#39;,&#39;)
+   if n==0 then return str else return &#39;{&#39;..v..&#39;}&#39; end
+end</code></pre>
+<p>The remaining terminals are <code>varname</code>, <code>funcname</code> and <code>operator</code>. The legal function and operator names are not known at the stage when the grammar is constructed; the user might add to them at any time. Yet the grammar depends on whether a name refers to a function, an operator or a variable.</p>
+<p>Suppose we keep tables for the functions and operators: when the user constructs a new function, it is just an entry added to the table. The key-value pairs will be the APL and Lua representations respectively. A toy version of these tables might be:</p>
+<pre><code>local funcs = { 
+   [&#39;+&#39;]=&#39;plus&#39;, [&#39;×&#39;]=&#39;times&#39;, [&#39;/&#39;]=&#39;slash&#39;, [&#39;⍋&#39;]=&quot;gradeup&quot;, 
+   [&#39;⍴&#39;]=&quot;rho&quot;, [&#39;⍳&#39;]=&quot;iota&quot;, [&#39;,&#39;]=&quot;comma&quot; }
+local ops = { [&#39;/&#39;]=&#39;slash&#39;, [&#39;.&#39;]=&#39;dot&#39; }</code></pre>
+<p>What we now need is a pattern that captures the value if its key is in a table, and fails when the key is absent. This cannot be done by the division operator, since the pattern has already succeeded by the time <code>/tbl</code> is invoked; only the <code>Cmt</code> constructor can overrule that.</p>
+<pre><code>local lookup = function(tbl) 
+   return function(subj,pos,key)
+      local v = tbl[key]
+      if v then return pos,v end
+   end
+end
+
+local funcname = Cmt(name,lookup(funcs))
+local operator = Cmt(name,lookup(ops))</code></pre>
+<p>We have not yet said what qualifies as <code>name</code>. As far as the syntax is concerned, it could be anything that does not match numbers, whitespace or the special characters appearing in the grammar. For reasons of legibility and error detection, that would be too permissive.</p>
+<p>Historically, APL allows the usual alphabetic-alphanumeric names plus the names <code>⍺</code> and <code>⍵</code>, the latter being reserved for argument names in function definitions. In olden days, APL symbols occupied one byte, internally encoded the same way as other symbols like &quot;é&quot;: one needed special screen fonts to display them. Nowadays, the APL symbols not in the ASCII character set have their own Unicode characters, usually represented in Lua strings by UTF-8 codepoints, and any decent font can display them.</p>
+<p>One must also not lose sight of the fact that APL symbols denote functions, and will be implemented as Lua functions. It is therefore convenient to define any single character that could be an APL function to be an APL name. The following cases cover that:</p>
+<ol style="list-style-type: lower-alpha">
+<li>an alphabetic character followed by any number of alphanumeric characters;</li>
+<li>any single ASCII character in the byte range 33–126 except those allowed under (a) and the five characters used in the grammar;</li>
+<li>any two- or three-byte UTF-8 codepoint except high minus and the one character used in the grammar.</li>
+</ol>
+<p>Let's code that in LPEG.</p>
+<pre><code>local first = R&quot;az&quot;+R&quot;AZ&quot;            -- alphabetic
+local later = first+R&quot;09&quot;            -- alphanumeric
+local utc = R&quot;\x80\xBF&quot;              -- UTF-8 continuation byte
+local utf2 = R&quot;\xC0\xDF&quot;*utc         -- 2-byte codepoint
+local utf3 = R&quot;\xE0\xEF&quot;*utc*utc     -- 3-byte codepoint
+local utf = utf2 + utf3 - P&quot;←&quot;-P&quot;¯&quot;
+local neutral = R&quot;\x21\x7E&quot;-later-S&quot;()[;]&quot;  
+local name = first*later^0 + utf + neutral</code></pre>
+<p>For variable names, we must be more restrictive. The assign operator does not care — <code>assign({2,3,4},'X')</code> — but when variables are referred to, they need to work as unquoted keys — <code>comma(_V.Y,_V.X)</code>. Anything not already defined to be a function or an operator is allowed.</p>
+<pre><code>local varname = C(first*later^0-funcname-operator)  </code></pre>
+<p>Finally, the function that calls <code>match</code> and returns the Lua code. This function would be very short if we took a high-handed attitude to APL syntax errors on the part of the user, but it is quite easy to be helpful.</p>
+<pre><code>apl2lua = function(apl)
+   local lua,pos = (apl_expr*Cp()):match(apl)
+   pos = pos or 1
+   if pos&gt;#apl then return lua 
+   else error(&quot;APL syntax error\n&quot;..apl..&quot;\n&quot;..
+      string.rep(&#39; &#39;,utflen(apl:sub(1,pos))-1)..&#39;↑&#39;)
+   end
+end</code></pre>
+<p>The <code>Cp()</code> pattern marks how far the APL compiler managed to get. If that is not the end of the APL code, an error message is printed. <code>utflen</code> is a little utility that counts the actual number of codepoints: <code>pos-1</code> would put in too many spaces since typically lots is two-byte and three-byte codepoints are used in APL code.</p>
+<p>Let's test it with the example at the top.</p>
+<pre><code>&gt; =apl2lua&quot;((⍴X)⍴⍋⍋X⍳X,Y)⍳(⍴Y)⍴⍋⍋X⍳(Y←1 2 3),X←2 3 4&quot;
+iota(rho(gradeup(gradeup(iota(comma(assign({2,3,4},&#39;X&#39;),
+assign({1,2,3},&#39;Y&#39;)),_V.X))),rho(_V.Y)),rho(gradeup(gradeup(
+iota(comma(_V.Y,_V.X),_V.X))),rho(_V.X)))</code></pre>
+<p>Exactly what we had before. (Actually, I cheated. My attempt to write this by hand contained several mistakes, so I cut-and-pasted this version to up there.)</p>
+<p>And an example with a syntax error (here merely a genuine APL function not included in our toy tables):</p>
+<pre><code>&gt; =apl2lua&quot;((⍴X)⍴⍋⍋X⍳X,Y)⍳(⍴Y)⍴?⍋X⍳(Y←1 2 3),X←2 3 4&quot;
+lpeg-apl-compiler.lua:68: APL syntax error
+((⍴X)⍴⍋⍋X⍳X,Y)⍳(⍴Y)⍴?⍋X⍳(Y←1 2 3),X←2 3 4
+                   ↑</code></pre>
+<p>The arrow is not quite at the right spot, because the string ending at that point is not legal APL. If the error is inside long parentheses, it is more annoying:</p>
+<pre><code>&gt; =apl2lua&quot;((⍴X)⍴?⍋X⍳X,Y)⍳(⍴Y)⍴⍋⍋X⍳(Y←1 2 3),X←2 3 4&quot;
+lpeg-apl-compiler.lua:68: APL syntax error
+((⍴X)⍴?⍋X⍳X,Y)⍳(⍴Y)⍴⍋⍋X⍳(Y←1 2 3),X←2 3 4
+ ↑</code></pre>
+<p>I can explain that, and could maybe make the error detection more intelligent, but is it worth it? Especially since there is a serious error still present:</p>
+<pre><code>&gt; return apl2lua&quot;((⍴X)⍴⍋⍋X⍳X,Y)⍳(⍴Y) ⍴⍋⍋ X ⍳ (Y←1 2 3),X←2 3 4&quot;
+lpeg-apl-compiler.lua:68: APL syntax error
+((⍴X)⍴⍋⍋X⍳X,Y)⍳(⍴Y) ⍴⍋⍋ X ⍳ (Y←1 2 3),X←2 3 4
+                    ↑</code></pre>
+<p>This is the original, correct expression, with some whitespace added to make it more legible. Our grammar makes no provision for inert whitespace — back to the drawing board!</p>
+<p>Postscript: all it took was this:</p>
+<pre><code>local funcname = space^0*Cmt(name,lookup(funcs))*space^0
+local operator = space^0*Cmt(name,lookup(ops))*space^0
+local varname = space^0*C(first*later^0+utf-funcname-operator)*space^0</code></pre>
 <hr />
 <!-- _About this document:_ Dirk Laurie wrote it in order to teach himself 
 LPEG. All errors in it can be blamed on his inexperience. The original
