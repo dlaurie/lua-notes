@@ -24,7 +24,7 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <ul>
 <li><p>Writing a topic up for oneself is one of the best ways of learning it.</p></li>
 <li><p>Once you have learnt it, you can never recapture the difficulty you had in understanding the original.</p></li>
-<li><p>I promise not to re-work these notes to elegance when I know the material well. I will add stuff and correct errors, though. Thanks to members of the Lua list for helping me here, particularly Pierre-Yves Gérardy.</p></li>
+<li><p>I promise not to re-work these notes to elegance when I know the material well. I will add stuff and correct errors, though. Thanks to members of the Lua list for helping me here, particularly Pierre-Yves Gérardy (alias Pygy).</p></li>
 <li><p>They are mainly for my own use, especially when I need the information ater not having worked with it for a long time. If anyone else finds them helpful, it is a bonus.</p></li>
 <li><p>They are not intended to be comprehensive, only to flatten the learning curve until the reader knows enough not to be daunted by the official documentation.</p></li>
 </ul>
@@ -212,7 +212,25 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
   end
 end
 pat = #P(dbl)*#P&quot;p&quot;*P(7)</code></pre>
-<p>The remaining capture functions: <code>Cg</code> and <code>Cb</code>, are definitely too advanced for this primer.</p>
+<h3 id="group-and-back-captures">Group and back captures</h3>
+<p>These patterns are useless by themselves. They are always used as part of a bigger pattern.</p>
+<p>The first version of this document said: &quot;The remaining capture functions: <code>Cg</code> and <code>Cb</code>, are definitely too advanced for this primer.&quot; That is still basically true, but one application is within reach: the Group-Back combination allows values to be stored and retrieved.</p>
+<dl>
+<dt><strong><code>Cg(p,name), p:Cg(name)</code></strong> (Group)</dt>
+<dd><p>Collects all the captures <code>p</code> made into a single entity, and gives that entity a name for future reference. Does not actually add any captured values to the big pattern.</p>
+</dd>
+<dt><strong><code>Cb(name)</code></strong> (Back)</dt>
+<dd><p>Retrieves the entity with the given name, and supplies its captures to the big pattern.</p>
+</dd>
+</dl>
+<p>Here is how it works.</p>
+<pre><code>data = &quot;Ierusalimschy, Roberto&quot;
+name = C(R&quot;AZ&quot;*R&quot;az&quot;^1)  -- Capitalized word
+entry = Cg(name,&#39;surname&#39;)*&#39;,&#39;*P&quot; &quot;^0*name*Cb&#39;surname&#39; 
+-- comma-separated list
+result =  {entry:match(data)} 
+print (table.concat(result,&#39; &#39;)) --&gt; Roberto Ierusalimschy</code></pre>
+<p>There's also an anonymous version of <code>Cg</code>, with the name omitted. For that, and much more, take a look at Pygy's recent addition to {http://lua-users.org/wiki/LpegTutorial&gt;.</p>
 <h3 id="more-about-the-division-operator">More about the division operator</h3>
 <p>When <code>p</code> succeeds without producing a capture, <code>p:match</code> returns the next position (see <code>Cp()</code>, above). The division operator cannot negate success: if it discards all captures, the match still succeeds and <code>p/whatever</code> still returns the next position.</p>
 <p>If <code>p</code> is a capture pattern but has not actually produced any captures, it acts like a non-capture pattern, as discussed when division was first decribed.</p>

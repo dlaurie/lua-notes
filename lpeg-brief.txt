@@ -18,7 +18,7 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 - I promise not to re-work these notes to elegance when I know the 
   material well. I will add stuff and correct errors, though. Thanks 
   to members of the Lua list for helping me here, particularly 
-  Pierre-Yves Gérardy.
+  Pierre-Yves Gérardy (alias Pygy).
 
 - They are mainly for my own use, especially when I need the information
   ater not having worked with it for a long time. If anyone else finds
@@ -357,8 +357,38 @@ has a double letter in it somewhere".
     end
     pat = #P(dbl)*#P"p"*P(7)
     
-The remaining capture functions: `Cg` and `Cb`, are definitely
-too advanced for this primer.    
+### Group and back captures
+
+These patterns are useless by themselves. They are always used as
+part of a bigger pattern.
+
+The first version of this document said: "The remaining capture 
+functions: `Cg` and `Cb`, are definitely too advanced for this primer."
+That is still basically true, but one application is within reach:
+the Group-Back combination allows values to be stored and retrieved.
+
+
+__`Cg(p,name), p:Cg(name)`__ (Group)
+~   Collects all the captures `p` made into a single entity, and gives 
+    that entity a name for future reference. Does not actually add any
+    captured values to the big pattern.
+    
+__`Cb(name)`__   (Back)
+~   Retrieves the entity with the given name, and supplies 
+    its captures to the big pattern.
+    
+Here is how it works.
+
+    data = "Ierusalimschy, Roberto"
+    name = C(R"AZ"*R"az"^1)  -- Capitalized word
+    entry = Cg(name,'surname')*','*P" "^0*name*Cb'surname' 
+    -- comma-separated list
+    result =  {entry:match(data)} 
+    print (table.concat(result,' ')) --> Roberto Ierusalimschy
+
+There's also an anonymous version of `Cg`, with the name omitted.
+For that, and much more, take a look at Pygy's recent addition to
+{http://lua-users.org/wiki/LpegTutorial>.
 
 ### More about the division operator
 
