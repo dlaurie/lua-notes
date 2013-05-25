@@ -303,7 +303,7 @@ Certain subexpressions occur so often in pattern expressions that one gets to re
 |This...||matches...|
 |:-----:|---|:---------|
 |`-1`||the end of the subject.|
-|`#p*q`||what `q` matches, provided that `p` succeeds.|
+|`#p*q`||what `q` matches, provided that `p` would succeed.|
 |`(1-p)^0`||everything up to where `p` would succeed.|
 
 1AQ: Once-asked questions
@@ -317,18 +317,18 @@ Certain subexpressions occur so often in pattern expressions that one gets to re
 
 2.  *Can one do a `sed`-style `gsub`?*
 
-    The point of the question is that if `pattern` is a greedy pattern that can match the empty string, `string.gsub(s,pattern,repl)` produces an empty match for every nonempty match, and in some situations this is not what one wants. For example, `(string.gsub(";a;","a*","ITEM"))` returns `"ITEM;ITEMITEM;ITEM"` whereas `"ITEM;ITEM;ITEM"` as returned by the `sed` command `s/a*/ITEM/` is more convenient in applications like string splitting.
+    The point of the question is that `string.gsub`, if given a greedy pattern that can match the empty string, produces an empty match after every nonempty match except right at the end, and in some situations this is not what one wants.
 
-    `p^0` (where `p=P"a"`) emulates the Lua pattern `"a*"`, but one cannot use it by itself in a loop because it matches the empty string. The trick here is to do the possibly empty first match outside the loop, and let the loop include the non-match in between, which must be non-empty.
+    For example, `(string.gsub(";a;","a*","ITEM"))` returns `"ITEM;ITEMITEM;ITEM"` whereas `"ITEM;ITEM;ITEM"` as returned by the `sed` command `s/a*/ITEM/` is more convenient in applications like string splitting.
 
-    Let `q=p^0/"ITEM"`, then `Cs(q*((1-p)*q)^0)` does the job: the outer `Cs` substitutes the captures instead of returning them. In general, suppose that `q=s/r`, where `s` is a non-capture pattern and `r` the replacement.
+    `p^0` (where `p=P"a"`) acts like the Lua pattern `"a*"`, but one cannot use it by itself in a loop because it matches the empty string. The trick here is to do the possibly empty first match outside the loop, and let the loop include the non-match in between, which must be non-empty. Let `q=p^0/"ITEM"`, then matching by `Cs(q*((1-p)*q)^0)` does the job: the outer `Cs` substitutes the captures instead of returning them.
 
-    For this solution to work, `p` must be a pattern that succeeds only when your given `s` produces a non-empty match. You can construct it this way:
+    In general, suppose that the straightforward `q=s/r`, where `s` is a non-capture pattern and `r` the replacement, is not good enough. We need a `p` so that the pattern `Cs(q*((1-p)*q)^0)` works instead. The critical property that `p` must have is to succeed only when the given `s` produces a non-empty match. You can construct it this way:
 
-        f=function(str,pos,cap) 
+        nonempty=function(str,pos,cap) 
            if cap and #cap>0 then return true end 
         end
-        p=Cmt(s,f)
+        p=Cmt(s,nonempty)
 
     It is not possible to construct `p` given only `q`: the information whether the match was empty has been lost.
 

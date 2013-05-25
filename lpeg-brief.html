@@ -284,7 +284,7 @@ end</code></pre>
 <tr class="even">
 <td align="center"><code>#p*q</code></td>
 <td align="left"></td>
-<td align="left">what <code>q</code> matches, provided that <code>p</code> succeeds.</td>
+<td align="left">what <code>q</code> matches, provided that <code>p</code> would succeed.</td>
 </tr>
 <tr class="odd">
 <td align="center"><code>(1-p)^0</code></td>
@@ -299,14 +299,14 @@ end</code></pre>
 <li><p><em>How do you match anywhere, as the Lua string library does?</em></p>
 <p>The easiest way is to use an idiom to skip over the non-matching part: <code>(1-p)^0*Cp()*p*Cp()</code> is a pattern that returns the first position where <code>p</code> succeeds and the position after the match.</p></li>
 <li><p><em>Can one do a <code>sed</code>-style <code>gsub</code>?</em></p>
-<p>The point of the question is that if <code>pattern</code> is a greedy pattern that can match the empty string, <code>string.gsub(s,pattern,repl)</code> produces an empty match for every nonempty match, and in some situations this is not what one wants. For example, <code>(string.gsub(&quot;;a;&quot;,&quot;a*&quot;,&quot;ITEM&quot;))</code> returns <code>&quot;ITEM;ITEMITEM;ITEM&quot;</code> whereas <code>&quot;ITEM;ITEM;ITEM&quot;</code> as returned by the <code>sed</code> command <code>s/a*/ITEM/</code> is more convenient in applications like string splitting.</p>
-<p><code>p^0</code> (where <code>p=P&quot;a&quot;</code>) emulates the Lua pattern <code>&quot;a*&quot;</code>, but one cannot use it by itself in a loop because it matches the empty string. The trick here is to do the possibly empty first match outside the loop, and let the loop include the non-match in between, which must be non-empty.</p>
-<p>Let <code>q=p^0/&quot;ITEM&quot;</code>, then <code>Cs(q*((1-p)*q)^0)</code> does the job: the outer <code>Cs</code> substitutes the captures instead of returning them. In general, suppose that <code>q=s/r</code>, where <code>s</code> is a non-capture pattern and <code>r</code> the replacement.</p>
-<p>For this solution to work, <code>p</code> must be a pattern that succeeds only when your given <code>s</code> produces a non-empty match. You can construct it this way:</p>
-<pre><code>f=function(str,pos,cap) 
+<p>The point of the question is that <code>string.gsub</code>, if given a greedy pattern that can match the empty string, produces an empty match after every nonempty match except right at the end, and in some situations this is not what one wants.</p>
+<p>For example, <code>(string.gsub(&quot;;a;&quot;,&quot;a*&quot;,&quot;ITEM&quot;))</code> returns <code>&quot;ITEM;ITEMITEM;ITEM&quot;</code> whereas <code>&quot;ITEM;ITEM;ITEM&quot;</code> as returned by the <code>sed</code> command <code>s/a*/ITEM/</code> is more convenient in applications like string splitting.</p>
+<p><code>p^0</code> (where <code>p=P&quot;a&quot;</code>) acts like the Lua pattern <code>&quot;a*&quot;</code>, but one cannot use it by itself in a loop because it matches the empty string. The trick here is to do the possibly empty first match outside the loop, and let the loop include the non-match in between, which must be non-empty. Let <code>q=p^0/&quot;ITEM&quot;</code>, then matching by <code>Cs(q*((1-p)*q)^0)</code> does the job: the outer <code>Cs</code> substitutes the captures instead of returning them.</p>
+<p>In general, suppose that the straightforward <code>q=s/r</code>, where <code>s</code> is a non-capture pattern and <code>r</code> the replacement, is not good enough. We need a <code>p</code> so that the pattern <code>Cs(q*((1-p)*q)^0)</code> works instead. The critical property that <code>p</code> must have is to succeed only when the given <code>s</code> produces a non-empty match. You can construct it this way:</p>
+<pre><code>nonempty=function(str,pos,cap) 
    if cap and #cap&gt;0 then return true end 
 end
-p=Cmt(s,f)</code></pre>
+p=Cmt(s,nonempty)</code></pre>
 <p>It is not possible to construct <code>p</code> given only <code>q</code>: the information whether the match was empty has been lost.</p></li>
 </ol>
 <h2 id="case-study-an-apl-to-lua-compiler">Case study: an APL-to-Lua compiler</h2>
