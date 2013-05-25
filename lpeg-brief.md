@@ -13,7 +13,7 @@ About beginner's notes in general
 
 -   I promise not to re-work these notes to elegance when I know the material well. I will add stuff and correct errors, though. Thanks to members of the Lua list for helping me here, particularly Pierre-Yves Gérardy (alias Pygy).
 
--   They are mainly for my own use, especially when I need the information ater not having worked with it for a long time. If anyone else finds them helpful, it is a bonus.
+-   They are mainly for my own use, especially when I need the information after not having worked with it for a long time. If anyone else finds them helpful, it is a bonus.
 
 -   They are not intended to be comprehensive, only to flatten the learning curve until the reader knows enough not to be daunted by the official documentation.
 
@@ -83,14 +83,14 @@ A string stands for a pattern that matches only that exact string.
 *Integers correspond to string length.*  
 `0` stands for a pattern that matches the empty string, positive `n` for a pattern that matches exactly `n` bytes, `-n` for the negation of `n` (see next item).
 
+*Negation means reversal of fortune.*  
+`-p` succeeds when `p` fails. It consumes no input. `-n` succeeds when there are fewer than `n` bytes of input left.
+
 *Functions mean user-defined patterns.*  
 A function `fct` stands for a pattern that fails when `fct` returns a Lua false value (i.e. `false`, `nil` or none) and succeeds when it returns `true` or a new valid position. See `Cmt` under [Captures](#captures) for a specification of `fct`.
 
 *Tables mean composite patterns.*  
 A table stands for a *grammar*, i.e. a pattern based on a collection of local patterns that are allowed to refer to each other recursively. See [Grammars](#grammars).
-
-*Negation means reversal of fortune.*  
-`-p` succeeds when `p` fails. It consumes no input. `-n` succeeds when there are fewer than `n` bytes of input left.
 
 *Length means don't consume.*  
 `#p` matches what `p` matches, but consumes no input.
@@ -105,14 +105,14 @@ Suppose `p` and `q` respectively match `a` and `b`, then `p*q` matches `a..b`. N
 `p-q` fails if `q` succeeds, otherwise matches what `p` matches. Note that `0-p` does the same as `-p`, but `p-p` does not do the same as `0`, it does the same as `false`.
 
 *Division means make or process captures.*  
-`p/s` matches what `p` does, and defines a capture for the whole expression by processing the captures of `p` as specified by `s`. It can also turn a non-capture pattern into a capture pattern. Here are the simplest cases, assuming that `p` is a non-capture pattern that has matched the non-nil value named `match`.
+`p/s` matches what `p` does, and defines a capture for the whole expression by processing the captures of `p` as specified by `s`. It can also turn a non-capture pattern into a capture pattern. Here are the simplest cases, assuming that `p` is a non-capture pattern that has matched the non-nil value named `value`.
 
--   number: `p/1` captures `match`.
--   table: `p/tbl` captures `tbl[match]` if it is not nil.
--   string: `p/str` means the capture is the result of replacing in `str` all instances of `"%0"` by `match`.
--   function: `p/fct` means the capture is `fct(match)`.
+-   number: `p/1` captures `value`.
+-   table: `p/tbl` captures `tbl[value]` if it is not nil.
+-   string: `p/str` captures `str:gsub("%0",value)`.
+-   function: `p/fct` captures `fct(value)`, even if the return value is nil. Returning nothing means no capture, which is not the same thing.
 
-For the fallbacks when `match` or `tbl[match]` is nil, and for what happens when `p` is already a capture pattern, see [Captures](#captures).
+For the fallbacks when `value` or `tbl[value]` is nil or `fct(value)` returns nothing, and for what happens when `p` is already a capture pattern, see [Captures](#captures).
 
 *Exponentiation corresponds to repetition.*  
 Not quite exponentiation in the usual sense: `p*p` means *exactly* two repetitions of `p`, which is not the same as `p^2`.
@@ -128,14 +128,22 @@ For example, suppose `x=P"abc"`. Then `x^2+3*x-13` means "two or more copies of 
 Some LPEG functions
 -------------------
 
-The introductory `lpeg.` has been omitted here.
+The introductory `lpeg.` has been omitted here. I have set up my system so that typing `lpeg` in a command shell does
+
+    lua -l lpeg -e "for k,v in pairs(lpeg) do _ENV[k]=v end" -i 
+
+Then I treat these names as reserved:
+
+    B C Carg Cb Cc Cf Cg Cmt Cp Cs Ct P R S V
+
+More items than those get copied, but I don't bother about the others. Actually I just remember "avoid one-letter uppercase and short names starting with `C`".
 
 ### Pattern constructors
 
 **`P`** (Pattern)  
 `P(v)` converts to a pattern a value `v` of any Lua type except thread or non-pattern userdata, as described above. Existing patterns are returned unchanged. It is not advisable for `v` to have a metatable.
 
-`P` is seldom explicitly needed; the LPEG functions invoke `P` automatically when expecting a pattern.
+`P` is explicitly needed at least once when forming a new pattern from scratch, but seldom after that; the LPEG functions invoke `P` automatically when expecting a pattern.
 
 **`R`** (Range)  
 `R(r)`, where `r` is a two-byte string, matches any byte whose internal numerical code is in the range `r:byte(1,2)`. You could use characters in `r`, e.g. `R"az"` on most systems matches the range of lowercase letters (but see `locale` for a more portable alternative).
@@ -150,7 +158,7 @@ The introductory `lpeg.` has been omitted here.
 
 When called with `p` as first argument, these functions will replace `p` by `P(p)` before proceeding. When `p` is already a pattern, they can also be called in an object-oriented way, as occasionally shown below.
 
-**`match(p,subject[,init]), match(p,subject,init, ...)`**  
+**`match(p,subject[,init]), p:match(subject,init, ...)`**  
 Tries to match `p` to `subject:sub(init)`. `init` defaults to 1. Returns the captures of the match, or if none specified, the next position, i.e. the index of the first byte in the subject after the match. Returns `nil` only when the capture fails.
 
 As indicated, you may not omit the `init` argument to `match` when there are extra arguments. Those optional arguments can be accessed as described under [Captures](#captures).
@@ -172,7 +180,7 @@ Captures made by a subexpression automatically become captures of the whole expr
 
 The patterns made by `P` acting on a non-pattern do not capture anything. They can be made to do so with the four options provided by the division operator. In principle one can do almost anything that way, since one of the options is to process the match by a function of one's own choosing.
 
-In practice some tasks are so common that it is useful to have additional capture functions predefined. We are reaching the limits of this primer here, and there is really no substitute for reading the official LPEG documentation, but at the risk of saying too much but not enough, here are some of them.
+In practice some tasks are so common that it is useful to have additional capture functions predefined. We are reaching the limits of this primer here, and there is really no substitute for reading the official LPEG documentation, or at least the tutorial on the [LuaWiki](http://lua-users.org/wiki/LpegTutorial), but at the risk of saying too much but not enough, here are some of them.
 
 The pattern `p1=P'a'/"A"+P'b'/"B"+P'c'/"C"`, which matches lower-case `a`, `b` or `c` and captures the upper-case equivalent, is used in some of the examples.
 
@@ -233,14 +241,14 @@ Retrieves the entity with the given name, and supplies its captures to the big p
 
 Here is how it works.
 
-    data = "Ierusalimschy, Roberto"
     name = C(R"AZ"*R"az"^1)  -- Capitalized word
     entry = Cg(name,'surname')*','*P" "^0*name*Cb'surname' 
-    -- comma-separated list
+    -- reverses the items in a two-item comma-separated list like `data`
+    data = "Ierusalimschy, Roberto"
     result =  {entry:match(data)} 
     print (table.concat(result,' ')) --> Roberto Ierusalimschy
 
-There's also an anonymous version of `Cg`, with the name omitted. For that, and much more, take a look at Pygy's recent addition to {http://lua-users.org/wiki/LpegTutorial\>.
+There's also an anonymous version of `Cg`, with the name omitted. For that, and much more, take a look at Pygy's recent addition to <http://lua-users.org/wiki/LpegTutorial>.
 
 ### More about the division operator
 
@@ -253,7 +261,7 @@ Assume that there is at least one capture, and call the captures `c_1`, `c_2` et
 -   number: `p/n` captures `c_n`, `p/0` means there is no capture.
 -   table: `p/tbl` captures `tbl[c_1]` except when this is nil, in which case there is no capture.
 -   string: `p/str` means the capture is the result of replacing in `str` all instances of `"%n"` by `c_n`, where `n` runs from 0 to 9. `c_0` means the whole match. This feature can only handle nine captures.
--   function: `p/fct` means the capture (or perhaps several captures) is `fct(c_1,c_2,...)`.
+-   function: `p/fct` means the capture (or perhaps several captures) is `fct(c_1,c_2,...)`. Any number of return values are allowed, any or all of which may be nil.
 
 ### Grammars
 
@@ -305,20 +313,24 @@ Certain subexpressions occur so often in pattern expressions that one gets to re
 
 1.  *How do you match anywhere, as the Lua string library does?*
 
-The easiest way is to use an idiom to skip over the non-matching part: `(1-p)^0*Cp()*p*Cp()` is a pattern that returns the first position where `p` succeeds and the position after the match.
+    The easiest way is to use an idiom to skip over the non-matching part: `(1-p)^0*Cp()*p*Cp()` is a pattern that returns the first position where `p` succeeds and the position after the match.
 
-1.  *Can one do a `sed`-style `gsub`?*
+2.  *Can one do a `sed`-style `gsub`?*
 
-The point of the question is that if `pattern` is a greedy pattern that can match the empty string, `string.gsub(s,pattern,repl)` produces an empty match for every nonempty match, and in some situations this is not what one wants. For example, `(string.gsub(";a;","a*","ITEM"))` returns `"ITEM;ITEMITEM;ITEM"` whereas `"ITEM;ITEM;ITEM"` as returned by the `sed` command `s/a*/ITEM/` is more convenient in applications like string splitting.
+    The point of the question is that if `pattern` is a greedy pattern that can match the empty string, `string.gsub(s,pattern,repl)` produces an empty match for every nonempty match, and in some situations this is not what one wants. For example, `(string.gsub(";a;","a*","ITEM"))` returns `"ITEM;ITEMITEM;ITEM"` whereas `"ITEM;ITEM;ITEM"` as returned by the `sed` command `s/a*/ITEM/` is more convenient in applications like string splitting.
 
-`p^0` (where `p=P"a"`) emulates the Lua pattern `"a*"`, but one cannot use it by itself in a loop because it matches the empty string. The trick here is to do the possibly empty first match outside the loop, and let the loop include the non-match in between, which must be non-empty. Let `q=p^0/"ITEM"`, then `Cs(q*((1-p)*q)^0)` does the job: the outer `Cs` substitutes the captures instead of returning them.
+    `p^0` (where `p=P"a"`) emulates the Lua pattern `"a*"`, but one cannot use it by itself in a loop because it matches the empty string. The trick here is to do the possibly empty first match outside the loop, and let the loop include the non-match in between, which must be non-empty.
 
-In general, suppose that `q=s/r`, where `s` is a non-capture pattern and `r` the replacement. This solution needs a pattern `p` that succeeds only when `s` produces a non-empty match.
+    Let `q=p^0/"ITEM"`, then `Cs(q*((1-p)*q)^0)` does the job: the outer `Cs` substitutes the captures instead of returning them. In general, suppose that `q=s/r`, where `s` is a non-capture pattern and `r` the replacement.
 
-    f=function(str,pos,cap) if cap and #cap>0 then return true end end
-    p=Cmt(s,f)
+    For this solution to work, `p` must be a pattern that succeeds only when your given `s` produces a non-empty match. You can construct it this way:
 
-It is not possible to construct `p` given only `q`: the information whether the match was empty has been lost.
+        f=function(str,pos,cap) 
+           if cap and #cap>0 then return true end 
+        end
+        p=Cmt(s,f)
+
+    It is not possible to construct `p` given only `q`: the information whether the match was empty has been lost.
 
 Case study: an APL-to-Lua compiler
 ----------------------------------

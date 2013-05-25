@@ -25,7 +25,7 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <li><p>Writing a topic up for oneself is one of the best ways of learning it.</p></li>
 <li><p>Once you have learnt it, you can never recapture the difficulty you had in understanding the original.</p></li>
 <li><p>I promise not to re-work these notes to elegance when I know the material well. I will add stuff and correct errors, though. Thanks to members of the Lua list for helping me here, particularly Pierre-Yves Gérardy (alias Pygy).</p></li>
-<li><p>They are mainly for my own use, especially when I need the information ater not having worked with it for a long time. If anyone else finds them helpful, it is a bonus.</p></li>
+<li><p>They are mainly for my own use, especially when I need the information after not having worked with it for a long time. If anyone else finds them helpful, it is a bonus.</p></li>
 <li><p>They are not intended to be comprehensive, only to flatten the learning curve until the reader knows enough not to be daunted by the official documentation.</p></li>
 </ul>
 <h2 id="brief-introduction-to-lpeg">Brief introduction to LPEG</h2>
@@ -91,14 +91,14 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <dt><em>Integers correspond to string length.</em></dt>
 <dd><p><code>0</code> stands for a pattern that matches the empty string, positive <code>n</code> for a pattern that matches exactly <code>n</code> bytes, <code>-n</code> for the negation of <code>n</code> (see next item).</p>
 </dd>
+<dt><em>Negation means reversal of fortune.</em></dt>
+<dd><p><code>-p</code> succeeds when <code>p</code> fails. It consumes no input. <code>-n</code> succeeds when there are fewer than <code>n</code> bytes of input left.</p>
+</dd>
 <dt><em>Functions mean user-defined patterns.</em></dt>
 <dd><p>A function <code>fct</code> stands for a pattern that fails when <code>fct</code> returns a Lua false value (i.e. <code>false</code>, <code>nil</code> or none) and succeeds when it returns <code>true</code> or a new valid position. See <code>Cmt</code> under <a href="#captures">Captures</a> for a specification of <code>fct</code>.</p>
 </dd>
 <dt><em>Tables mean composite patterns.</em></dt>
 <dd><p>A table stands for a <em>grammar</em>, i.e. a pattern based on a collection of local patterns that are allowed to refer to each other recursively. See <a href="#grammars">Grammars</a>.</p>
-</dd>
-<dt><em>Negation means reversal of fortune.</em></dt>
-<dd><p><code>-p</code> succeeds when <code>p</code> fails. It consumes no input. <code>-n</code> succeeds when there are fewer than <code>n</code> bytes of input left.</p>
 </dd>
 <dt><em>Length means don't consume.</em></dt>
 <dd><p><code>#p</code> matches what <code>p</code> matches, but consumes no input.</p>
@@ -113,14 +113,14 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <dd><p><code>p-q</code> fails if <code>q</code> succeeds, otherwise matches what <code>p</code> matches. Note that <code>0-p</code> does the same as <code>-p</code>, but <code>p-p</code> does not do the same as <code>0</code>, it does the same as <code>false</code>.</p>
 </dd>
 <dt><em>Division means make or process captures.</em></dt>
-<dd><p><code>p/s</code> matches what <code>p</code> does, and defines a capture for the whole expression by processing the captures of <code>p</code> as specified by <code>s</code>. It can also turn a non-capture pattern into a capture pattern. Here are the simplest cases, assuming that <code>p</code> is a non-capture pattern that has matched the non-nil value named <code>match</code>.</p>
+<dd><p><code>p/s</code> matches what <code>p</code> does, and defines a capture for the whole expression by processing the captures of <code>p</code> as specified by <code>s</code>. It can also turn a non-capture pattern into a capture pattern. Here are the simplest cases, assuming that <code>p</code> is a non-capture pattern that has matched the non-nil value named <code>value</code>.</p>
 <ul>
-<li>number: <code>p/1</code> captures <code>match</code>.</li>
-<li>table: <code>p/tbl</code> captures <code>tbl[match]</code> if it is not nil.</li>
-<li>string: <code>p/str</code> means the capture is the result of replacing in <code>str</code> all instances of <code>&quot;%0&quot;</code> by <code>match</code>.</li>
-<li>function: <code>p/fct</code> means the capture is <code>fct(match)</code>.</li>
+<li>number: <code>p/1</code> captures <code>value</code>.</li>
+<li>table: <code>p/tbl</code> captures <code>tbl[value]</code> if it is not nil.</li>
+<li>string: <code>p/str</code> captures <code>str:gsub(&quot;%0&quot;,value)</code>.</li>
+<li>function: <code>p/fct</code> captures <code>fct(value)</code>, even if the return value is nil. Returning nothing means no capture, which is not the same thing.</li>
 </ul>
-<p>For the fallbacks when <code>match</code> or <code>tbl[match]</code> is nil, and for what happens when <code>p</code> is already a capture pattern, see <a href="#captures">Captures</a>.</p>
+<p>For the fallbacks when <code>value</code> or <code>tbl[value]</code> is nil or <code>fct(value)</code> returns nothing, and for what happens when <code>p</code> is already a capture pattern, see <a href="#captures">Captures</a>.</p>
 </dd>
 <dt><em>Exponentiation corresponds to repetition.</em></dt>
 <dd><p>Not quite exponentiation in the usual sense: <code>p*p</code> means <em>exactly</em> two repetitions of <code>p</code>, which is not the same as <code>p^2</code>.</p>
@@ -134,12 +134,16 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 </dl>
 <p>For example, suppose <code>x=P&quot;abc&quot;</code>. Then <code>x^2+3*x-13</code> means &quot;two or more copies of <code>abc</code>, or any three bytes followed by <code>abc</code>, but shorter than 13 bytes&quot;.</p>
 <h2 id="some-lpeg-functions">Some LPEG functions</h2>
-<p>The introductory <code>lpeg.</code> has been omitted here.</p>
+<p>The introductory <code>lpeg.</code> has been omitted here. I have set up my system so that typing <code>lpeg</code> in a command shell does</p>
+<pre><code>lua -l lpeg -e &quot;for k,v in pairs(lpeg) do _ENV[k]=v end&quot; -i </code></pre>
+<p>Then I treat these names as reserved:</p>
+<pre><code>B C Carg Cb Cc Cf Cg Cmt Cp Cs Ct P R S V</code></pre>
+<p>More items than those get copied, but I don't bother about the others. Actually I just remember &quot;avoid one-letter uppercase and short names starting with <code>C</code>&quot;.</p>
 <h3 id="pattern-constructors">Pattern constructors</h3>
 <dl>
 <dt><strong><code>P</code></strong> (Pattern)</dt>
 <dd><p><code>P(v)</code> converts to a pattern a value <code>v</code> of any Lua type except thread or non-pattern userdata, as described above. Existing patterns are returned unchanged. It is not advisable for <code>v</code> to have a metatable.</p>
-<p><code>P</code> is seldom explicitly needed; the LPEG functions invoke <code>P</code> automatically when expecting a pattern.</p>
+<p><code>P</code> is explicitly needed at least once when forming a new pattern from scratch, but seldom after that; the LPEG functions invoke <code>P</code> automatically when expecting a pattern.</p>
 </dd>
 <dt><strong><code>R</code></strong> (Range)</dt>
 <dd><p><code>R(r)</code>, where <code>r</code> is a two-byte string, matches any byte whose internal numerical code is in the range <code>r:byte(1,2)</code>. You could use characters in <code>r</code>, e.g. <code>R&quot;az&quot;</code> on most systems matches the range of lowercase letters (but see <code>locale</code> for a more portable alternative).</p>
@@ -154,7 +158,7 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <h3 id="pattern-methods">Pattern methods</h3>
 <p>When called with <code>p</code> as first argument, these functions will replace <code>p</code> by <code>P(p)</code> before proceeding. When <code>p</code> is already a pattern, they can also be called in an object-oriented way, as occasionally shown below.</p>
 <dl>
-<dt><strong><code>match(p,subject[,init]), match(p,subject,init, ...)</code></strong></dt>
+<dt><strong><code>match(p,subject[,init]), p:match(subject,init, ...)</code></strong></dt>
 <dd><p>Tries to match <code>p</code> to <code>subject:sub(init)</code>. <code>init</code> defaults to 1. Returns the captures of the match, or if none specified, the next position, i.e. the index of the first byte in the subject after the match. Returns <code>nil</code> only when the capture fails.</p>
 <p>As indicated, you may not omit the <code>init</code> argument to <code>match</code> when there are extra arguments. Those optional arguments can be accessed as described under <a href="#captures">Captures</a>.</p>
 </dd>
@@ -170,7 +174,7 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <h3 id="captures">Captures</h3>
 <p>Captures made by a subexpression automatically become captures of the whole expression, and are eventually returned by <code>match</code>, unless modified by the division operator and the capture methods.</p>
 <p>The patterns made by <code>P</code> acting on a non-pattern do not capture anything. They can be made to do so with the four options provided by the division operator. In principle one can do almost anything that way, since one of the options is to process the match by a function of one's own choosing.</p>
-<p>In practice some tasks are so common that it is useful to have additional capture functions predefined. We are reaching the limits of this primer here, and there is really no substitute for reading the official LPEG documentation, but at the risk of saying too much but not enough, here are some of them.</p>
+<p>In practice some tasks are so common that it is useful to have additional capture functions predefined. We are reaching the limits of this primer here, and there is really no substitute for reading the official LPEG documentation, or at least the tutorial on the <a href="http://lua-users.org/wiki/LpegTutorial">LuaWiki</a>, but at the risk of saying too much but not enough, here are some of them.</p>
 <p>The pattern <code>p1=P'a'/&quot;A&quot;+P'b'/&quot;B&quot;+P'c'/&quot;C&quot;</code>, which matches lower-case <code>a</code>, <code>b</code> or <code>c</code> and captures the upper-case equivalent, is used in some of the examples.</p>
 <p>All the capture constructors are pattern modifiers: they affect what happens after a given pattern succeeds. For all except <code>Cmt</code>, success or failure is determined by the pattern, and the capture constructor merely determines which captures will be produced. As in table constructors, return lists etc, nil captures are significant as placeholders.</p>
 <dl>
@@ -224,13 +228,13 @@ pat = #P(dbl)*#P&quot;p&quot;*P(7)</code></pre>
 </dd>
 </dl>
 <p>Here is how it works.</p>
-<pre><code>data = &quot;Ierusalimschy, Roberto&quot;
-name = C(R&quot;AZ&quot;*R&quot;az&quot;^1)  -- Capitalized word
+<pre><code>name = C(R&quot;AZ&quot;*R&quot;az&quot;^1)  -- Capitalized word
 entry = Cg(name,&#39;surname&#39;)*&#39;,&#39;*P&quot; &quot;^0*name*Cb&#39;surname&#39; 
--- comma-separated list
+-- reverses the items in a two-item comma-separated list like `data`
+data = &quot;Ierusalimschy, Roberto&quot;
 result =  {entry:match(data)} 
 print (table.concat(result,&#39; &#39;)) --&gt; Roberto Ierusalimschy</code></pre>
-<p>There's also an anonymous version of <code>Cg</code>, with the name omitted. For that, and much more, take a look at Pygy's recent addition to {http://lua-users.org/wiki/LpegTutorial&gt;.</p>
+<p>There's also an anonymous version of <code>Cg</code>, with the name omitted. For that, and much more, take a look at Pygy's recent addition to <a href="http://lua-users.org/wiki/LpegTutorial">http://lua-users.org/wiki/LpegTutorial</a>.</p>
 <h3 id="more-about-the-division-operator">More about the division operator</h3>
 <p>When <code>p</code> succeeds without producing a capture, <code>p:match</code> returns the next position (see <code>Cp()</code>, above). The division operator cannot negate success: if it discards all captures, the match still succeeds and <code>p/whatever</code> still returns the next position.</p>
 <p>If <code>p</code> is a capture pattern but has not actually produced any captures, it acts like a non-capture pattern, as discussed when division was first decribed.</p>
@@ -239,7 +243,7 @@ print (table.concat(result,&#39; &#39;)) --&gt; Roberto Ierusalimschy</code></pr
 <li>number: <code>p/n</code> captures <code>c_n</code>, <code>p/0</code> means there is no capture.</li>
 <li>table: <code>p/tbl</code> captures <code>tbl[c_1]</code> except when this is nil, in which case there is no capture.</li>
 <li>string: <code>p/str</code> means the capture is the result of replacing in <code>str</code> all instances of <code>&quot;%n&quot;</code> by <code>c_n</code>, where <code>n</code> runs from 0 to 9. <code>c_0</code> means the whole match. This feature can only handle nine captures.</li>
-<li>function: <code>p/fct</code> means the capture (or perhaps several captures) is <code>fct(c_1,c_2,...)</code>.</li>
+<li>function: <code>p/fct</code> means the capture (or perhaps several captures) is <code>fct(c_1,c_2,...)</code>. Any number of return values are allowed, any or all of which may be nil.</li>
 </ul>
 <h3 id="grammars">Grammars</h3>
 <p>A grammar is a pattern constructed out of a table <code>tbl</code> of named patterns, called &quot;rules&quot;, that may refer to each other recursively. One of the patterns, known as the &quot;initial rule&quot;, becomes the pattern created by <code>P(tbl)</code>; it must either be <code>tbl[1]</code> or its key must be stored as <code>tbl[1]</code>.</p>
@@ -288,18 +292,19 @@ end</code></pre>
 <h2 id="aq-once-asked-questions">1AQ: Once-asked questions</h2>
 <p>(I can't tell whether they will be frequently asked.)</p>
 <ol style="list-style-type: decimal">
-<li><em>How do you match anywhere, as the Lua string library does?</em></li>
-</ol>
-<p>The easiest way is to use an idiom to skip over the non-matching part: <code>(1-p)^0*Cp()*p*Cp()</code> is a pattern that returns the first position where <code>p</code> succeeds and the position after the match.</p>
-<ol start="2" style="list-style-type: decimal">
-<li><em>Can one do a <code>sed</code>-style <code>gsub</code>?</em></li>
-</ol>
+<li><p><em>How do you match anywhere, as the Lua string library does?</em></p>
+<p>The easiest way is to use an idiom to skip over the non-matching part: <code>(1-p)^0*Cp()*p*Cp()</code> is a pattern that returns the first position where <code>p</code> succeeds and the position after the match.</p></li>
+<li><p><em>Can one do a <code>sed</code>-style <code>gsub</code>?</em></p>
 <p>The point of the question is that if <code>pattern</code> is a greedy pattern that can match the empty string, <code>string.gsub(s,pattern,repl)</code> produces an empty match for every nonempty match, and in some situations this is not what one wants. For example, <code>(string.gsub(&quot;;a;&quot;,&quot;a*&quot;,&quot;ITEM&quot;))</code> returns <code>&quot;ITEM;ITEMITEM;ITEM&quot;</code> whereas <code>&quot;ITEM;ITEM;ITEM&quot;</code> as returned by the <code>sed</code> command <code>s/a*/ITEM/</code> is more convenient in applications like string splitting.</p>
-<p><code>p^0</code> (where <code>p=P&quot;a&quot;</code>) emulates the Lua pattern <code>&quot;a*&quot;</code>, but one cannot use it by itself in a loop because it matches the empty string. The trick here is to do the possibly empty first match outside the loop, and let the loop include the non-match in between, which must be non-empty. Let <code>q=p^0/&quot;ITEM&quot;</code>, then <code>Cs(q*((1-p)*q)^0)</code> does the job: the outer <code>Cs</code> substitutes the captures instead of returning them.</p>
-<p>In general, suppose that <code>q=s/r</code>, where <code>s</code> is a non-capture pattern and <code>r</code> the replacement. This solution needs a pattern <code>p</code> that succeeds only when <code>s</code> produces a non-empty match.</p>
-<pre><code>f=function(str,pos,cap) if cap and #cap&gt;0 then return true end end
+<p><code>p^0</code> (where <code>p=P&quot;a&quot;</code>) emulates the Lua pattern <code>&quot;a*&quot;</code>, but one cannot use it by itself in a loop because it matches the empty string. The trick here is to do the possibly empty first match outside the loop, and let the loop include the non-match in between, which must be non-empty.</p>
+<p>Let <code>q=p^0/&quot;ITEM&quot;</code>, then <code>Cs(q*((1-p)*q)^0)</code> does the job: the outer <code>Cs</code> substitutes the captures instead of returning them. In general, suppose that <code>q=s/r</code>, where <code>s</code> is a non-capture pattern and <code>r</code> the replacement.</p>
+<p>For this solution to work, <code>p</code> must be a pattern that succeeds only when your given <code>s</code> produces a non-empty match. You can construct it this way:</p>
+<pre><code>f=function(str,pos,cap) 
+   if cap and #cap&gt;0 then return true end 
+end
 p=Cmt(s,f)</code></pre>
-<p>It is not possible to construct <code>p</code> given only <code>q</code>: the information whether the match was empty has been lost.</p>
+<p>It is not possible to construct <code>p</code> given only <code>q</code>: the information whether the match was empty has been lost.</p></li>
+</ol>
 <h2 id="case-study-an-apl-to-lua-compiler">Case study: an APL-to-Lua compiler</h2>
 <p>APL is a language in which expressions look something like this:</p>
 <pre><code>((⍴X)⍴⍋⍋X⍳X,Y)⍳(⍴Y)⍴⍋⍋X⍳(Y←1 2 3),X←2 3 4</code></pre>
