@@ -490,12 +490,12 @@ Certain subexpressions occur so often in pattern expressions that
 one gets to recognize them at a glance. 
 
 
-  This...         matches...
-----------------  ------------------------------------------------------------
-  `-1`            the end of the subject.
- `#p*q`           what `q` matches, provided that `p` succeeds.
-`(1-p)^0`         everything up to where `p` would succeed.
-----------------  ------------------------------------------------------------
+  This...             matches...
+---------------- --   ----------------------------------------------------
+  `-1`                the end of the subject.
+ `#p*q`               what `q` matches, provided that `p` succeeds.
+`(1-p)^0`             everything up to where `p` would succeed.
+---------------- --  -----------------------------------------------------
 
 ## 1AQ: Once-asked questions
 
@@ -540,11 +540,6 @@ one gets to recognize them at a glance.
 
     It is not possible to construct `p` given only `q`: the information
     whether the match was empty has been lost.
-
-
-
-
-    
 
 ## Case study: an APL-to-Lua compiler
 
