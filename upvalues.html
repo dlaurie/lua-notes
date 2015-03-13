@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Dirk Laurie" />
+  <meta name="date" content="2015-03-13" />
+  <title>Upvalues in Lua</title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Upvalues in Lua</h1>
+<h2 class="author">Dirk Laurie</h2>
+<h3 class="date">2015-03-13</h3>
+</div>
+<p>Upvalues are local variables in a containing block visible to a closure.</p>
+<pre><code>do
+   local print = print
+   function f(...)
+       print(...)
+   end
+   function g()
+       return print
+   end
+end</code></pre>
+<p>Here, <code>print</code> inside the function is an upvalue.</p>
+<p>You can examine the upvalues of a function. The addresses shown will be different on your computer but addresses that are equal here will still be equal.</p>
+<pre><code>for i=1,256 do -- VM design implies there can&#39;t be more 255 upvalues
+   local value,name = debug.getupvalue(f,i)
+   if value==nil then break end
+   print(i, name, value)  --&gt; 1  function: 0x419fd0  print
+end</code></pre>
+<h2 id="modifying-upvalues-from-the-calling-program">Modifying upvalues from the calling program</h2>
+<p>The code that calls a function can set its upvalues. Let's first demonstrate the status quo.</p>
+<pre><code>-- print the global print function 
+print(print)  --&gt;  function: 0x419fd0
+-- print the local print function 
+print(g())  --&gt;  function: 0x419fd0
+-- print items using the local print function via f
+f(&quot;a&quot;,100,1==2)  --&gt;  a  100  false</code></pre>
+<p>We now define a new print function and assign it to the proper upvalue of <code>f</code>. One should check that the right upvalue has been modified.</p>
+<pre><code>listprint = function(...)
+   for i=1,select(&#39;#&#39;,...) do
+      io.write(i,&#39;\t&#39;,tostring(select(i,...)),&#39;\n&#39;)
+   end
+end
+
+assert (&quot;print&quot; == debug.setupvalue(f,1,listprint)) --&gt; true</code></pre>
+<p>Now run the demo again.</p>
+<pre><code>-- print the global print function 
+print(print)  --&gt;  function: 0x419fd0
+-- print the local print function 
+print(g())  --&gt;  function: 0x22a5b40
+-- print items using the local print function via f
+f(&quot;a&quot;,100,1==2)  --[[ --&gt;
+1   a
+2   100
+3   false
+]]</code></pre>
+<p>Note that even though we only modified an upvalue of <code>f</code>, the upvalue seen by <code>g</code> has also been changed. That is to say, the actual local variable has been modified.</p>
+<h2 id="what-happens-if-the-calling-program-fails-to-set-upvalues">What happens if the calling program fails to set upvalues?</h2>
+<p>Suppose that the called function was not defined as Lua code inside the current scope, but loaded as a binary chunk from a string or a file.</p>
+<pre><code>tempname = os.tmpname()
+io.open(tempname,&quot;w&quot;):write(string.dump(f)):close()
+h = loadfile(tempname)
+os.remove(tempname)</code></pre>
+<p>If we try to run <code>h</code> without setting its first upvalue, we should expect trouble, and indeed, we get it: an error message that we attempted to call a table value. What's going on here? Examine the upvalues of <code>h</code>.</p>
+<pre><code>for i=1,256 do 
+   local value,name = debug.getupvalue(h,i)
+   if value==nil then break end
+   print(i, name, value)  --&gt; 1  table: 0x227e5f0  print
+end</code></pre>
+<p>Indeed, there's a table in there. Maybe this is a good time to read what the manual has to say about upvalues for loaded binary chunks.</p>
+<blockquote>
+<p>If the resulting function has upvalues, the first upvalue is set to the value of <code>env</code>, if that parameter is given, or to the value of the global environment.</p>
+</blockquote>
+<p>And indeed:</p>
+<pre><code>print(_ENV) --&gt; table: 0x227e5f0</code></pre>
+<p>For robust programming, one should make sure that supplying <code>_ENV</code> as the first argument is the right thing to do.</p>
+<h2 id="can-the-called-function-do-anything-about-it">Can the called function do anything about it?</h2>
+<p>The only control that the called function has, is to make sure that the first upvalue should actually be <code>_ENV</code>. Here is an example of what can go wrong.</p>
+<pre><code>do
+   local print = print
+   function p()
+       local print = print
+       local pi=math.pi
+       print(pi)
+   end
+end</code></pre>
+<p>Since the first appearance of <code>_ENV</code> is implied by the reference to the global variable <code>math</code>, by which time the upvalue has already been referenced, <code>_ENV</code> is only the second upvalue. When this function is dumped and loaded, we get:</p>
+<pre><code>p = load(dumped_p)
+for i=1,256 do -- VM design means there can&#39;t be more 255 upvalues
+   local value,name = debug.getupvalue(p,i)
+   if value==nil then break end
+   print(i, name, value)  
+end</code></pre>
+<p>with the result:</p>
+<pre><code>1       table: 0xd5b5f0 print
+2       nil             _ENV</code></pre>
+<p>I.e., there is an upvalue <code>_ENV</code>, but it is not the first. Loading <code>_ENV</code> into the first upvalue is worse than useless.</p>
+<p>A good idiom for functions that will be saved and loaded as binary chunks is therefore to put</p>
+<pre><code>local _ENV = _ENV</code></pre>
+<p>as the very first line of your function, ensuring that loading the binary chunk does the right thing.</p>
+<pre><code>do
+   local print = print
+   function f(...)
+      local _ENV = _ENV
+      print(...)
+   end
+end
+
+tempname = os.tmpname()
+io.open(tempname,&quot;w&quot;):write(string.dump(f)):close()
+p = loadfile(tempname)
+os.remove(tempname)
+
+for i=1,256 do --
+   local value,name = debug.getupvalue(p,i)
+   if value==nil then break end
+   print(i, name, value)  
+end</code></pre>
+<p>The result is:</p>
+<pre><code>1       table: 0xd5b5f0     _ENV
+2       nil                 print</code></pre>
+<p><code>_ENV</code> has correctly been set, but we still need to set the <code>print</code> upvalue. This is unavoidable. Setting all required upvalues except the automatic <code>_ENV</code> remains the obligation of the calling program.</p>
+<h2 id="fine-but-i-mean-can-the-running-function-do-anything-about-it">Fine, but I mean &quot;Can the <em>running</em> function do anything about it?&quot;</h2>
+<p>All that the running function can do is to make type checks on its upvalues.</p>
+<pre><code>do
+   local print = print
+   function f(...)
+      local _ENV = _ENV      -- as recommended above
+      assert(type(print) == &#39;function&#39;)
+      print(...)
+   end
+end</code></pre>
+<p>If <code>_ENV</code> is a table, that is where your attempts to access global variables will be directed to. There is nothing more that can be checked. The calling program can supply any <code>_ENV</code> it likes when loading the chunk. If it wishes to deny a loaded function access to the standard libraries, there is nothing the code defining that function can do about it. If it wishes to supply a bogus <code>debug</code> library so that <code>debug.getregistry()[2]</code> makes it look as if your <code>_ENV</code> is the original <code>_G</code>, you can't detect that.</p>
+</body>
+</html>

@@ -1,0 +1,202 @@
+% Upvalues in Lua
+% Dirk Laurie
+% 2015-03-13
+
+Upvalues are local variables in a containing block visible to 
+a closure.
+
+    do
+       local print = print
+       function f(...)
+           print(...)
+       end
+       function g()
+           return print
+       end
+    end
+
+Here, `print` inside the two functions is an upvalue.
+
+You can examine the upvalues of a function.  The addresses shown
+will be different on your computer but addresses that are equal here 
+will still be equal.
+
+    for i=1,256 do -- VM design implies there can't be more 255 upvalues
+       local value,name = debug.getupvalue(f,i)
+       if value==nil then break end
+       print(i, name, value)  --> 1  function: 0x419fd0  print
+    end
+
+Modifying upvalues from the calling program
+--------------------------------------------
+
+The code that calls a function can set its upvalues.
+Let's first demonstrate the status quo.
+
+    -- print the global print function 
+    print(print)  -->  function: 0x419fd0
+    -- print the local print function 
+    print(g())  -->  function: 0x419fd0
+    -- print items using the local print function via f
+    f("a",100,1==2)  -->  a  100  false
+
+We now define a new print function and assign it to the proper upvalue 
+of `f`. One should check that the right upvalue has been modified.
+
+    listprint = function(...)
+       for i=1,select('#',...) do
+          io.write(i,'\t',tostring(select(i,...)),'\n')
+       end
+    end
+
+    assert ("print" == debug.setupvalue(f,1,listprint)) --> true
+
+Now run the demo again.
+
+    -- print the global print function 
+    print(print)  -->  function: 0x419fd0
+    -- print the local print function 
+    print(g())  -->  function: 0x22a5b40
+    -- print items using the local print function via f
+    f("a",100,1==2)  --[[ -->
+    1	a
+    2	100
+    3	false
+    ]]
+
+Note that even though we only modified an upvalue of `f`, the upvalue 
+seen by `g` has also been changed. That is to say, the actual local 
+variable has been modified.
+
+What happens if the calling program fails to set upvalues?
+----------------------------------------------------------
+
+Suppose that the called function was not defined as Lua code inside 
+the current scope, but loaded as a binary chunk from a string or
+a file.
+
+    tempname = os.tmpname()
+    io.open(tempname,"w"):write(string.dump(f)):close()
+    h = loadfile(tempname)
+    os.remove(tempname)
+
+If we try to run `h` without setting its first upvalue, we should
+expect trouble, and indeed, we get it: an error message that we
+attempted to call a table value. What's going on here? Examine the 
+upvalues of `h`.
+
+    for i=1,256 do 
+       local value,name = debug.getupvalue(h,i)
+       if value==nil then break end
+       print(i, name, value)  --> 1  table: 0x227e5f0  print
+    end
+
+Indeed, there's a table in there. Maybe this is a good time to read what
+the manual has to say about upvalues for loaded binary chunks.
+
+> If the resulting function has upvalues, the first upvalue is set to
+> the value of `env`, if that parameter is given, or to the value of the
+> global environment.
+
+And that is the table we see:
+ 
+    print(_ENV) --> table: 0x227e5f0
+
+For robust programming, one should make sure that supplying `_ENV` as 
+the first argument is the right thing to do.
+    
+Can the called function do anything about it?    
+---------------------------------------------
+
+The only control that the called function has, is to make sure that the 
+first upvalue should actually be `_ENV`. Here is an example of what can 
+go wrong.
+
+    do
+       local print = print
+       function p()
+           local print = print
+           local pi=math.pi
+           print(pi)
+       end
+    end
+
+Since the first appearance of `_ENV` is implied by the reference to
+the global variable `math`, by which time the upvalue has already
+been referenced, `_ENV` is only the second upvalue. When this function 
+is dumped and loaded, we get:
+
+    p = load(dumped_p)
+    for i=1,256 do -- VM design means there can't be more 255 upvalues
+       local value,name = debug.getupvalue(p,i)
+       if value==nil then break end
+       print(i, name, value)  
+    end
+
+with the result:
+
+    1       table: 0xd5b5f0 print
+    2       nil             _ENV
+
+I.e., there is an upvalue `_ENV`, but it is not the first. Loading
+`_ENV` into the first upvalue is worse than useless.
+
+A good idiom for functions that will be saved and loaded as binary
+chunks is therefore to put
+
+    local _ENV = _ENV
+
+as the very first line of your function, ensuring that loading the
+binary chunk does the right thing.
+
+    do
+       local print = print
+       function f(...)
+          local _ENV = _ENV
+          print(...)
+       end
+    end
+
+    tempname = os.tmpname()
+    io.open(tempname,"w"):write(string.dump(f)):close()
+    p = loadfile(tempname)
+    os.remove(tempname)
+
+    for i=1,256 do --
+       local value,name = debug.getupvalue(p,i)
+       if value==nil then break end
+       print(i, name, value)  
+    end
+
+The result is:
+
+    1       table: 0xd5b5f0     _ENV
+    2       nil	                print
+
+`_ENV` has correctly been set, but we still need to set the `print` 
+upvalue. This is unavoidable. Setting all required upvalues except
+the automatic `_ENV` remains the obligation of the calling program.
+
+Fine, but I mean "Can the _running_ function do anything about it?"
+-------------------------------------------------------------------
+
+All that the running function can do is to make type checks on its 
+upvalues.
+
+    do
+       local print = print
+       function f(...)
+          local _ENV = _ENV      -- as recommended above
+          assert(type(print) == 'function')
+          print(...)
+       end
+    end
+
+If `_ENV` is a table, that is where your attempts to access global 
+variables will be directed to. There is nothing more that can be
+checked. The calling program can supply any `_ENV` it likes when 
+loading the chunk. If it wishes to deny a loaded function access 
+to the standard libraries, there is nothing the code defining that 
+function can do about it. If it wishes to supply a bogus `debug`
+library so that `debug.getregistry()[2]` makes it look as if your 
+`_ENV` is the original `_G`, you can't detect that.
