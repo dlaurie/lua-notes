@@ -1,0 +1,976 @@
+% A glossary of some essential Lua terms
+% Dirk Laurie 
+% 28 April 2017
+
+This Glossary covers those terms in [Lua](http://www.lua.org/about.html) 
+5.3 that are necessary to refer to when reading the 
+[User's Manual](http://www.lua.org/manual/5.3). 
+
+The selection of topics is based on one posted on the Lua mailing list 
+`<lua-l-lists.lua.org>` by "Adel" on 24 April 2017. It does not cover 
+advanced concepts, except to point out that they are advanced.
+You must grok those from the Manual. 
+
+Many of these terms occur in other computer [language]s too. Prior 
+knowledge of how the term is used elsewhere may help you to understand
+how it is used in Lua; on the other hand, it may put preconceptions 
+in your mind that are not applicable to Lua. 
+
+I mainly explain how the term is used in Lua, not in general. _This
+Glossary may put preconceptions in your mind that are not applicable 
+elsewhere._
+
+Just keep an open mind, that's all.
+
+Access
+------
+
+To read or write (a variable, table etc).
+
+API
+---
+
+Acronym for Application Program Interface. The [function]s,
+[type]s and [data structure]s to be used when writing C code that 
+interacts with Lua. 
+
+Understanding the API requires a knowledge of C. It is therefore not
+covered in this Glossary.
+
+APIs for other [language]s (C++, Pascal etc) also exist, but the official 
+documentation (which fills half the 
+[Lua manual](http://www.lua.org/manual/5.3)) is for the C API.
+
+Application
+-----------
+
+A [program] designed for use by people that know next to nothing
+about computers. Familiarly shortened to **app** by such users.
+
+Argument
+--------
+
+The actual value that a [parameter] has when a [function] is [call]ed. 
+We say that the argument is **passed to** the function.
+
+    x = fct (1,3,'pqr')  -- 1, 3 and 'pqr' are arguments
+
+The number of arguments may differ from the number of parameters. If 
+there are too many, the extra arguments are ignored; if there are too 
+few, the missing arguments are assumed to have the value `nil`.
+
+Array
+-----
+
+A [data structure] whose values (in this context called [element]s) are 
+numbered consecutively. The number of an element is its [key].
+
+    A          -- refers to the whole array
+    A[1]       -- refers to a single element with key 1
+
+Arrays in which other keys than numbers are used are called 
+**associative arrays**. The elements of associative arrays are
+sometimes referred to as **items**.
+
+    A['name']  -- refers to a single item with key 'name'
+    A.name     -- a synonym for A['name']
+
+The notation `A.name` is only available when `name` is an identifier.
+
+Both kinds of array are special cases of a [table]. A [sequence] is an
+even more special case of an array.
+
+Binary
+------
+
+1. Made up only of 0s and 1s, as all digital computers are when 
+considered at the lowest level. 
+2. (When talking about [file]s) Not [text].
+3. (When talking about [operation]s) Involving two values. 
+
+Boolean
+-------
+
+One of the eight types of Lua. A boolean value can only be `true` or 
+`false`.
+
+The result of a [comparison](#compare) [operation] is always boolean.
+
+Border
+------
+
+Any natural [index] in a table where a non-nil value is followed by 
+a nil value. When the value at index 1 is nil, 0 is a border regardless 
+of the value at index 0.
+
+Byte
+----
+
+The smallest individually [access]ible unit on most computers, consisting
+of 8 binary digits. 
+
+Bytecode
+--------
+
+An [implementation]-dependent represention of a Lua [program] or part of 
+one as instructions to be executed by a [virtual machine]. Though 
+representable in Lua as a [string], it is not legible.
+
+Call
+----
+
+When the name of a [function] is encountered in a Lua program, there are 
+two possibilities: the function itself may be meant, or the instructions 
+making up the function are to be executed. In the latter case, we say 
+that the function is _called_.
+
+    a = fct      -- the function is not called, but assigned as a value
+    a = fct()    -- the function is called
+    a = fct{1}   -- when there is ony one arguent, and that argument itself 
+    a = fct"abc" --   is already delimited, parentheses are not needed 
+
+Chunk
+-----
+
+A block of Lua [code] that can be [compile]d successfully by itself.
+It consists of one or more [statement]s.
+
+Class
+-----
+
+A [data structure] of related values, especially a [constructor] and
+[method]s.
+
+Closure
+-------
+
+A [function] bundled with its [upvalue]s.
+
+Code
+----
+
+[Text] written in a programming [language].
+
+Coercion
+--------
+
+To automatically convert a value to another [type] or [subtype] so 
+that an [operation] involving it will work.
+
+    'number' .. 3       -- the number will be coerced to a string
+    '3' + 10            -- the string will be coerced to a number
+    3.1415 * 10         -- the integer will be coerced to float
+    tbl = {[3.0]=true}  -- the float will be coerced to integer
+
+Coercion, especially string-to-number coercion, is considered 
+undesirable by many, and Lua 5.3 can be compiled with options set
+that will make either or both of the first two examples illegal.
+
+Compare
+-------
+
+To determine whether a specified relation between two values exists.
+
+Any two values can be compared for equality or inequality. Two strings 
+or two numbers can be compared for order. Any other comparison is only
+possible with the aid of a [metamethod].
+
+Comparison [operation]s have a higher [priority] than [logical] operations
+and [parentheses] are seldom needed.
+
+The result of a comparison operation is a [boolean].
+
+    abc ~= nil    -- True if the value of abc (of whatever type) is not nil.
+    0<x and x<=10 -- True if x is in the range 1 to 10.
+
+Compile
+-------
+
+To convert code written in a programming [language] such as Lua to 
+a form that is computer-friendly rather than human-friendly.
+In the case of Lua, the latter form is known as [bytecode].
+
+A **compiler** is a program that (or a [function] inside a program) 
+that compiles code.
+
+Constant
+--------
+
+An anonymous [immutable](#mutable) [value]. 
+
+Constructor
+-----------
+
+1. A table [literal].
+2. A [function] in a [class] that is not itself a [method], but returns 
+a new [object] of the class. 
+
+Coroutine
+---------
+
+One of the eight types of Lua. The subject is too advance to discuss
+here.
+
+Data structure
+--------------
+
+A collection of [Values](#value) such that the 
+collection can be referred to as a whole, but the values in it can 
+also be referred to individually. 
+
+In Lua, the only data structure is a [table], but it is also possible 
+to code one's own data structure in C and make it visible to Lua as 
+a [userdata](#userdata).
+
+Debug
+-----
+
+One of the standard [libraries](library) of Lua. It contains functions
+necessary to look into details of [implementation] not normally visible,
+and functions that can change values that normally are im[mutable].
+
+Declaration
+-----------
+
+A statement that specifies that one or more names have [local] [scope] 
+and optionally [initialize]s them.
+
+    local x, y = 1  -- x gets the value 1, y gets the value nil.
+
+Names that have [global](#global) scope are declared implicitly, i.e.
+they count as declared, with value `nil`, the moment you use them.
+
+Definition
+----------
+
+A [chunk](#chunk) that fully specifies what a function does. 
+
+The definition starts with the keyword `function` and stops at the 
+matching keyword `end`.
+
+    function fct(x,y)
+      if x<y then
+        return y-x
+      else
+        return x-y
+      end   -- definition does not stop here, this 'end' matches 'if'
+    end     -- definition stops here 
+
+Delimit
+-------
+
+To put markers called **delimiters** in front and after something to 
+show where it starts and stops. 
+
+There is therefore always a _pair_ of delimiters. They can be as simple 
+as a pair of quotes, and as complicated as `function` and `end`, or 
+a pair of `[=====]` with any number of equal signs.
+
+Dummy
+-----
+
+Something supplied _pro forma_ but not actually used.
+
+Element
+-------
+
+One of the values in an [array] or a [sequence], or (more loosely) in 
+any collection of values.
+
+\_ENV
+-----
+
+An abbreviation for "environment". The table in which currently visible
+global variables are kept.
+
+Escape
+------
+
+A technique to encode a character that has a special meaning or is hard
+to type by an **escape sequence** consisting of several other characters.
+
+    "\xcafe"          -- Hexadecimal encoding of an integer
+    "\u{cafe}         -- The Unicode character with hexadecimal encoding
+                      -- CAFE, displayed on your screen as 쫾
+    "%%               -- The way to represent a percent sign in a pattern.
+
+Humans find it hard to write escape sequences correctly, but Lua offers 
+an option `%q` to `string.format` that will do it for you.
+
+Expression
+----------
+
+An expression is a piece of Lua code, shorter than a statement, that
+specifies how a value should be calculated.
+
+    (2+2)^5                         -- arithmetic expression
+    age <= 65                       -- boolean expression
+    '--' .. " this is"              -- string expression
+    (gsub('Number # wins",'#','7')) -- function call expression (only the
+          -- first value is used, and you need the parentheses for that)
+
+File
+----
+
+Data stored outside one's program, usually on a disk, under the control
+of the operating system.
+
+A file may contain [text], in which case it is a text file. Otherwise
+it is a [binary] file.
+
+First-class value
+-----------------
+
+A [value] that can be:
+
+* assigned to a [name] 
+* used as a [key] as well as a [value] in a [table]
+* used in [expression]s 
+* given as an [argument] to a [function]
+
+There are minor exceptions: [nil] and [NaN] may not be used as a key.
+
+Floating-point
+--------------
+
+A subtype of [number] that represents a number as a **mantissa** (i.e.
+a number between 0.5 and 1) multiplied by a positive or negative power
+of 2. Integers up to about 9e15 can be represented exactly.
+
+Function
+--------
+
+1. A self-contained part of a program that performs a particular task.
+2. One of the eight types of Lua. Lua is unusual in that a function is
+a [first-class value].
+
+See [Declaration], [Parameter], [Argument], [Scope], [Closure].
+
+\_G
+---
+
+On startup, _G is a [global] variable equal to [_ENV](#env). There are 
+no rules for _G. The name might be an abbreviation for "global", but 
+Lua does not actually use it for any purpose.
+
+Global
+------
+
+Strictly: having unlimited [scope]. In practice the term refers to 
+perhaps the most idiosyncratic feature of Lua.
+
+_When a name is not in any local scope, not even as an upvalue, Lua looks 
+for a key of that name in a table called [_ENV](#env)_ which is 
+guaranteed always to be in scope. The entry in _ENV with the given 
+name is the **global variable** of that name.
+
+    string          -- these two notations are 
+    _ENV.string     -- equivalent
+
+There is nothing pervasive about global variables. All their values 
+may be switched at the drop of a hat by simply assigning a different 
+table to _ENV. If that table is empty, all global variables are 
+instantly reset to `nil`.
+
+Identifier
+----------
+
+A synonym for [name]. The term also has a special meaning in the API.
+
+Implementation
+--------------
+
+The way the details of Lua are handled on a specific computer. You are
+not supposed to know what they are, and if you do know, you are not
+allowed to rely on that knowledge. So I will not even try to explain
+**implementation details** like _endianness_, _word size_, _array part_, 
+_hash part_, etc.
+ 
+Index
+-----
+
+1. The position of a specific [byte] in a [string].
+2. An integer-valued [key]. A **natural index** is a positive 
+integer-valued key.
+
+If a [floating-point] number that happens to equal an exact integer 
+is used as an index, it will be [coerced](#coercion) to integer.
+
+Inf
+---
+
+Short for "Infinity". An exceptional value of type [number] (also 
+written 'INF' and 'inf'), which arises the result of overflow, division
+by zero etc. If you need the notation Inf, assign such a value to the 
+name. Inf is not a Lua keyword, but appears in output, as does `-inf`.
+
+Inf and -Inf are a legal [key]s in a table.
+
+Inf can freely be used in expressions, and behaves the way one would
+think it should.
+
+    Inf = 1/0
+    0-Inf             -- -inf
+    Inf + 1           -- inf
+    Inf-Inf           -- -nan
+    1/Inf             -- 0.0  
+    1/(-Inf)          -- -0.0
+    Inf < Inf         -- false
+    math.type(Inf)    -- float
+
+Initialize
+----------
+
+To assign a [value] to a [name] simultaneously with its 
+[declaration](#declare). Uninitialized names are treated as having 
+value [nil].
+
+Integer
+-------
+
+A subtype of [number] that can represent integers up to about 9e18 
+exactly. The three extra digits come at the expense of not being able
+to represent anything except integers.
+
+Interpret
+---------
+
+To compile code and execute it in one go, especially inside a [REPL].
+An _interpreter_ is a program that does this. _The interpreter_ is
+the program `lua` bundled with the Lua distribution.
+
+Key
+---
+
+The first [element] of a key-value [pair] in a [table]. Any value 
+except [nil] and [NaN] may be used as a key. 
+
+Language
+--------
+
+(short for _programming language_): A specification for composing text
+that can be understood by both humans and computers. 
+
+Examples: Ada, APL, 
+Basic, C, Fortran, Go, Guile, Java, Lisp, Lua, Pascal, Python, Ruby, Scheme.
+
+Library
+-------
+
+A [table] of [function]s that serve a common purpose.
+
+Libraries extend the power of Lua. Apart from the [global] library,
+a number of standard libraries are automatically [load]ed when Lua
+starts up.
+
+Custom libraries can also be returned by a [module].
+
+Literal
+-------
+
+An expression that defines a [constant] of type [string], [number]
+or [table].
+
+    1.3475e4                          -- floating-point literal
+    12346                             -- integer literal
+    "the quick brown fox"             -- string literal
+    {'Jock','Bill',name='Friends'}    -- table literal
+
+Load
+----
+
+To make a function, or a table of functions, available to Lua. There
+are several ways to do this. All are considered too advanced for 
+further explanation in this Glossary.
+
+    fct = load "return 'Hello, World'"   -- load a string
+    fct = loadfile "myfunc.lua"          -- load a file
+    fct = require "mylib"                -- load a library
+
+Local
+-----
+
+Having limited [scope].
+
+Logical
+-------
+
+The [operation]s `and`, `or` and `not` are known as **logical operations**.
+They operate on all values, not only on [boolean]s. The result of `not`
+is boolean, but the result of the other operations is to select one of
+the operands.
+
+Their action is determined by the [truth] of the first value.
+
+    a and b   -- if a is false, then a (and don't evaluate b); else b
+    a or b    -- if a is true, then a (and don't evaluate b); else b
+
+The point about evaluation is important. It can be used to avoid illegal
+operations.
+
+    v = a.k          -- an error if a is nil
+    v = a and a.k    -- nil if a is nil
+      
+Metamethod
+----------
+
+A user-supplied function that is called to perform an [operation],
+bypassing the default action, usually because the operation would 
+otherwise be undefined, but also when a [raw] operation is to be 
+supplanted by a customized one. 
+
+Metamethods are kept in a **metatable**. 
+
+Metamethods can be used (abused?) to customize Lua almost beyond
+recognition. The subject is too advanced for further explanation 
+in this Glossary. 
+
+Method
+------
+
+A [function] in a [class] whose first [parameter] is an [object] of 
+that class.
+
+A special notation, known as an [object-oriented](#object) call, 
+may be used to call a method.
+
+    class.fct(obj,x,y)   -- normal call to class.fct
+    obj:fct(x,y)         -- object-oriented call to the function 'fct'
+                         -- of the class to which 'obj' belongs
+
+If `obj` belongs to `class`, the two calls are equivalent. 
+
+A similar notation may also be used to define a method. The following two
+definitions are equivalent.
+
+    function class:fct(x,y)
+      -- code comes here
+    end
+
+    class.fct = function(self,x,y)
+      -- code comes here
+    end
+
+Module
+------
+
+A function that [load]s a library. The subject is too advanced for
+this Glossary.
+
+Mutable
+-------
+
+Capable of being changed during the running of a program. 
+
+[Value]s of type [nil], [boolean], [number] and [string] are 
+**immutable**. Values of type [coroutine], [table] and [userdata] 
+are mutable. Values of type [function] are immutable except via 
+the [debug] library.
+
+Name
+----
+
+A word in a Lua program that can be associated with a value.
+
+    x = 1.23    -- 'x' is a name, 1.23 is a constant number value
+
+Lua syntax demands that a name satisfy the rules for an [identifier].
+
+NaN
+---
+
+Acronym for "Not A Number". An exceptional value of type [number] (also 
+written 'NAN' and 'nan'), which arises as the result of an undefinable 
+arithmetic [operation]. NaN is not a Lua keyword, but appears in 
+output (in some implementations, even the nonsensical '-nan' may 
+be printed). If you need the notation NaN, assign such 
+a value to the name. 
+
+NaN is not a legal [key] in a table.
+
+    NaN = 0/0
+    NaN + 1        -- NaN. All arithmetic operations involving NaN have
+                   -- result NaN.
+    NaN <= NaN     -- false. All comparison operations involving NaN have
+                   -- result false except the following.
+    NaN ~= NaN     -- true. The only Lua value with this property.
+    
+Nil
+---
+
+One of the eight types of Lua. There is only one value of that type,
+also called `nil`. Its purpose is to act as a placeholder where a value
+is needed, but no proper value is available.
+
+    tbl = {1,4,nil,nil,10}         -- tbl[5] is 10
+    fct = load(code,nil,nil,data)  -- the data table must be the 4th argument
+
+Number
+------
+
+One of the eight types of Lua. The possible values can be integers, 
+floating-point numbers, Inf, -Inf, and NaN.
+
+    n = 1        -- integer
+    x = 1.0      -- floating-point
+
+See [integer], [floating-point], [subtype].
+
+Object
+------
+
+A value of type [table] or [userdata] that is associated with 
+a [class] table. See [method].
+
+Operation
+---------
+
+A basic computing task like addition, multiplication, concatenation etc.,
+involving one or two values, called **operands**, and expressed in Lua 
+by putting an **operator** in front of a single value, or between the 
+two values.
+
+    n = #tbl           -- '#' is the length operator
+    s = name .. id     -- '..' is the concatenation operator
+
+Pair
+----
+
+Two related values, especially a key in a table and its associated value.
+
+    for k,v in pairs(tbl) do   -- start of a loop that iterates over all
+                               -- key-value pairs k,v in 'tbl'
+
+Parameter
+---------
+
+A [local](#local) [name](#name) used in the definition of a [function] 
+for the [value](#value) that will later be [passed](#pass) as an argument.
+
+        function fct (a,b,c)   -- a,b,c are parameters
+        fct(1,2,3)             -- 1,2,3 arearguments
+
+Parentheses
+-----------
+
+A pair of delimiters with several uses.
+
+1. To delimit a list of parameters or arguments.
+2. To specify precedence of [operation]s in a complicated expression.
+3. To adjust the number of return values in a function to 1. See [vararg].     
+
+Pass to
+-------
+
+See [Argument](#argument).
+
+Pattern
+-------
+
+A [string] that describes properties and substrings that another string
+might have. Most patterns are instantly recognizable by the many percent 
+signs in them.
+
+The [string] library contains several functions that exploit patterns.
+
+Precedence
+----------
+
+A pecking order of Lua [operators](#operation).
+
+Priority
+--------
+
+The position of an [operator](#operation) in the [precedence] table. 
+Operators with higher priority are performed first.
+
+Procedure
+---------
+
+A synonym for [function], especially when the function is one that
+does not return any values.
+
+Program
+-------
+
+1. A set of instructions to be performed by a computer.
+2. To write such instructions in a programming [language].
+
+Prompt
+------
+
+1. To give a hint that a terminal user should type something.
+2. A character string used for that purpose.
+
+A short message or symbol 
+    >                    -- the usual Lua prompt
+    >>                   -- the prompt when wat you typed was not enough
+    name?                -- a typical prompt issued by an appplication
+
+Raw
+---
+
+As originally defined, i.e. ignoring metamethods.
+
+
+Release
+-------
+
+A version of a software package that is officially made available 
+by its developers.
+
+Lua releases have three-part numbers, e.g. **Lua 5.3.4**. These are called 
+**minor releases**; if the third part is dropped, it is called 
+a **major release**, e.g. **Lua 5.3**. Each minor release is considered 
+to be merely a bugfix of the previous one: no features are added or changed,
+and the [virtual machine] is the same.
+
+REPL
+----
+
+Acronym for Read-Evaluate-Print Loop. Basically what the Lua [interpret]er
+does.
+
+Scope
+-----
+
+The part of a program inside which a local variable is **visible**,
+i.e. recognized by the compiler. The scope starts when the variable 
+is declared and goes to just before an unmatched `end`, or up to and 
+including an unmatched `until`. The `end` can be matched by a previous 
+`begin`, `if`, `while` or `function`.
+
+    local a,b    -- a and b are now visible
+    begin
+      local a    -- the previous variable called `a` is now shadowed
+      c = a + b  -- the scope of the most recent `a` ends here
+    end          -- this `end` is matched by the previous begin
+                 -- for the most recent `a`, it is unmatched.
+    d = a+b      -- the original `a` is visible again
+    
+    repeat
+      local i
+    until i>10   -- the scope of i ends here    
+
+Sentinel
+--------
+
+A special [value] in a list that cannot be mistaken for a genuine 
+element of the list. Used to indicate that the list stopped at the 
+previous element.
+
+Sequence
+--------
+
+1. (Loosely) some items coming one after the other.
+2. An [escape] sequence.
+3. A table with exactly one [border].
+
+    {1,2,3,4}    -- a sequence: border at index 4
+    {1,2,nil,4}  -- not a sequence: borders at index 2 and 4
+
+Shadow
+------
+
+To make a  [variable] that is currently [visible] invisible by declaring 
+a [local] variable of the same [name]. See [scope].
+
+Shell
+-----
+
+A program that executes operating system commands. If it does so by
+responding to what a user types in, it is an **interactive shell**
+or **command window**.
+
+Statement
+---------
+
+A part of a chunk that cannot be split any further into smaller chunks.
+(This definition is a loose one: for a precise definition, one needs
+to study the syntax of Lua). Lua is unusual in that the statement 
+separator ';'  is almost entirely optional.
+
+    a = b; func(1,2,4)    -- two statements, separated by a semicolon
+    a = b func(1,2,4)     -- still two statements
+
+
+String
+------
+
+1. A sequence of bytes. One of the eight types of Lua. Strings can
+   be [delimit]ed in an infinite number of ways.
+2. `string` is a standard [library] containing functions that involve 
+   strings. Most of those functions can be called using 
+   [object-oriented](#method) syntax.
+
+        data = "Laurie, Dirk"
+        pattern = "([^,]+),%s*(.*)"
+        surname, name = string.match(data, pattern)  -- these two calls
+        surname, name = data:match(pattern)          -- are equivalent
+
+Subtype
+-------
+
+A further classification of [value]s of a specific type. The type
+[number] has subtypes [integer] and [float](floating-point). See also
+[userdata].
+
+    type(1)         --> number
+    type(1.0)       --> number
+    math.type(1)    --> integer
+    math.type(1.0)  --> float
+
+Table
+-----
+
+1. A collection of ([key],[value]) pairs, called **entries**. One of the 
+eight types of Lua. The keys in a table are distinct. If the value is 
+[nil], the entry is not actually stored, and the key is lost. See also 
+[array], [sequence].
+
+        a.r = nil    -- delete the entry with key "r"
+
+2. `table` is a standard library containing functions that involve
+[sequence]s. Those functions _cannot_ be called using 
+[object-oriented](#method) syntax.
+
+Text
+----
+
+A [string] or [file] that is designed to be readable by a human. Text
+files typically contain only characters that have an understandable
+appearance on the screen, and [whitespace].
+
+Truth
+-----
+
+The property whether a value counts as true or false in an `if` statement
+or a [logical] [operation].
+
+`nil` and `false` count as false, all other values (including 0 and NaN)
+count as true.
+
+Tuple
+-----
+
+The bare contents of an array, without delimiters.
+
+    {1,2,nil,4}   -- an array
+    1,2,nil,4     -- a tuple
+
+May appear in as a [parameter] list, an [argument] list, a return list, 
+the right-hand side of an assignment, or inside a table [constructor].
+
+A tuple is not a [first-class value]: it is several values, not thought
+of as comprising a whole.
+
+Type
+----
+
+A classification of [value]s as one of [nil], [boolean], [number], 
+[string], [function], [table], [coroutine] or [userdata].
+
+The type of a value determines how it is stored in the computer, what 
+[operation]s on it are allowed, and how it is represented when printed.
+
+Unary
+-----
+
+(of an [operation]) Involving only one value.
+
+Upvalue
+-------
+
+A local variable defined outside but referred to inside a function.
+
+Userdata
+--------
+
+A block of memory that can only be [access]ed via its own [method]s.
+One of the eight types of Lua.
+
+The definition of a userdata and the basic methods for accessing it 
+need to be written in the API. A userdata can be **full** (i.e.
+it can be manipulated from Lua) or **light** (i.e. all Lua can do 
+with it is to determine whether two values are raw equal). These are
+not true [subtype]s since they are treated as one type inside Lua
+and as two types inside the [API].
+
+The topic is too advanced to explain any further in this Glossary.
+
+Value 
+------
+
+A block of memory organized as one of Lua's eight types.
+Values can be [mutable] or immutable. All values in Lua are
+[first-class value]s, unlike some other commonly used [language]s.
+
+Vararg
+------
+
+A [tuple] of unspecified length, denoted by three dots. 
+
+Mainly used in the [parameter] list of a [function], where it must appear 
+last. Inside such a function, it is also available for use wherever
+a tuple could be used.
+
+    function fct(z,...)          -- typical vararg parameter list
+      local x,y = ...            -- assign first two elements of the vararg
+      local p,q = select(4,...)  -- assign elements 4 and 5 of the vararg
+      local t = table.pack(...)  -- create an array containing the vararg
+      local u = {...}            -- the same, but u.n is not set
+      local s = 10+...           -- add 10 to first element of vararg
+      print(...)                 -- print everything in the vararg
+      print((...))               -- print only the first element
+      return z,20,...            -- returns a new vararg
+    end
+
+Variable
+--------
+
+A [name] associated with a [value].
+
+See [dummy], [local], [global], [initialize].
+
+Virtual machine
+---------------
+
+A program (or part of one) running on a computer known as the **host**, 
+that can execute instructions for a different machine by representing 
+the components of that machine as a [data structure] on the host.
+
+Lua code is compiled for a virtual machine that has never been built 
+as hardware, with a design that changes with every [major release](#release).
+
+Visible
+-------
+
+See [scope].
+
+Whitespace
+----------
+
+A character such as a blank, tab, line feed or carriage return that may
+be present in a text file but is not visible. In Lua any sequence 
+of whitespace characters outside comments and strings is treated as being 
+equivalent to one blank. 
+
+Zero
+----
+
+Zero is a unique number, having three different representations that
+are all equal.
+
+    0          -- integer zero
+    0.         -- floating-point zero
+    -0.        -- negative zero
+
+They can be distinguished by programming tricks, but only the integer
+zero can be a table [key]. Either of the others will be silently coerced
+to an integer.
+
+    c = {[-0.]=true}
+    next(c)    --> 0   true
+
+
+
