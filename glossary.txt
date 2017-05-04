@@ -1,6 +1,6 @@
 % A glossary of some essential Lua terms
 % Dirk Laurie 
-% 28 April 2017
+% 28 April 2017, revised 4 May 2017
 
 This Glossary covers those terms in [Lua](http://www.lua.org/about.html) 
 5.3 that are necessary to refer to when reading the 
@@ -88,6 +88,12 @@ considered at the lowest level.
 2. (When talking about [file]s) Not [text].
 3. (When talking about [operation]s) Involving two values. 
 
+Block
+-----
+
+A chunk of code enclosed by a pair of delimiters like `do ... end`,
+`function ... end`, `then ... else` etc.
+
 Boolean
 -------
 
@@ -144,7 +150,7 @@ A [data structure] of related values, especially a [constructor] and
 Closure
 -------
 
-A [function] bundled with its [upvalue]s.
+A [function] bundled with its [upvalue]s. 
 
 Code
 ----
@@ -750,7 +756,15 @@ including an unmatched `until`. The `end` can be matched by a previous
     
     repeat
       local i
-    until i>10   -- the scope of i ends here    
+    until i>10   -- the scope of i ends here 
+
+Semi-global
+-----------
+
+[Visible] in the whole file but not [global]. 
+
+A semi-global variable is declared as [local] near the top of the file,
+and is an upvalue to every function that uses its name.
 
 Sentinel
 --------
@@ -832,7 +846,8 @@ eight types of Lua. The keys in a table are distinct. If the value is
 
 2. `table` is a standard library containing functions that involve
 [sequence]s. Those functions _cannot_ be called using 
-[object-oriented](#method) syntax.
+[object-oriented](#method) syntax straight off, but you can do it with
+[metatables](metamethod).
 
 Text
 ----
@@ -881,8 +896,19 @@ Unary
 Upvalue
 -------
 
-A local variable defined outside but referred to inside a function.
+A [local] [variable] defined outside but referred to inside a function.
+See also [semi-global].
 
+Local variables defined outside a function but not referred to inside
+are not upvalues to the function.
+
+    do    -- start a block
+      local settings = {}    -- visible only to functions in the block
+      set_width = function(w)
+        settings.width = w   -- implicitly defines an upvalue `settings`
+      end
+    end   -- end the block
+              
 Userdata
 --------
 
@@ -901,7 +927,8 @@ The topic is too advanced to explain any further in this Glossary.
 Value 
 ------
 
-A block of memory organized as one of Lua's eight types.
+A block of memory organized as one of Lua's eight types. 
+
 Values can be [mutable] or immutable. All values in Lua are
 [first-class value]s, unlike some other commonly used [language]s.
 

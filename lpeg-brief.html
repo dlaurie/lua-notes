@@ -7,6 +7,7 @@
   <meta name="author" content="Dirk Laurie" />
   <title>Brief introduction to LPEG</title>
   <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="pandoc.css" type="text/css" />
 </head>
 <body>
 <div id="header">
@@ -14,12 +15,30 @@
 <h2 class="author">Dirk Laurie</h2>
 <h3 class="date">May 2013</h3>
 </div>
+<div id="TOC">
+<ul>
+<li><a href="#about-beginners-notes-in-general">About beginner's notes in general</a></li>
+<li><a href="#brief-introduction-to-lpeg">Brief introduction to LPEG</a></li>
+<li><a href="#some-lpeg-functions">Some LPEG functions</a><ul>
+<li><a href="#pattern-constructors">Pattern constructors</a></li>
+<li><a href="#pattern-methods">Pattern methods</a></li>
+</ul></li>
+<li><a href="#advanced-topics">Advanced topics</a><ul>
+<li><a href="#captures">Captures</a></li>
+<li><a href="#group-and-back-captures">Group and back captures</a></li>
+<li><a href="#more-about-the-division-operator">More about the division operator</a></li>
+<li><a href="#grammars">Grammars</a></li>
+</ul></li>
+<li><a href="#idioms">Idioms</a></li>
+<li><a href="#aq-once-asked-questions">1AQ: Once-asked questions</a></li>
+<li><a href="#case-study-an-apl-to-lua-compiler">Case study: an APL-to-Lua compiler</a></li>
+</ul>
+</div>
 <style type="text/css">code{white-space: pre;}
 body{font-family: Lucida, Times, serif;}
 h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 
 </style>
-
 <h2 id="about-beginners-notes-in-general">About beginner's notes in general</h2>
 <ul>
 <li><p>Writing a topic up for oneself is one of the best ways of learning it.</p></li>
@@ -33,13 +52,13 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <p>Some words mean very specific things to LPEG.</p>
 <dl>
 <dt><strong>string</strong></dt>
-<dd><p>A Lua string, consisting of an arbitrary sequence of bytes. On many systems, one could say &quot;characters&quot; instead.</p>
+<dd>A Lua string, consisting of an arbitrary sequence of bytes. On many systems, one could say &quot;characters&quot; instead.
 </dd>
 <dt><strong>pattern</strong></dt>
-<dd><p>A userdata type, containing enough information to characterize a certain property that a string might have. The properties that can be described are rather like the questions solvers of crossword puzzles tend to ask. For example: &quot;seven letters, starts with 'p', has a double letter in it somewhere&quot;.</p>
+<dd>A userdata type, containing enough information to characterize a certain property that a string might have. The properties that can be described are rather like the questions solvers of crossword puzzles tend to ask. For example: &quot;seven letters, starts with 'p', has a double letter in it somewhere&quot;.
 </dd>
 <dt><strong>subject</strong></dt>
-<dd><p>A string that is presented for examination to an LPEG function. Its bytes are referred to as &quot;input&quot;.</p>
+<dd>A string that is presented for examination to an LPEG function. Its bytes are referred to as &quot;input&quot;.
 </dd>
 <dt><strong>match</strong></dt>
 <dd><p>Not the same as <code>string.match</code>. In fact, it may be a good idea to forget everything you know about the Lua string library while coming to grips with LPEG.</p>
@@ -51,10 +70,10 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <p>The central concept of LPEG.</p>
 </dd>
 <dt><strong>success</strong></dt>
-<dd><p>A pattern <em>succeeds</em> when it matches a substring of the subject at the position where it is applied. Matching the empty string also counts as success, if the pattern allows it.</p>
+<dd>A pattern <em>succeeds</em> when it matches a substring of the subject at the position where it is applied. Matching the empty string also counts as success, if the pattern allows it.
 </dd>
 <dt><strong>failure</strong></dt>
-<dd><p>A pattern <em>fails</em> when it does not match any substring at that position, not even the empty string.</p>
+<dd>A pattern <em>fails</em> when it does not match any substring at that position, not even the empty string.
 </dd>
 <dt><strong>capture</strong></dt>
 <dd><p>Not just a portion of a match.</p>
@@ -65,10 +84,10 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 </ol>
 </dd>
 <dt><strong>capture pattern</strong></dt>
-<dd><p>A pattern designed to return one or more captures when it succeeds.</p>
+<dd>A pattern designed to return one or more captures when it succeeds.
 </dd>
 <dt><strong>consume</strong></dt>
-<dd><p>A pattern <em>consumes</em> its match if that portion of the subject is not available to any follow-up pattern except a backspace pattern.</p>
+<dd>A pattern <em>consumes</em> its match if that portion of the subject is not available to any follow-up pattern except a backspace pattern.
 </dd>
 </dl>
 <p>The most spectacular feature of LPEG is the way complicated patterns are built up from simpler ones: <em>Patterns can be used instead of numbers as the values that the variables in an arithmetic expression may take</em>. For example, <code>x^2+3*x-13</code> is a perfectly valid LPEG expression when <code>x</code> is a pattern.</p>
@@ -80,37 +99,37 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 </ul>
 <dl>
 <dt><em>Nil is not a valid pattern.</em></dt>
-<dd><p>This goes without saying, but I am nevertheless saying it.</p>
+<dd>This goes without saying, but I am nevertheless saying it.
 </dd>
 <dt><em>Booleans denote success or failure.</em></dt>
-<dd><p><code>true</code> stands for a pattern that always succeeds, <code>false</code> for a pattern that always fails.</p>
+<dd><code>true</code> stands for a pattern that always succeeds, <code>false</code> for a pattern that always fails.
 </dd>
 <dt><em>Strings correspond to themselves.</em></dt>
-<dd><p>A string stands for a pattern that matches only that exact string.</p>
+<dd>A string stands for a pattern that matches only that exact string.
 </dd>
 <dt><em>Integers correspond to string length.</em></dt>
-<dd><p><code>0</code> stands for a pattern that matches the empty string, positive <code>n</code> for a pattern that matches exactly <code>n</code> bytes, <code>-n</code> for the negation of <code>n</code> (see next item).</p>
+<dd><code>0</code> stands for a pattern that matches the empty string, positive <code>n</code> for a pattern that matches exactly <code>n</code> bytes, <code>-n</code> for the negation of <code>n</code> (see next item).
 </dd>
 <dt><em>Negation means reversal of fortune.</em></dt>
-<dd><p><code>-p</code> succeeds when <code>p</code> fails. It consumes no input. <code>-n</code> succeeds when there are fewer than <code>n</code> bytes of input left.</p>
+<dd><code>-p</code> succeeds when <code>p</code> fails. It consumes no input. <code>-n</code> succeeds when there are fewer than <code>n</code> bytes of input left.
 </dd>
 <dt><em>Functions mean user-defined patterns.</em></dt>
-<dd><p>A function <code>fct</code> stands for a pattern that fails when <code>fct</code> returns a Lua false value (i.e. <code>false</code>, <code>nil</code> or none) and succeeds when it returns <code>true</code> or a new valid position. See <code>Cmt</code> under <a href="#captures">Captures</a> for a specification of <code>fct</code>.</p>
+<dd>A function <code>fct</code> stands for a pattern that fails when <code>fct</code> returns a Lua false value (i.e. <code>false</code>, <code>nil</code> or none) and succeeds when it returns <code>true</code> or a new valid position. See <code>Cmt</code> under <a href="#captures">Captures</a> for a specification of <code>fct</code>.
 </dd>
 <dt><em>Tables mean composite patterns.</em></dt>
-<dd><p>A table stands for a <em>grammar</em>, i.e. a pattern based on a collection of local patterns that are allowed to refer to each other recursively. See <a href="#grammars">Grammars</a>.</p>
+<dd>A table stands for a <em>grammar</em>, i.e. a pattern based on a collection of local patterns that are allowed to refer to each other recursively. See <a href="#grammars">Grammars</a>.
 </dd>
 <dt><em>Length means don't consume.</em></dt>
-<dd><p><code>#p</code> matches what <code>p</code> matches, but consumes no input.</p>
+<dd><code>#p</code> matches what <code>p</code> matches, but consumes no input.
 </dd>
 <dt><em>Multiplication corresponds to concatenation.</em></dt>
-<dd><p>Suppose <code>p</code> and <code>q</code> respectively match <code>a</code> and <code>b</code>, then <code>p*q</code> matches <code>a..b</code>. Note that multiplication is not commutative.</p>
+<dd>Suppose <code>p</code> and <code>q</code> respectively match <code>a</code> and <code>b</code>, then <code>p*q</code> matches <code>a..b</code>. Note that multiplication is not commutative.
 </dd>
 <dt><em>Addition corresponds to shortcut <code>or</code>.</em></dt>
-<dd><p><code>p+q</code> matches what <code>p</code> matches, except when <code>p</code> fails; then it matches what <code>q</code> matches. Note that <code>p+q</code> succeeds if and only if <code>q+p</code> succeeds, but if both <code>p</code> and <code>q</code> would succeed, the match is that of the first pattern. So addition is not quite commutative.</p>
+<dd><code>p+q</code> matches what <code>p</code> matches, except when <code>p</code> fails; then it matches what <code>q</code> matches. Note that <code>p+q</code> succeeds if and only if <code>q+p</code> succeeds, but if both <code>p</code> and <code>q</code> would succeed, the match is that of the first pattern. So addition is not quite commutative.
 </dd>
 <dt><em>Subtraction corresponds to reverse shortcut <code>and not</code>.</em></dt>
-<dd><p><code>p-q</code> fails if <code>q</code> succeeds, otherwise matches what <code>p</code> matches. Note that <code>0-p</code> does the same as <code>-p</code>, but <code>p-p</code> does not do the same as <code>0</code>, it does the same as <code>false</code>.</p>
+<dd><code>p-q</code> fails if <code>q</code> succeeds, otherwise matches what <code>p</code> matches. Note that <code>0-p</code> does the same as <code>-p</code>, but <code>p-p</code> does not do the same as <code>0</code>, it does the same as <code>false</code>.
 </dd>
 <dt><em>Division means make or process captures.</em></dt>
 <dd><p><code>p/s</code> matches what <code>p</code> does, and defines a capture for the whole expression by processing the captures of <code>p</code> as specified by <code>s</code>. It can also turn a non-capture pattern into a capture pattern. Here are the simplest cases, assuming that <code>p</code> is a non-capture pattern that has matched the non-nil value named <code>value</code>.</p>
@@ -146,13 +165,13 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <p><code>P</code> is explicitly needed at least once when forming a new pattern from scratch, but seldom after that; the LPEG functions invoke <code>P</code> automatically when expecting a pattern.</p>
 </dd>
 <dt><strong><code>R</code></strong> (Range)</dt>
-<dd><p><code>R(r)</code>, where <code>r</code> is a two-byte string, matches any byte whose internal numerical code is in the range <code>r:byte(1,2)</code>. You could use characters in <code>r</code>, e.g. <code>R&quot;az&quot;</code> on most systems matches the range of lowercase letters (but see <code>locale</code> for a more portable alternative).</p>
+<dd><code>R(r)</code>, where <code>r</code> is a two-byte string, matches any byte whose internal numerical code is in the range <code>r:byte(1,2)</code>. You could use characters in <code>r</code>, e.g. <code>R&quot;az&quot;</code> on most systems matches the range of lowercase letters (but see <code>locale</code> for a more portable alternative).
 </dd>
 <dt><strong><code>S</code></strong> (Set)</dt>
-<dd><p><code>S(s)</code>, where <code>s</code> is a string, matches any of the bytes in <code>s</code>.</p>
+<dd><code>S(s)</code>, where <code>s</code> is a string, matches any of the bytes in <code>s</code>.
 </dd>
 <dt><strong><code>locale</code></strong></dt>
-<dd><p><code>locale()</code> returns a table of patterns that match character classes. Recommended method is to examine the keys of the returned table, e.g. <code>locale().lower</code> matches all lower-case letters.</p>
+<dd><code>locale()</code> returns a table of patterns that match character classes. Recommended method is to examine the keys of the returned table, e.g. <code>locale().lower</code> matches all lower-case letters.
 </dd>
 </dl>
 <h3 id="pattern-methods">Pattern methods</h3>
@@ -163,10 +182,10 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <p>As indicated, you may not omit the <code>init</code> argument to <code>match</code> when there are extra arguments. Those optional arguments can be accessed as described under <a href="#captures">Captures</a>.</p>
 </dd>
 <dt><strong><code>B(p), p:B()</code></strong> (Backspace)</dt>
-<dd><p>Matches what <code>p</code> does, but matches just before the next position instead of at it and consumes no input. <code>p</code> is restricted to patterns of fixed length that make no captures.</p>
+<dd>Matches what <code>p</code> does, but matches just before the next position instead of at it and consumes no input. <code>p</code> is restricted to patterns of fixed length that make no captures.
 </dd>
 <dt><strong><code>C(p), p:C()</code></strong> (Capture)</dt>
-<dd><p>Matches what <code>p</code> does, and returns a capture of the match, plus all captures that were made.</p>
+<dd>Matches what <code>p</code> does, and returns a capture of the match, plus all captures that were made.
 </dd>
 </dl>
 <h2 id="advanced-topics">Advanced topics</h2>
@@ -179,22 +198,22 @@ h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
 <p>All the capture constructors are pattern modifiers: they affect what happens after a given pattern succeeds. For all except <code>Cmt</code>, success or failure is determined by the pattern, and the capture constructor merely determines which captures will be produced. As in table constructors, return lists etc, nil captures are significant as placeholders.</p>
 <dl>
 <dt><strong><code>Carg(n)</code></strong></dt>
-<dd><p>Captures the <code>n</code>-th extra argument to <code>match</code>. <code>(p1*Carg(1)*p1):match(&quot;ab&quot;,1,2)</code> returns <code>'A',2,'B'</code> (the <code>1</code> is <code>init</code>, which is non-optional if you want to use extra arguments).</p>
+<dd>Captures the <code>n</code>-th extra argument to <code>match</code>. <code>(p1*Carg(1)*p1):match(&quot;ab&quot;,1,2)</code> returns <code>'A',2,'B'</code> (the <code>1</code> is <code>init</code>, which is non-optional if you want to use extra arguments).
 </dd>
 <dt><strong><code>Cp()</code></strong> (Position)</dt>
-<dd><p>Captures the next position, i.e. <code>n+1</code> when the input up to position <code>n</code> has been consumed. <code>(p1*p1*Cp()):match(&quot;ab&quot;)</code> returns <code>'A','B',3</code>.</p>
+<dd>Captures the next position, i.e. <code>n+1</code> when the input up to position <code>n</code> has been consumed. <code>(p1*p1*Cp()):match(&quot;ab&quot;)</code> returns <code>'A','B',3</code>.
 </dd>
 <dt><strong><code>Cc(...)</code></strong> (Constant)</dt>
-<dd><p>Captures all its arguments. <code>(p1+Cc(math.pi)):match&quot;xyz&quot;</code> returns <code>3.1415926535898</code>.</p>
+<dd>Captures all its arguments. <code>(p1+Cc(math.pi)):match&quot;xyz&quot;</code> returns <code>3.1415926535898</code>.
 </dd>
 <dt><strong><code>Ct(p), p:Ct()</code></strong> (Table)</dt>
-<dd><p>Captures a table containing all the captures of <code>p</code>. <code>Ct(p1*Carg(1)*p1):match(&quot;ab&quot;,1,2)</code> is <code>{A,2,B}</code>.</p>
+<dd>Captures a table containing all the captures of <code>p</code>. <code>Ct(p1*Carg(1)*p1):match(&quot;ab&quot;,1,2)</code> is <code>{A,2,B}</code>.
 </dd>
 <dt><strong><code>Cs(p), p:Cs()</code></strong> (Substitute in String)</dt>
-<dd><p>Substitute the matched substring in the full match by its captured value. <code>Cs(p1*Carg(1)*p1):match(&quot;ab&quot;,1,2)</code> returns <code>A2B</code>. The captures must be strings. Note that the substitution applies to the match, not to the full subject: <code>Cs(p1*Carg(1)*p1):match(&quot;abc&quot;,1,2)</code> also returns <code>A2B</code>.</p>
+<dd>Substitute the matched substring in the full match by its captured value. <code>Cs(p1*Carg(1)*p1):match(&quot;ab&quot;,1,2)</code> returns <code>A2B</code>. The captures must be strings. Note that the substitution applies to the match, not to the full subject: <code>Cs(p1*Carg(1)*p1):match(&quot;abc&quot;,1,2)</code> also returns <code>A2B</code>.
 </dd>
 <dt><strong><code>Cf(p,fct), p:Cf(fct)</code></strong> (Fold by Function)</dt>
-<dd><p><code>fct</code> must be a function of two variables. Think of it as a left-associative binary operator applied between the captures of <code>p</code>. The result is the capture of <code>Cf(p,fct)</code>. <code>(C(1)^3):match&quot;361&quot;</code> returns <code>'3','6','1'</code> but <code>Cf(C(1)^3,math.max):match&quot;361&quot;</code> returns <code>6</code>.</p>
+<dd><code>fct</code> must be a function of two variables. Think of it as a left-associative binary operator applied between the captures of <code>p</code>. The result is the capture of <code>Cf(p,fct)</code>. <code>(C(1)^3):match&quot;361&quot;</code> returns <code>'3','6','1'</code> but <code>Cf(C(1)^3,math.max):match&quot;361&quot;</code> returns <code>6</code>.
 </dd>
 <dt><strong><code>Cmt(p,fct)</code></strong> (Match-Time iMmediaTe)</dt>
 <dd><p>Makes a new match immediately after <code>p</code> reports success. This does more than define captures for <code>p</code>, it overrules everything that <code>p</code> did: whether the match fails despite the success of <code>p</code>, and in the case of success, what the new position after the match is, and what captures the modified pattern returns.</p>
@@ -221,10 +240,10 @@ pat = #P(dbl)*#P&quot;p&quot;*P(7)</code></pre>
 <p>The first version of this document said: &quot;The remaining capture functions: <code>Cg</code> and <code>Cb</code>, are definitely too advanced for this primer.&quot; That is still basically true, but one application is within reach: the Group-Back combination allows values to be stored and retrieved.</p>
 <dl>
 <dt><strong><code>Cg(p,name), p:Cg(name)</code></strong> (Group)</dt>
-<dd><p>Collects all the captures <code>p</code> made into a single entity, and gives that entity a name for future reference. Does not actually add any captured values to the big pattern.</p>
+<dd>Collects all the captures <code>p</code> made into a single entity, and gives that entity a name for future reference. Does not actually add any captured values to the big pattern.
 </dd>
 <dt><strong><code>Cb(name)</code></strong> (Back)</dt>
-<dd><p>Retrieves the entity with the given name, and supplies its captures to the big pattern.</p>
+<dd>Retrieves the entity with the given name, and supplies its captures to the big pattern.
 </dd>
 </dl>
 <p>Here is how it works.</p>
@@ -234,7 +253,7 @@ entry = Cg(name,&#39;surname&#39;)*&#39;,&#39;*P&quot; &quot;^0*name*Cb&#39;surn
 data = &quot;Ierusalimschy, Roberto&quot;
 result =  {entry:match(data)} 
 print (table.concat(result,&#39; &#39;)) --&gt; Roberto Ierusalimschy</code></pre>
-<p>There's also an anonymous version of <code>Cg</code>, with the name omitted. For that, and much more, take a look at Pygy's recent addition to <a href="http://lua-users.org/wiki/LpegTutorial">http://lua-users.org/wiki/LpegTutorial</a>.</p>
+<p>There's also an anonymous version of <code>Cg</code>, with the name omitted. For that, and much more, take a look at Pygy's recent addition to <a href="http://lua-users.org/wiki/LpegTutorial" class="uri">http://lua-users.org/wiki/LpegTutorial</a>.</p>
 <h3 id="more-about-the-division-operator">More about the division operator</h3>
 <p>When <code>p</code> succeeds without producing a capture, <code>p:match</code> returns the next position (see <code>Cp()</code>, above). The division operator cannot negate success: if it discards all captures, the match still succeeds and <code>p/whatever</code> still returns the next position.</p>
 <p>If <code>p</code> is a capture pattern but has not actually produced any captures, it acts like a non-capture pattern, as discussed when division was first decribed.</p>
@@ -435,10 +454,6 @@ lpeg-apl-compiler.lua:68: APL syntax error
 local operator = space^0*Cmt(name,lookup(ops))*space^0
 local varname = space^0*C(first*later^0+utf-funcname-operator)*space^0</code></pre>
 <hr />
-<!-- _About this document:_ Dirk Laurie wrote it in order to teach himself 
-LPEG. All errors in it can be blamed on his inexperience. The original
-is `lpeg-brief.txt`, which is written in Pandoc Markdown. The other
-versions were made using Pandoc <http://www.johnmacfarlane.com/pandoc-->
-
+<p>&lt;! <em>About this document:</em> Dirk Laurie wrote it in order to teach himself LPEG. All errors in it can be blamed on his inexperience. The original is <code>lpeg-brief.txt</code>, which is written in Pandoc Markdown. The other versions were made using Pandoc <a href="http://www.johnmacfarlane.com/pandoc" class="uri">http://www.johnmacfarlane.com/pandoc</a>. /&gt;</p>
 </body>
 </html>

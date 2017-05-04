@@ -8,12 +8,21 @@
   <meta name="date" content="2015-03-13" />
   <title>Upvalues in Lua</title>
   <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="pandoc.css" type="text/css" />
 </head>
 <body>
 <div id="header">
 <h1 class="title">Upvalues in Lua</h1>
 <h2 class="author">Dirk Laurie</h2>
 <h3 class="date">2015-03-13</h3>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#modifying-upvalues-from-the-calling-program">Modifying upvalues from the calling program</a></li>
+<li><a href="#what-happens-if-the-calling-program-fails-to-set-upvalues">What happens if the calling program fails to set upvalues?</a></li>
+<li><a href="#can-the-called-function-do-anything-about-it">Can the called function do anything about it?</a></li>
+<li><a href="#fine-but-i-mean-can-the-running-function-do-anything-about-it">Fine, but I mean &quot;Can the <em>running</em> function do anything about it?&quot;</a></li>
+</ul>
 </div>
 <p>Upvalues are local variables in a containing block visible to a closure.</p>
 <pre><code>do
@@ -25,7 +34,7 @@
        return print
    end
 end</code></pre>
-<p>Here, <code>print</code> inside the function is an upvalue.</p>
+<p>Here, <code>print</code> inside the two functions is an upvalue.</p>
 <p>You can examine the upvalues of a function. The addresses shown will be different on your computer but addresses that are equal here will still be equal.</p>
 <pre><code>for i=1,256 do -- VM design implies there can&#39;t be more 255 upvalues
    local value,name = debug.getupvalue(f,i)
@@ -76,7 +85,7 @@ end</code></pre>
 <blockquote>
 <p>If the resulting function has upvalues, the first upvalue is set to the value of <code>env</code>, if that parameter is given, or to the value of the global environment.</p>
 </blockquote>
-<p>And indeed:</p>
+<p>And that is the table we see:</p>
 <pre><code>print(_ENV) --&gt; table: 0x227e5f0</code></pre>
 <p>For robust programming, one should make sure that supplying <code>_ENV</code> as the first argument is the right thing to do.</p>
 <h2 id="can-the-called-function-do-anything-about-it">Can the called function do anything about it?</h2>

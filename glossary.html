@@ -5,15 +5,15 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Dirk Laurie" />
-  <meta name="date" content="2017-04-28" />
   <title>A glossary of some essential Lua terms</title>
   <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="pandoc.css" type="text/css" />
 </head>
 <body>
 <div id="header">
 <h1 class="title">A glossary of some essential Lua terms</h1>
 <h2 class="author">Dirk Laurie</h2>
-<h3 class="date">28 April 2017</h3>
+<h3 class="date">28 April 2017, revised 4 May 2017</h3>
 </div>
 <div id="TOC">
 <ul>
@@ -23,6 +23,7 @@
 <li><a href="#argument">Argument</a></li>
 <li><a href="#array">Array</a></li>
 <li><a href="#binary">Binary</a></li>
+<li><a href="#block">Block</a></li>
 <li><a href="#boolean">Boolean</a></li>
 <li><a href="#border">Border</a></li>
 <li><a href="#byte">Byte</a></li>
@@ -92,6 +93,7 @@
 <li><a href="#release">Release</a></li>
 <li><a href="#repl">REPL</a></li>
 <li><a href="#scope">Scope</a></li>
+<li><a href="#semi-global">Semi-global</a></li>
 <li><a href="#sentinel">Sentinel</a></li>
 <li><a href="#sequence">Sequence</a></li>
 <li><a href="#shadow">Shadow</a></li>
@@ -148,6 +150,8 @@ A.name     -- a synonym for A[&#39;name&#39;]</code></pre>
 <li>(When talking about <a href="#file">file</a>s) Not <a href="#text">text</a>.</li>
 <li>(When talking about <a href="#operation">operation</a>s) Involving two values.</li>
 </ol>
+<h2 id="block">Block</h2>
+<p>A chunk of code enclosed by a pair of delimiters like <code>do ... end</code>, <code>function ... end</code>, <code>then ... else</code> etc.</p>
 <h2 id="boolean">Boolean</h2>
 <p>One of the eight types of Lua. A boolean value can only be <code>true</code> or <code>false</code>.</p>
 <p>The result of a <a href="#compare">comparison</a> <a href="#operation">operation</a> is always boolean.</p>
@@ -434,7 +438,10 @@ d = a+b      -- the original `a` is visible again
 
 repeat
   local i
-until i&gt;10   -- the scope of i ends here    </code></pre>
+until i&gt;10   -- the scope of i ends here </code></pre>
+<h2 id="semi-global">Semi-global</h2>
+<p><a href="#visible">Visible</a> in the whole file but not <a href="#global">global</a>.</p>
+<p>A semi-global variable is declared as <a href="#local">local</a> near the top of the file, and is an upvalue to every function that uses its name.</p>
 <h2 id="sentinel">Sentinel</h2>
 <p>A special <a href="#value">value</a> in a list that cannot be mistaken for a genuine element of the list. Used to indicate that the list stopped at the previous element.</p>
 <h2 id="sequence">Sequence</h2>
@@ -471,7 +478,7 @@ math.type(1.0)  --&gt; float</code></pre>
 <ol style="list-style-type: decimal">
 <li><p>A collection of (<a href="#key">key</a>,<a href="#value">value</a>) pairs, called <strong>entries</strong>. One of the eight types of Lua. The keys in a table are distinct. If the value is <a href="#nil">nil</a>, the entry is not actually stored, and the key is lost. See also <a href="#array">array</a>, <a href="#sequence">sequence</a>.</p>
 <pre><code>a.r = nil    -- delete the entry with key &quot;r&quot;</code></pre></li>
-<li><p><code>table</code> is a standard library containing functions that involve <a href="#sequence">sequence</a>s. Those functions <em>cannot</em> be called using <a href="#method">object-oriented</a> syntax.</p></li>
+<li><p><code>table</code> is a standard library containing functions that involve <a href="#sequence">sequence</a>s. Those functions <em>cannot</em> be called using <a href="#method">object-oriented</a> syntax straight off, but you can do it with <a href="metamethod">metatables</a>.</p></li>
 </ol>
 <h2 id="text">Text</h2>
 <p>A <a href="#string">string</a> or <a href="#file">file</a> that is designed to be readable by a human. Text files typically contain only characters that have an understandable appearance on the screen, and <a href="#whitespace">whitespace</a>.</p>
@@ -490,13 +497,22 @@ math.type(1.0)  --&gt; float</code></pre>
 <h2 id="unary">Unary</h2>
 <p>(of an <a href="#operation">operation</a>) Involving only one value.</p>
 <h2 id="upvalue">Upvalue</h2>
-<p>A local variable defined outside but referred to inside a function.</p>
+<p>A <a href="#variable">local</a> defined outside but referred to inside a function. See also <a href="#semi-global">semi-global</a>.</p>
+<p>Local variables defined outside a function but not referred to inside are not upvalues to the function.</p>
+<pre><code>do    -- start a block
+  local settings = {}    -- visible only to functions in the block
+  set_width = function(w)
+    settings.width = w   -- implicitly defines an upvalue `settings`
+  end
+end   -- end the block
+          </code></pre>
 <h2 id="userdata">Userdata</h2>
 <p>A block of memory that can only be <a href="#access">access</a>ed via its own <a href="#method">method</a>s. One of the eight types of Lua.</p>
 <p>The definition of a userdata and the basic methods for accessing it need to be written in the API. A userdata can be <strong>full</strong> (i.e. it can be manipulated from Lua) or <strong>light</strong> (i.e. all Lua can do with it is to determine whether two values are raw equal). These are not true <a href="#subtype">subtype</a>s since they are treated as one type inside Lua and as two types inside the <a href="#api">API</a>.</p>
 <p>The topic is too advanced to explain any further in this Glossary.</p>
 <h2 id="value">Value</h2>
-<p>A block of memory organized as one of Lua's eight types. Values can be <a href="#mutable">mutable</a> or immutable. All values in Lua are <a href="#first-class-value">first-class value</a>s, unlike some other commonly used <a href="#language">language</a>s.</p>
+<p>A block of memory organized as one of Lua's eight types.</p>
+<p>Values can be <a href="#mutable">mutable</a> or immutable. All values in Lua are <a href="#first-class-value">first-class value</a>s, unlike some other commonly used <a href="#language">language</a>s.</p>
 <h2 id="vararg">Vararg</h2>
 <p>A <a href="#tuple">tuple</a> of unspecified length, denoted by three dots.</p>
 <p>Mainly used in the <a href="#parameter">parameter</a> list of a <a href="#function">function</a>, where it must appear last. Inside such a function, it is also available for use wherever a tuple could be used.</p>
