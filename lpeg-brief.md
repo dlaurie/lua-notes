@@ -1,9 +1,5 @@
 <style type="text/css">code{white-space: pre;}
-body{font-family: Lucida, Times, serif;}
-h1,h2,h3,h4{font-family: Lucida, Palatino, serif;
-
 </style>
-
 About beginner's notes in general
 ---------------------------------
 
@@ -300,11 +296,11 @@ Idioms
 
 Certain subexpressions occur so often in pattern expressions that one gets to recognize them at a glance.
 
-|This...||matches...|
-|:-----:|---|:---------|
-|`-1`||the end of the subject.|
-|`#p*q`||what `q` matches, provided that `p` would succeed.|
-|`(1-p)^0`||everything up to where `p` would succeed.|
+|  This...  |     | matches...                                         |
+|:---------:|-----|:---------------------------------------------------|
+|    `-1`   |     | the end of the subject.                            |
+|   `#p*q`  |     | what `q` matches, provided that `p` would succeed. |
+| `(1-p)^0` |     | everything up to where `p` would succeed.          |
 
 1AQ: Once-asked questions
 -------------------------
@@ -501,11 +497,6 @@ Postscript: all it took was this:
     local operator = space^0*Cmt(name,lookup(ops))*space^0
     local varname = space^0*C(first*later^0+utf-funcname-operator)*space^0
 
-* * * * *
+------------------------------------------------------------------------
 
-<!-- _About this document:_ Dirk Laurie wrote it in order to teach himself 
-LPEG. All errors in it can be blamed on his inexperience. The original
-is `lpeg-brief.txt`, which is written in Pandoc Markdown. The other
-versions were made using Pandoc <http://www.johnmacfarlane.com/pandoc-->
-
-
+&lt;! *About this document:* Dirk Laurie wrote it in order to teach himself LPEG. All errors in it can be blamed on his inexperience. The original is `lpeg-brief.txt`, which is written in Pandoc Markdown. The other versions were made using Pandoc <http://www.johnmacfarlane.com/pandoc>. /&gt;

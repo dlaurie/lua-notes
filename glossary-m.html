@@ -221,7 +221,11 @@ tbl = {[3.0]=true}  -- the float will be coerced to integer</code></pre>
 end     -- definition stops here </code></pre>
 <h2 id="delimit">Delimit</h2>
 <p>To put markers called <strong>delimiters</strong> in front and after something to show where it starts and stops.</p>
-<p>There is therefore always a <em>pair</em> of delimiters. They can be as simple as a pair of quotes, and as complicated as <code>function</code> and <code>end</code>, or a pair of <code>[=====]</code> with any number of equal signs.</p>
+<p>There is therefore always a <em>pair</em> of delimiters.</p>
+<pre><code>&quot;this is a string&quot;
+&#39;This too&#39;
+[===[ And this ]===]               -- the same number (&gt;0) of equal signs
+function (x,y) return &#39;foo&#39; end    -- `function`, `end` are delimiters</code></pre>
 <h2 id="dummy">Dummy</h2>
 <p>Something supplied <em>pro forma</em> but not actually used.</p>
 <h2 id="element">Element</h2>
@@ -230,10 +234,9 @@ end     -- definition stops here </code></pre>
 <p>An abbreviation for &quot;environment&quot;. The table in which currently visible global variables are kept.</p>
 <h2 id="escape">Escape</h2>
 <p>A technique to encode a character that has a special meaning or is hard to type by an <strong>escape sequence</strong> consisting of several other characters.</p>
-<pre><code>&quot;\xcafe&quot;          -- Hexadecimal encoding of an integer
-&quot;\u{cafe}         -- The Unicode character with hexadecimal encoding
-                  -- CAFE, displayed on your screen as 쫾
-&quot;%%               -- The way to represent a percent sign in a pattern.</code></pre>
+<pre><code>&quot;\x9a&quot;            -- Hexadecimal encoding of a byte
+&quot;\u{20AC}         -- The Unicode character &#39;€&#39; in hexadecimal encoding
+&quot;%%&quot;              -- The way to represent a percent sign in a pattern.</code></pre>
 <p>Humans find it hard to write escape sequences correctly, but Lua offers an option <code>%q</code> to <code>string.format</code> that will do it for you.</p>
 <h2 id="expression">Expression</h2>
 <p>An expression is a piece of Lua code, shorter than a statement, that specifies how a value should be calculated.</p>

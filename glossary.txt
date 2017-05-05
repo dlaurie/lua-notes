@@ -268,10 +268,13 @@ Delimit
 To put markers called **delimiters** in front and after something to 
 show where it starts and stops. 
 
-There is therefore always a _pair_ of delimiters. They can be as simple 
-as a pair of quotes, and as complicated as `function` and `end`, or 
-a pair of `[=====]` with any number of equal signs.
+There is therefore always a _pair_ of delimiters. 
 
+    "this is a string"
+    'This too'
+    [===[ And this ]===]               -- the same number (>0) of equal signs
+    function (x,y) return 'foo' end    -- `function`, `end` are delimiters
+    
 Dummy
 -----
 
@@ -295,10 +298,9 @@ Escape
 A technique to encode a character that has a special meaning or is hard
 to type by an **escape sequence** consisting of several other characters.
 
-    "\xcafe"          -- Hexadecimal encoding of an integer
-    "\u{cafe}         -- The Unicode character with hexadecimal encoding
-                      -- CAFE, displayed on your screen as 쫾
-    "%%               -- The way to represent a percent sign in a pattern.
+    "\x9a"            -- Hexadecimal encoding of a byte
+    "\u{20AC}         -- The Unicode character '€' in hexadecimal encoding
+    "%%"              -- The way to represent a percent sign in a pattern.
 
 Humans find it hard to write escape sequences correctly, but Lua offers 
 an option `%q` to `string.format` that will do it for you.
