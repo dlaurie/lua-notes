@@ -127,7 +127,7 @@ Call
 
 When the name of a [function] is encountered in a Lua program, there are 
 two possibilities: the function itself may be meant, or the instructions 
-making up the function are to be executed. In the latter case, we say 
+making up the function are to be [execute]d. In the latter case, we say 
 that the function is _called_.
 
     a = fct      -- the function is not called, but assigned as a value
@@ -214,15 +214,18 @@ a new [object] of the class.
 Coroutine
 ---------
 
-One of the eight types of Lua. The subject is too advance to discuss
-here.
+1. A [thread] containing a [function] that can **yield** (temporarily suspend
+its execution) and **resume** (continue where it left off). One of the eight 
+types of Lua. 
+2. One of the standard [libraries](library) of Lua. Coroutines can only be 
+created and used via routines in this library. The subject is too advanced to 
+discuss in detail. 
 
 Data structure
 --------------
 
-A collection of [Values](#value) such that the 
-collection can be referred to as a whole, but the values in it can 
-also be referred to individually. 
+A collection of [Values](#value) such that the collection can be referred 
+to as a whole, but the values in it can also be referred to individually. 
 
 In Lua, the only data structure is a [table], but it is also possible 
 to code one's own data structure in C and make it visible to Lua as 
@@ -304,6 +307,11 @@ to type by an **escape sequence** consisting of several other characters.
 
 Humans find it hard to write escape sequences correctly, but Lua offers 
 an option `%q` to `string.format` that will do it for you.
+
+Execute
+-------
+
+Actually do some work. See [function].
 
 Expression
 ----------
@@ -446,6 +454,12 @@ Interpret
 To compile code and execute it in one go, especially inside a [REPL].
 An _interpreter_ is a program that does this. _The interpreter_ is
 the program `lua` bundled with the Lua distribution.
+
+Invoke
+------
+
+To [call], especially in a formalized way or as a consequence of another
+call.
 
 Key
 ---
@@ -854,9 +868,19 @@ eight types of Lua. The keys in a table are distinct. If the value is
 Text
 ----
 
-A [string] or [file] that is designed to be readable by a human. Text
-files typically contain only characters that have an understandable
+A [string] or [file] that is designed to be readable by a human. 
+
+Text files typically contain only characters that have an understandable
 appearance on the screen, and [whitespace].
+
+Thread
+------
+
+1. (On an operating system) Part of a task that runs at the same time
+as other threads.
+2. (In Lua) An **opaque** (can't be looked into) [data structure] that 
+holds all the information needed to support the running of a [virtual 
+machine].
 
 Truth
 -----

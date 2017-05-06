@@ -47,6 +47,7 @@
 <li><a href="#element">Element</a></li>
 <li><a href="#env">_ENV</a></li>
 <li><a href="#escape">Escape</a></li>
+<li><a href="#execute">Execute</a></li>
 <li><a href="#expression">Expression</a></li>
 <li><a href="#file">File</a></li>
 <li><a href="#first-class-value">First-class value</a></li>
@@ -61,6 +62,7 @@
 <li><a href="#initialize">Initialize</a></li>
 <li><a href="#integer">Integer</a></li>
 <li><a href="#interpret">Interpret</a></li>
+<li><a href="#invoke">Invoke</a></li>
 <li><a href="#key">Key</a></li>
 <li><a href="#language">Language</a></li>
 <li><a href="#library">Library</a></li>
@@ -102,6 +104,7 @@
 <li><a href="#subtype">Subtype</a></li>
 <li><a href="#table">Table</a></li>
 <li><a href="#text">Text</a></li>
+<li><a href="#thread">Thread</a></li>
 <li><a href="#truth">Truth</a></li>
 <li><a href="#tuple">Tuple</a></li>
 <li><a href="#type">Type</a></li>
@@ -161,7 +164,7 @@ A.name     -- a synonym for A[&#39;name&#39;]</code></pre>
 <h2 id="bytecode">Bytecode</h2>
 <p>An <a href="#implementation">implementation</a>-dependent represention of a Lua <a href="#program">program</a> or part of one as instructions to be executed by a <a href="#virtual-machine">virtual machine</a>. Though representable in Lua as a <a href="#string">string</a>, it is not legible.</p>
 <h2 id="call">Call</h2>
-<p>When the name of a <a href="#function">function</a> is encountered in a Lua program, there are two possibilities: the function itself may be meant, or the instructions making up the function are to be executed. In the latter case, we say that the function is <em>called</em>.</p>
+<p>When the name of a <a href="#function">function</a> is encountered in a Lua program, there are two possibilities: the function itself may be meant, or the instructions making up the function are to be <a href="#execute">execute</a>d. In the latter case, we say that the function is <em>called</em>.</p>
 <pre><code>a = fct      -- the function is not called, but assigned as a value
 a = fct()    -- the function is called
 a = fct{1}   -- when there is ony one arguent, and that argument itself 
@@ -199,7 +202,10 @@ tbl = {[3.0]=true}  -- the float will be coerced to integer</code></pre>
 <li>A <a href="#function">function</a> in a <a href="#class">class</a> that is not itself a <a href="#method">method</a>, but returns a new <a href="#object">object</a> of the class.</li>
 </ol>
 <h2 id="coroutine">Coroutine</h2>
-<p>One of the eight types of Lua. The subject is too advance to discuss here.</p>
+<ol style="list-style-type: decimal">
+<li>A <a href="#thread">thread</a> containing a <a href="#function">function</a> that can <strong>yield</strong> (temporarily suspend its execution) and <strong>resume</strong> (continue where it left off). One of the eight types of Lua.</li>
+<li>One of the standard <a href="library">libraries</a> of Lua. Coroutines can only be created and used via routines in this library. The subject is too advanced to discuss in detail.</li>
+</ol>
 <h2 id="data-structure">Data structure</h2>
 <p>A collection of <a href="#value">Values</a> such that the collection can be referred to as a whole, but the values in it can also be referred to individually.</p>
 <p>In Lua, the only data structure is a <a href="#table">table</a>, but it is also possible to code one's own data structure in C and make it visible to Lua as a <a href="#userdata">userdata</a>.</p>
@@ -238,6 +244,8 @@ function (x,y) return &#39;foo&#39; end    -- `function`, `end` are delimiters</
 &quot;\u{20AC}         -- The Unicode character &#39;€&#39; in hexadecimal encoding
 &quot;%%&quot;              -- The way to represent a percent sign in a pattern.</code></pre>
 <p>Humans find it hard to write escape sequences correctly, but Lua offers an option <code>%q</code> to <code>string.format</code> that will do it for you.</p>
+<h2 id="execute">Execute</h2>
+<p>Actually do some work. See <a href="#function">function</a>.</p>
 <h2 id="expression">Expression</h2>
 <p>An expression is a piece of Lua code, shorter than a statement, that specifies how a value should be calculated.</p>
 <pre><code>(2+2)^5                         -- arithmetic expression
@@ -301,6 +309,8 @@ math.type(Inf)    -- float</code></pre>
 <p>A subtype of <a href="#number">number</a> that can represent integers up to about 9e18 exactly. The three extra digits come at the expense of not being able to represent anything except integers.</p>
 <h2 id="interpret">Interpret</h2>
 <p>To compile code and execute it in one go, especially inside a <a href="#repl">REPL</a>. An <em>interpreter</em> is a program that does this. <em>The interpreter</em> is the program <code>lua</code> bundled with the Lua distribution.</p>
+<h2 id="invoke">Invoke</h2>
+<p>To <a href="#call">call</a>, especially in a formalized way or as a consequence of another call.</p>
 <h2 id="key">Key</h2>
 <p>The first <a href="#element">element</a> of a key-value <a href="#pair">pair</a> in a <a href="#table">table</a>. Any value except <a href="#nil">nil</a> and <a href="#nan">NaN</a> may be used as a key.</p>
 <h2 id="language">Language</h2>
@@ -483,7 +493,13 @@ math.type(1.0)  --&gt; float</code></pre>
 <li><p><code>table</code> is a standard library containing functions that involve <a href="#sequence">sequence</a>s. Those functions <em>cannot</em> be called using <a href="#method">object-oriented</a> syntax straight off, but you can do it with <a href="metamethod">metatables</a>.</p></li>
 </ol>
 <h2 id="text">Text</h2>
-<p>A <a href="#string">string</a> or <a href="#file">file</a> that is designed to be readable by a human. Text files typically contain only characters that have an understandable appearance on the screen, and <a href="#whitespace">whitespace</a>.</p>
+<p>A <a href="#string">string</a> or <a href="#file">file</a> that is designed to be readable by a human.</p>
+<p>Text files typically contain only characters that have an understandable appearance on the screen, and <a href="#whitespace">whitespace</a>.</p>
+<h2 id="thread">Thread</h2>
+<ol style="list-style-type: decimal">
+<li>(On an operating system) Part of a task that runs at the same time as other threads.</li>
+<li>(In Lua) An <strong>opaque</strong> (can't be looked into) <a href="#data-structure">data structure</a> that holds all the information needed to support the running of a <a href="#virtual-machine">virtual machine</a>.</li>
+</ol>
 <h2 id="truth">Truth</h2>
 <p>The property whether a value counts as true or false in an <code>if</code> statement or a <a href="#operation">logical</a>.</p>
 <p><code>nil</code> and <code>false</code> count as false, all other values (including 0 and NaN) count as true.</p>
