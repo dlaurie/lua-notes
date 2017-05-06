@@ -65,7 +65,7 @@ pre[class*="language-"] {
 	position: relative;
 	padding: .2em;
 	border-radius: 0.3em;
-	color: #c92c2c;
+	color: #8a1e1e;
 	border: 1px solid rgba(0, 0, 0, 0.1);
 	display: inline;
 	white-space: normal;
@@ -131,7 +131,8 @@ pre[class*="language-"]:after {
 .token.function,
 .token.builtin,
 .token.inserted {
-	color: #2f9c0a;
+    /* color: #2f9c0a; */
+    color: #1e6206;
 }
 
 .token.function {
