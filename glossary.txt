@@ -214,12 +214,13 @@ a new [object] of the class.
 Coroutine
 ---------
 
-1. A [thread] containing a [function] that can **yield** (temporarily suspend
-its execution) and **resume** (continue where it left off). One of the eight 
-types of Lua. 
-2. One of the standard [libraries](library) of Lua. Coroutines can only be 
-created and used via routines in this library. The subject is too advanced to 
-discuss in detail. 
+1. A [thread] containing a [function] that can **yield** (temporarily 
+stop running) and **resume** (continue where it left off), rather 
+like a train, dropping off some values and taking aboard new ones. 
+One of the eight types of Lua. 
+2. One of the standard [libraries](library) of Lua. Coroutines can only 
+be created and used via routines in this library. The subject is too 
+advanced to discuss in detail. 
 
 Data structure
 --------------
