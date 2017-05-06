@@ -11,7 +11,8 @@ html {
   -ms-text-size-adjust: 100%;
 }
 
-body {
+/* This is the old style. */
+/* body {
   color: #444;
   font-family: Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
   font-size: 12px;
@@ -20,6 +21,24 @@ body {
   margin: auto;
   max-width: 42em;
   background: #fefefe;
+}
+*/
+
+body {
+	background-color: #FFFFFF ;
+	color: #000000 ;
+	/* Why yes, I think Arial is worse than the fallback font. Shut up. */
+	font-family: Helvetica, Arimo, "DejaVu Sans", sans-serif, Arial ;
+	line-height: 1.4 ;
+	margin: 16px auto ;
+	/* padding: 32px ; */
+	padding-left: 32px;
+	padding-right: 32px;
+	padding-bottom: 32px;
+	/* border: solid #a0a0a0 1px ;
+	border-radius: 20px ; */
+	max-width: 50em ;
+	width: 90% ;
 }
 
 a {
@@ -64,7 +83,7 @@ a::selection {
 }
 
 p {
-  margin: 1em 0;
+  margin: 0.6em 0;
 }
 
 img {
@@ -74,7 +93,8 @@ img {
 h1, h2, h3, h4, h5, h6 {
   color: #111;
   line-height: 125%;
-  margin-top: 2em;
+  margin-top: 0.5em;
+  margin-bottom:  0.3em;
   font-weight: normal;
 }
 
@@ -83,7 +103,7 @@ h4, h5, h6 {
 }
 
 h1 {
-  font-size: 2.5em;
+  font-size: 1.8em;
 }
 
 h2 {
@@ -252,14 +272,16 @@ table td {
   text-align: center;
 }
 
-@media only screen and (min-width: 480px) {
+/* Why are these written backwards? */
+
+@media only screen and (min-width: 320px) {
   body {
     font-size: 14px;
   }
 }
 @media only screen and (min-width: 768px) {
   body {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 @media print {
