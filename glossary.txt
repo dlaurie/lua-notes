@@ -1,15 +1,14 @@
 % A glossary of some essential Lua terms
 % Dirk Laurie 
-% 28 April 2017, revised 4 May 2017
+% 28 April 2017, revised 7 May 2017
 
 This Glossary covers those terms in [Lua](http://www.lua.org/about.html) 
-5.3 that are necessary to refer to when reading the 
-[User's Manual](http://www.lua.org/manual/5.3). 
+5.3 that are necessary to refer to when reading 
+the [User's Manual](http://www.lua.org/manual/5.3).
 
 The selection of topics is based on one posted on the Lua mailing list 
 `<lua-l-lists.lua.org>` by "Adel" on 24 April 2017. It does not cover 
-advanced concepts, except to point out that they are advanced.
-You must grok those from the Manual. 
+advanced concepts. You must grok those from the Manual. 
 
 Many of these terms occur in other computer [language]s too. Prior 
 knowledge of how the term is used elsewhere may help you to understand
@@ -39,7 +38,7 @@ covered in this Glossary.
 
 APIs for other [language]s (C++, Pascal etc) also exist, but the official 
 documentation (which fills half the 
-[Lua manual](http://www.lua.org/manual/5.3)) is for the C API.
+[Lua manual](http://www.lua.org/manual/5.3/manual.html#4)) is for the C API.
 
 Application
 -----------
@@ -92,7 +91,9 @@ Block
 -----
 
 A chunk of code enclosed by a pair of delimiters like `do ... end`,
-`function ... end`, `then ... else` etc.
+`function ... end`, `then ... else` etc. 
+[Manual §3.3.](http://www.lua.org/manual/5.3/manual.html#3.3.1)
+
 
 Boolean
 -------
@@ -108,6 +109,13 @@ Border
 Any natural [index] in a table where a non-nil value is followed by 
 a nil value. When the value at index 1 is nil, 0 is a border regardless 
 of the value at index 0.
+
+Bug
+---
+
+1. An aspect of program behaviour that does not conform to its specification.
+2. An error in the program design that causes said behaviour.
+3. (blunderingly) Something that does not behave as you wanted or imagined.
 
 Byte
 ----
@@ -219,8 +227,8 @@ stop running) and **resume** (continue where it left off), rather
 like a train, dropping off some values and taking aboard new ones. 
 One of the eight types of Lua. 
 2. One of the standard [libraries](library) of Lua. Coroutines can only 
-be created and used via routines in this library. The subject is too 
-advanced to discuss in detail. 
+be created and used via routines in this library. 
+[Manual §2.6](http://www.lua.org/manual/5.3/manual.html#2.6)
 
 Data structure
 --------------
@@ -235,7 +243,8 @@ a [userdata](#userdata).
 Debug
 -----
 
-One of the standard [libraries](library) of Lua. It contains functions
+1. To remove [bug]s.
+2. One of the standard [libraries](library) of Lua. It contains functions
 necessary to look into details of [implementation] not normally visible,
 and functions that can change values that normally are im[mutable].
 
@@ -294,7 +303,9 @@ any collection of values.
 -----
 
 An abbreviation for "environment". The table in which currently visible
-global variables are kept.
+global variables are kept. 
+[Manual §2.2](http://www.lua.org/manual/5.3/manual.html#2.2)
+
 
 Escape
 ------
@@ -317,8 +328,10 @@ Actually do some work. See [function].
 Expression
 ----------
 
-An expression is a piece of Lua code, shorter than a statement, that
+A piece of Lua code, shorter than a statement, that
 specifies how a value should be calculated.
+[Manual §3.4](http://www.lua.org/manual/5.3/manual.html#3.4)
+
 
     (2+2)^5                         -- arithmetic expression
     age <= 65                       -- boolean expression
@@ -334,6 +347,8 @@ of the operating system.
 
 A file may contain [text], in which case it is a text file. Otherwise
 it is a [binary] file.
+[Manual §6.8](http://www.lua.org/manual/5.3/manual.html#6.8)
+
 
 First-class value
 -----------------
@@ -362,6 +377,8 @@ Function
 a [first-class value].
 
 See [Declaration], [Parameter], [Argument], [Scope], [Closure].
+[Manual §3.3.6](http://www.lua.org/manual/5.3/manual.html#3.3.6),
+[§3.4.10](http://www.lua.org/manual/5.3/manual.html#3.4.10).
 
 \_G
 ---
@@ -375,6 +392,8 @@ Global
 
 Strictly: having unlimited [scope]. In practice the term refers to 
 perhaps the most idiosyncratic feature of Lua.
+[Manual §2.2](http://www.lua.org/manual/5.3/manual.html#2.2)
+
 
 _When a name is not in any local scope, not even as an upvalue, Lua looks 
 for a key of that name in a table called [_ENV](#env)_ which is 
@@ -484,14 +503,15 @@ A [table] of [function]s that serve a common purpose.
 
 Libraries extend the power of Lua. Apart from the [global] library,
 a number of standard libraries are automatically [load]ed when Lua
-starts up.
+starts up. [Manual §6](http://www.lua.org/manual/5.3/manual.html#6)
+
 
 Custom libraries can also be returned by a [module].
 
 Literal
 -------
 
-An expression that defines a [constant] of type [string], [number]
+An [expression] that defines a [constant] of type [string], [number]
 or [table].
 
     1.3475e4                          -- floating-point literal
@@ -503,8 +523,8 @@ Load
 ----
 
 To make a function, or a table of functions, available to Lua. There
-are several ways to do this. All are considered too advanced for 
-further explanation in this Glossary.
+are several ways to do this.
+[Manual §6.1](http://www.lua.org/manual/5.3/manual.html#6.1)
 
     fct = load "return 'Hello, World'"   -- load a string
     fct = loadfile "myfunc.lua"          -- load a file
@@ -514,6 +534,7 @@ Local
 -----
 
 Having limited [scope].
+[Manual §3.3.7](http://www.lua.org/manual/5.3/manual.html#3.3.7)
 
 Logical
 -------
@@ -522,6 +543,7 @@ The [operation]s `and`, `or` and `not` are known as **logical operations**.
 They operate on all values, not only on [boolean]s. The result of `not`
 is boolean, but the result of the other operations is to select one of
 the operands.
+[Manual §3.4.5](http://www.lua.org/manual/5.3/manual.html#3.4.5)
 
 Their action is determined by the [truth] of the first value.
 
@@ -540,13 +562,13 @@ Metamethod
 A user-supplied function that is called to perform an [operation],
 bypassing the default action, usually because the operation would 
 otherwise be undefined, but also when a [raw] operation is to be 
-supplanted by a customized one. 
+supplanted by a customized one.
+[Manual §2.4](http://www.lua.org/manual/5.3/manual.html#2.4) 
 
 Metamethods are kept in a **metatable**. 
 
 Metamethods can be used (abused?) to customize Lua almost beyond
-recognition. The subject is too advanced for further explanation 
-in this Glossary. 
+recognition.  
 
 Method
 ------
@@ -577,9 +599,9 @@ definitions are equivalent.
 Module
 ------
 
-A function that [load]s a library. The subject is too advanced for
-this Glossary.
-
+A function that [load]s a library.
+[Manual §6.3](http://www.lua.org/manual/5.3/manual.html#6.3)
+ 
 Mutable
 -------
 
@@ -598,6 +620,7 @@ A word in a Lua program that can be associated with a value.
     x = 1.23    -- 'x' is a name, 1.23 is a constant number value
 
 Lua syntax demands that a name satisfy the rules for an [identifier].
+[Manual §3.1](http://www.lua.org/manual/5.3/manual.html#3.1)
 
 NaN
 ---
@@ -621,7 +644,7 @@ NaN is not a legal [key] in a table.
 Nil
 ---
 
-One of the eight types of Lua. There is only one value of that type,
+One of the eight types of Lua. There is only one value of this type,
 also called `nil`. Its purpose is to act as a placeholder where a value
 is needed, but no proper value is available.
 
@@ -695,11 +718,13 @@ might have. Most patterns are instantly recognizable by the many percent
 signs in them.
 
 The [string] library contains several functions that exploit patterns.
+[Manual §6.4.1](http://www.lua.org/manual/5.3/manual.html#6.4.1)
 
 Precedence
 ----------
 
 A pecking order of Lua [operators](#operation).
+[Manual §3.4.8](http://www.lua.org/manual/5.3/manual.html#3.4.8)
 
 Priority
 --------
@@ -762,6 +787,7 @@ i.e. recognized by the compiler. The scope starts when the variable
 is declared and goes to just before an unmatched `end`, or up to and 
 including an unmatched `until`. The `end` can be matched by a previous 
 `begin`, `if`, `while` or `function`.
+[Manual §3.5](http://www.lua.org/manual/5.3/manual.html#3.5)
 
     local a,b    -- a and b are now visible
     begin
@@ -796,6 +822,7 @@ Sequence
 1. (Loosely) some items coming one after the other.
 2. An [escape] sequence.
 3. A table with exactly one [border].
+[Manual §3.4.7](http://www.lua.org/manual/5.3/manual.html#3.4.7)
 
     {1,2,3,4}    -- a sequence: border at index 4
     {1,2,nil,4}  -- not a sequence: borders at index 2 and 4
@@ -816,7 +843,7 @@ or **command window**.
 Statement
 ---------
 
-A part of a chunk that cannot be split any further into smaller chunks.
+A part of a [chunk] that cannot be split any further into smaller chunks.
 (This definition is a loose one: for a precise definition, one needs
 to study the syntax of Lua). Lua is unusual in that the statement 
 separator ';'  is almost entirely optional.
@@ -862,7 +889,10 @@ eight types of Lua. The keys in a table are distinct. If the value is
         a.r = nil    -- delete the entry with key "r"
 
 2. `table` is a standard library containing functions that involve
-[sequence]s. Those functions _cannot_ be called using 
+[sequence]s. 
+[Manual §6.6](http://www.lua.org/manual/5.3/manual.html#6.6)
+
+Those functions _cannot_ be called using 
 [object-oriented](#method) syntax straight off, but you can do it with
 [metatables](metamethod).
 
@@ -888,6 +918,7 @@ Truth
 
 The property whether a value counts as true or false in an `if` statement
 or a [logical] [operation].
+[Manual §3.4.5](http://www.lua.org/manual/5.3/manual.html#3.4.5)
 
 `nil` and `false` count as false, all other values (including 0 and NaN)
 count as true.
@@ -902,6 +933,7 @@ The bare contents of an array, without delimiters.
 
 May appear in as a [parameter] list, an [argument] list, a return list, 
 the right-hand side of an assignment, or inside a table [constructor].
+[Manual §3.4.11](http://www.lua.org/manual/5.3/manual.html#3.4.11)
 
 A tuple is not a [first-class value]: it is several values, not thought
 of as comprising a whole.
@@ -914,6 +946,7 @@ A classification of [value]s as one of [nil], [boolean], [number],
 
 The type of a value determines how it is stored in the computer, what 
 [operation]s on it are allowed, and how it is represented when printed.
+[Manual §2.1](http://www.lua.org/manual/5.3/manual.html#2.1)
 
 Unary
 -----
@@ -943,13 +976,11 @@ A block of memory that can only be [access]ed via its own [method]s.
 One of the eight types of Lua.
 
 The definition of a userdata and the basic methods for accessing it 
-need to be written in the API. A userdata can be **full** (i.e.
+need to be written in the [API]. A userdata can be **full** (i.e.
 it can be manipulated from Lua) or **light** (i.e. all Lua can do 
 with it is to determine whether two values are raw equal). These are
 not true [subtype]s since they are treated as one type inside Lua
-and as two types inside the [API].
-
-The topic is too advanced to explain any further in this Glossary.
+and as two types inside the API.
 
 Value 
 ------
@@ -1012,16 +1043,16 @@ equivalent to one blank.
 Zero
 ----
 
-Zero is a unique number, having three different representations that
-are all equal.
+Zero is a unique number, having three representations that
+are all different, but equal.
 
     0          -- integer zero
     0.         -- floating-point zero
     -0.        -- negative zero
 
 They can be distinguished by programming tricks, but only the integer
-zero can be a table [key]. Either of the others will be silently coerced
-to an integer.
+zero can be a table [key]. Either of the others will be silently 
+[coerced](coercion) to an integer.
 
     c = {[-0.]=true}
     next(c)    --> 0   true
