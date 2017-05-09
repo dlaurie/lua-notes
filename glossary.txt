@@ -1,14 +1,16 @@
 % A glossary of some essential Lua terms
 % Dirk Laurie 
-% 28 April 2017, revised 7 May 2017
+% 28 April 2017, revised 9 May 2017
 
 This Glossary covers those terms in [Lua](http://www.lua.org/about.html) 
 5.3 that are necessary to refer to when reading 
-the [User's Manual](http://www.lua.org/manual/5.3).
+the [User's Manual](http://www.lua.org/manual/5.3). It also contains 
+a few terms that, while not actually used in the manual, often are used 
+in posts on Lua-L, the Lua mailing list `<lua-l-lists.lua.org>`
 
-The selection of topics is based on one posted on the Lua mailing list 
-`<lua-l-lists.lua.org>` by "Adel" on 24 April 2017. It does not cover 
-advanced concepts. You must grok those from the Manual. 
+The selection of topics is based on one posted on Lua-L by "Adel" on 
+24 April 2017. It does not cover advanced concepts. You must grok those 
+from the Manual. 
 
 Many of these terms occur in other computer [language]s too. Prior 
 knowledge of how the term is used elsewhere may help you to understand
@@ -25,6 +27,11 @@ Access
 ------
 
 To read or write (a variable, table etc).
+
+Allocate
+--------
+
+To reserve a block of [memory] for use by a particular running program.
 
 API
 ---
@@ -287,7 +294,13 @@ There is therefore always a _pair_ of delimiters.
     'This too'
     [===[ And this ]===]               -- the same number (>0) of equal signs
     function (x,y) return 'foo' end    -- `function`, `end` are delimiters
-    
+
+Distinct
+--------
+
+1. (of two values) Not [equal].
+2. (of a collection of values) Not containing two equal values.
+   
 Dummy
 -----
 
@@ -306,6 +319,18 @@ An abbreviation for "environment". The table in which currently visible
 global variables are kept. 
 [Manual §2.2](http://www.lua.org/manual/5.3/manual.html#2.2)
 
+Equal
+-----
+
+(of two values `a` and `b`) Such that `a==b` evaluates to `true`.
+
+One of the subtlest concepts in Lua. 
+[Manual §3.4.4](http://www.lua.org/manual/5.3/manual.html#3.4.4)
+
+    1 == 1.0         --> true (integer vs float does not matter)
+    {} == {}         --> false (two new empty tables)
+    'abc' == 'abc'   --> true (strings are not reference types)
+    0/0 == 0/0       --> false (NaN is not equal to itself) 
 
 Escape
 ------
@@ -349,7 +374,6 @@ A file may contain [text], in which case it is a text file. Otherwise
 it is a [binary] file.
 [Manual §6.8](http://www.lua.org/manual/5.3/manual.html#6.8)
 
-
 First-class value
 -----------------
 
@@ -369,6 +393,12 @@ A subtype of [number] that represents a number as a **mantissa** (i.e.
 a number between 0.5 and 1) multiplied by a positive or negative power
 of 2. Integers up to about 9e15 can be represented exactly.
 
+Free
+----
+
+To inform the memory manager that an [allocate]d block of 
+[memory] is no longer required.
+
 Function
 --------
 
@@ -386,6 +416,14 @@ See [Declaration], [Parameter], [Argument], [Scope], [Closure].
 On startup, _G is a [global] variable equal to [_ENV](#env). There are 
 no rules for _G. The name might be an abbreviation for "global", but 
 Lua does not actually use it for any purpose.
+
+Garbage
+-------
+
+[Memory] which is allocated but no longer needed.
+
+Lua has an internal function called a **garbage collector** which
+regularly frees such memory for reuse.
 
 Global
 ------
@@ -411,16 +449,24 @@ instantly reset to `nil`.
 Identifier
 ----------
 
-A synonym for [name]. The term also has a special meaning in the API.
+1. A word in Lua code that starts with a letter or an underscore, after
+which only letters, underscores and digits are allowed.
+
+        Catch_22  -- But not 'Catch-22': hyphens not allowed
+        _ENV      -- Global names used by the system look like this.
+        _VERSION  -- Users should avoid the underscore-capitals pattern.
+
+2. The term has a different special meaning in the [API] and [debug] library.
 
 Implementation
 --------------
 
-The way the details of Lua are handled on a specific computer. You are
-not supposed to know what they are, and if you do know, you are not
-allowed to rely on that knowledge. So I will not even try to explain
+The way the details of Lua are handled on a specific computer. 
+
+You are not supposed to know what they are, and if you do know, you are 
+not allowed to rely on that knowledge. So I will not even try to explain
 **implementation details** like _endianness_, _word size_, _array part_, 
-_hash part_, etc.
+_hash part_, etc. But see [Internalize] and [Memoize].
  
 Index
 -----
@@ -467,6 +513,14 @@ Integer
 A subtype of [number] that can represent integers up to about 9e18 
 exactly. The three extra digits come at the expense of not being able
 to represent anything except integers.
+
+Internalize
+-----------
+
+To store in a hidden special-purpose table.
+
+An [implementation] detail of Lua, used for efficient storage and
+comparison of strings.
 
 Interpret
 ---------
@@ -555,6 +609,36 @@ operations.
 
     v = a.k          -- an error if a is nil
     v = a and a.k    -- nil if a is nil
+
+Memoize
+-------
+
+To store the result of a function call in a table [upvalue] so that, 
+next time, it can be looked up rather than re-calculated.
+
+    do
+      local cache = {}
+      function myfunc(arg)
+        local result = cache[arg]
+        if result == nil then
+          -- calculate 'result', read it from a database on your
+          -- computer, query the Internet, whatever.
+        end
+        return result
+      end
+    end
+       
+Memory
+------
+
+The part of a computer in which data is stored only while your 
+program is running. 
+
+Memory is thought of as [byte]s numbered from 1 upwards to several
+trillions and beyond. Those numbers are known as **addresses**.
+
+Memory is [allocate]d by a **memory manager**, which at the lowest
+level is the system itself. See also [Free].
       
 Metamethod
 ----------
@@ -632,7 +716,7 @@ output (in some implementations, even the nonsensical '-nan' may
 be printed). If you need the notation NaN, assign such 
 a value to the name. 
 
-NaN is not a legal [key] in a table.
+NaN is not a legal [key] in a table, but counts as [tue](truth).
 
     NaN = 0/0
     NaN + 1        -- NaN. All arithmetic operations involving NaN have
@@ -650,6 +734,15 @@ is needed, but no proper value is available.
 
     tbl = {1,4,nil,nil,10}         -- tbl[5] is 10
     fct = load(code,nil,nil,data)  -- the data table must be the 4th argument
+
+None
+----
+
+1. The absence of any value whatsoever, not even `nil`. Can only
+be tested for in a [vararg] or in the [API].
+2. A user-defined [sentinel] used instead of [nil] as a value in 
+a table so that the key is not deleted. In some other languages, 
+a predefined value is supplied for that purpose.
 
 Number
 ------
@@ -720,6 +813,14 @@ signs in them.
 The [string] library contains several functions that exploit patterns.
 [Manual §6.4.1](http://www.lua.org/manual/5.3/manual.html#6.4.1)
 
+Pointer
+-------
+
+The actual address in [memory] where something is stored. Usually 
+displayed in hexadecimal notation.
+
+    math    --> table: 0x22a8aa0
+
 Precedence
 ----------
 
@@ -760,6 +861,20 @@ Raw
 
 As originally defined, i.e. ignoring metamethods.
 
+Reference
+---------
+
+A [pointer] that looks like a [variable] to the programmer.
+
+In Lua, the types [function], [table], [coroutine] and [userdata]
+are accessed by reference.
+
+    a = {name="Jack"}   -- the variable 'a' has a reference
+    a                   --> table: 0x22c8810
+    b = a               -- 'b' now also has that reference
+    b                   --> table: 0x22c8810
+    c = {name="Jack"}   -- 'c' has a reference to a different table
+    c                   --> table: 0x22c9ba0
 
 Release
 -------
@@ -851,7 +966,6 @@ separator ';'  is almost entirely optional.
     a = b; func(1,2,4)    -- two statements, separated by a semicolon
     a = b func(1,2,4)     -- still two statements
 
-
 String
 ------
 
@@ -882,9 +996,11 @@ Table
 -----
 
 1. A collection of ([key],[value]) pairs, called **entries**. One of the 
-eight types of Lua. The keys in a table are distinct. If the value is 
-[nil], the entry is not actually stored, and the key is lost. See also 
-[array], [sequence].
+eight types of Lua. 
+
+The keys in a table are [distinct]. If the value is [nil], the entry
+may not actually be stored, and the key is lost. See also [Array], 
+[Sequence], [None].
 
         a.r = nil    -- delete the entry with key "r"
 

@@ -7,133 +7,26 @@
   <meta name="author" content="Dirk Laurie" />
   <title>A glossary of some essential Lua terms</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="pandoc.css" type="text/css" />
-     <link rel="stylesheet" href="prismjs.css" type="text/css" />
-     <link rel="stylesheet" href="local.css" type="text/css" />
 </head>
 <body>
 <div id="header">
 <h1 class="title">A glossary of some essential Lua terms</h1>
 <h2 class="author">Dirk Laurie</h2>
-<h3 class="date">28 April 2017, revised 4 May 2017</h3>
+<h3 class="date">28 April 2017, revised 9 May 2017</h3>
 </div>
-<div id="TOC">
-<ul>
-<li><a href="#access">Access</a></li>
-<li><a href="#api">API</a></li>
-<li><a href="#application">Application</a></li>
-<li><a href="#argument">Argument</a></li>
-<li><a href="#array">Array</a></li>
-<li><a href="#binary">Binary</a></li>
-<li><a href="#block">Block</a></li>
-<li><a href="#boolean">Boolean</a></li>
-<li><a href="#border">Border</a></li>
-<li><a href="#byte">Byte</a></li>
-<li><a href="#bytecode">Bytecode</a></li>
-<li><a href="#call">Call</a></li>
-<li><a href="#chunk">Chunk</a></li>
-<li><a href="#class">Class</a></li>
-<li><a href="#closure">Closure</a></li>
-<li><a href="#code">Code</a></li>
-<li><a href="#coercion">Coercion</a></li>
-<li><a href="#compare">Compare</a></li>
-<li><a href="#compile">Compile</a></li>
-<li><a href="#constant">Constant</a></li>
-<li><a href="#constructor">Constructor</a></li>
-<li><a href="#coroutine">Coroutine</a></li>
-<li><a href="#data-structure">Data structure</a></li>
-<li><a href="#debug">Debug</a></li>
-<li><a href="#declaration">Declaration</a></li>
-<li><a href="#definition">Definition</a></li>
-<li><a href="#delimit">Delimit</a></li>
-<li><a href="#dummy">Dummy</a></li>
-<li><a href="#element">Element</a></li>
-<li><a href="#env">_ENV</a></li>
-<li><a href="#escape">Escape</a></li>
-<li><a href="#execute">Execute</a></li>
-<li><a href="#expression">Expression</a></li>
-<li><a href="#file">File</a></li>
-<li><a href="#first-class-value">First-class value</a></li>
-<li><a href="#floating-point">Floating-point</a></li>
-<li><a href="#function">Function</a></li>
-<li><a href="#g">_G</a></li>
-<li><a href="#global">Global</a></li>
-<li><a href="#identifier">Identifier</a></li>
-<li><a href="#implementation">Implementation</a></li>
-<li><a href="#index">Index</a></li>
-<li><a href="#inf">Inf</a></li>
-<li><a href="#initialize">Initialize</a></li>
-<li><a href="#integer">Integer</a></li>
-<li><a href="#interpret">Interpret</a></li>
-<li><a href="#invoke">Invoke</a></li>
-<li><a href="#key">Key</a></li>
-<li><a href="#language">Language</a></li>
-<li><a href="#library">Library</a></li>
-<li><a href="#literal">Literal</a></li>
-<li><a href="#load">Load</a></li>
-<li><a href="#local">Local</a></li>
-<li><a href="#logical">Logical</a></li>
-<li><a href="#metamethod">Metamethod</a></li>
-<li><a href="#method">Method</a></li>
-<li><a href="#module">Module</a></li>
-<li><a href="#mutable">Mutable</a></li>
-<li><a href="#name">Name</a></li>
-<li><a href="#nan">NaN</a></li>
-<li><a href="#nil">Nil</a></li>
-<li><a href="#number">Number</a></li>
-<li><a href="#object">Object</a></li>
-<li><a href="#operation">Operation</a></li>
-<li><a href="#pair">Pair</a></li>
-<li><a href="#parameter">Parameter</a></li>
-<li><a href="#parentheses">Parentheses</a></li>
-<li><a href="#pass-to">Pass to</a></li>
-<li><a href="#pattern">Pattern</a></li>
-<li><a href="#precedence">Precedence</a></li>
-<li><a href="#priority">Priority</a></li>
-<li><a href="#procedure">Procedure</a></li>
-<li><a href="#program">Program</a></li>
-<li><a href="#prompt">Prompt</a></li>
-<li><a href="#raw">Raw</a></li>
-<li><a href="#release">Release</a></li>
-<li><a href="#repl">REPL</a></li>
-<li><a href="#scope">Scope</a></li>
-<li><a href="#semi-global">Semi-global</a></li>
-<li><a href="#sentinel">Sentinel</a></li>
-<li><a href="#sequence">Sequence</a></li>
-<li><a href="#shadow">Shadow</a></li>
-<li><a href="#shell">Shell</a></li>
-<li><a href="#statement">Statement</a></li>
-<li><a href="#string">String</a></li>
-<li><a href="#subtype">Subtype</a></li>
-<li><a href="#table">Table</a></li>
-<li><a href="#text">Text</a></li>
-<li><a href="#thread">Thread</a></li>
-<li><a href="#truth">Truth</a></li>
-<li><a href="#tuple">Tuple</a></li>
-<li><a href="#type">Type</a></li>
-<li><a href="#unary">Unary</a></li>
-<li><a href="#upvalue">Upvalue</a></li>
-<li><a href="#userdata">Userdata</a></li>
-<li><a href="#value">Value</a></li>
-<li><a href="#vararg">Vararg</a></li>
-<li><a href="#variable">Variable</a></li>
-<li><a href="#virtual-machine">Virtual machine</a></li>
-<li><a href="#visible">Visible</a></li>
-<li><a href="#whitespace">Whitespace</a></li>
-<li><a href="#zero">Zero</a></li>
-</ul>
-</div>
-<p>This Glossary covers those terms in <a href="http://www.lua.org/about.html">Lua</a> 5.3 that are necessary to refer to when reading the <a href="http://www.lua.org/manual/5.3">User's Manual</a>.</p>
-<p>The selection of topics is based on one posted on the Lua mailing list <code>&lt;lua-l-lists.lua.org&gt;</code> by &quot;Adel&quot; on 24 April 2017. It does not cover advanced concepts, except to point out that they are advanced. You must grok those from the Manual.</p>
+<p>This Glossary covers those terms in <a href="http://www.lua.org/about.html">Lua</a> 5.3 that are necessary to refer to when reading the <a href="http://www.lua.org/manual/5.3">User's Manual</a>. It also contains a few terms that, while not actually used in the manual, often are used in posts on Lua-L, the Lua mailing list <code>&lt;lua-l-lists.lua.org&gt;</code></p>
+<p>The selection of topics is based on one posted on Lua-L by &quot;Adel&quot; on 24 April 2017. It does not cover advanced concepts. You must grok those from the Manual.</p>
 <p>Many of these terms occur in other computer <a href="#language">language</a>s too. Prior knowledge of how the term is used elsewhere may help you to understand how it is used in Lua; on the other hand, it may put preconceptions in your mind that are not applicable to Lua.</p>
 <p>I mainly explain how the term is used in Lua, not in general. <em>This Glossary may put preconceptions in your mind that are not applicable elsewhere.</em></p>
 <p>Just keep an open mind, that's all.</p>
 <h2 id="access">Access</h2>
 <p>To read or write (a variable, table etc).</p>
+<h2 id="allocate">Allocate</h2>
+<p>To reserve a block of <a href="#memory">memory</a> for use by a particular running program.</p>
 <h2 id="api">API</h2>
 <p>Acronym for Application Program Interface. The <a href="#function">function</a>s, <a href="#type">type</a>s and <a href="#data-structure">data structure</a>s to be used when writing C code that interacts with Lua.</p>
 <p>Understanding the API requires a knowledge of C. It is therefore not covered in this Glossary.</p>
-<p>APIs for other <a href="#language">language</a>s (C++, Pascal etc) also exist, but the official documentation (which fills half the <a href="http://www.lua.org/manual/5.3">Lua manual</a>) is for the C API.</p>
+<p>APIs for other <a href="#language">language</a>s (C++, Pascal etc) also exist, but the official documentation (which fills half the <a href="http://www.lua.org/manual/5.3/manual.html#4">Lua manual</a>) is for the C API.</p>
 <h2 id="application">Application</h2>
 <p>A <a href="#program">program</a> designed for use by people that know next to nothing about computers. Familiarly shortened to <strong>app</strong> by such users.</p>
 <h2 id="argument">Argument</h2>
@@ -156,12 +49,18 @@ A.name     -- a synonym for A[&#39;name&#39;]</code></pre>
 <li>(When talking about <a href="#operation">operation</a>s) Involving two values.</li>
 </ol>
 <h2 id="block">Block</h2>
-<p>A chunk of code enclosed by a pair of delimiters like <code>do ... end</code>, <code>function ... end</code>, <code>then ... else</code> etc.</p>
+<p>A chunk of code enclosed by a pair of delimiters like <code>do ... end</code>, <code>function ... end</code>, <code>then ... else</code> etc. <a href="http://www.lua.org/manual/5.3/manual.html#3.3.1">Manual §3.3.</a></p>
 <h2 id="boolean">Boolean</h2>
 <p>One of the eight types of Lua. A boolean value can only be <code>true</code> or <code>false</code>.</p>
 <p>The result of a <a href="#compare">comparison</a> <a href="#operation">operation</a> is always boolean.</p>
 <h2 id="border">Border</h2>
 <p>Any natural <a href="#index">index</a> in a table where a non-nil value is followed by a nil value. When the value at index 1 is nil, 0 is a border regardless of the value at index 0.</p>
+<h2 id="bug">Bug</h2>
+<ol style="list-style-type: decimal">
+<li>An aspect of program behaviour that does not conform to its specification.</li>
+<li>An error in the program design that causes said behaviour.</li>
+<li>(blunderingly) Something that does not behave as you wanted or imagined.</li>
+</ol>
 <h2 id="byte">Byte</h2>
 <p>The smallest individually <a href="#access">access</a>ible unit on most computers, consisting of 8 binary digits.</p>
 <h2 id="bytecode">Bytecode</h2>
@@ -207,13 +106,16 @@ tbl = {[3.0]=true}  -- the float will be coerced to integer</code></pre>
 <h2 id="coroutine">Coroutine</h2>
 <ol style="list-style-type: decimal">
 <li>A <a href="#thread">thread</a> containing a <a href="#function">function</a> that can <strong>yield</strong> (temporarily stop running) and <strong>resume</strong> (continue where it left off), rather like a train, dropping off some values and taking aboard new ones. One of the eight types of Lua.</li>
-<li>One of the standard <a href="library">libraries</a> of Lua. Coroutines can only be created and used via routines in this library. The subject is too advanced to discuss in detail.</li>
+<li>One of the standard <a href="library">libraries</a> of Lua. Coroutines can only be created and used via routines in this library. <a href="http://www.lua.org/manual/5.3/manual.html#2.6">Manual §2.6</a></li>
 </ol>
 <h2 id="data-structure">Data structure</h2>
 <p>A collection of <a href="#value">Values</a> such that the collection can be referred to as a whole, but the values in it can also be referred to individually.</p>
 <p>In Lua, the only data structure is a <a href="#table">table</a>, but it is also possible to code one's own data structure in C and make it visible to Lua as a <a href="#userdata">userdata</a>.</p>
 <h2 id="debug">Debug</h2>
-<p>One of the standard <a href="library">libraries</a> of Lua. It contains functions necessary to look into details of <a href="#implementation">implementation</a> not normally visible, and functions that can change values that normally are im<a href="#mutable">mutable</a>.</p>
+<ol style="list-style-type: decimal">
+<li>To remove <a href="#bug">bug</a>s.</li>
+<li>One of the standard <a href="library">libraries</a> of Lua. It contains functions necessary to look into details of <a href="#implementation">implementation</a> not normally visible, and functions that can change values that normally are im<a href="#mutable">mutable</a>.</li>
+</ol>
 <h2 id="declaration">Declaration</h2>
 <p>A statement that specifies that one or more names have <a href="#local">local</a> <a href="#scope">scope</a> and optionally <a href="#initialize">initialize</a>s them.</p>
 <pre><code>local x, y = 1  -- x gets the value 1, y gets the value nil.</code></pre>
@@ -235,12 +137,24 @@ end     -- definition stops here </code></pre>
 &#39;This too&#39;
 [===[ And this ]===]               -- the same number (&gt;0) of equal signs
 function (x,y) return &#39;foo&#39; end    -- `function`, `end` are delimiters</code></pre>
+<h2 id="distinct">Distinct</h2>
+<ol style="list-style-type: decimal">
+<li>(of two values) Not <a href="#equal">equal</a>.</li>
+<li>(of a collection of values) Not containing two equal values.</li>
+</ol>
 <h2 id="dummy">Dummy</h2>
 <p>Something supplied <em>pro forma</em> but not actually used.</p>
 <h2 id="element">Element</h2>
 <p>One of the values in an <a href="#array">array</a> or a <a href="#sequence">sequence</a>, or (more loosely) in any collection of values.</p>
 <h2 id="env">_ENV</h2>
-<p>An abbreviation for &quot;environment&quot;. The table in which currently visible global variables are kept.</p>
+<p>An abbreviation for &quot;environment&quot;. The table in which currently visible global variables are kept. <a href="http://www.lua.org/manual/5.3/manual.html#2.2">Manual §2.2</a></p>
+<h2 id="equal">Equal</h2>
+<p>(of two values <code>a</code> and <code>b</code>) Such that <code>a==b</code> evaluates to <code>true</code>.</p>
+<p>One of the subtlest concepts in Lua. <a href="http://www.lua.org/manual/5.3/manual.html#3.4.4">Manual §3.4.4</a></p>
+<pre><code>1 == 1.0         --&gt; true (integer vs float does not matter)
+{} == {}         --&gt; false (two new empty tables)
+&#39;abc&#39; == &#39;abc&#39;   --&gt; true (strings are not reference types)
+0/0 == 0/0       --&gt; false (NaN is not equal to itself) </code></pre>
 <h2 id="escape">Escape</h2>
 <p>A technique to encode a character that has a special meaning or is hard to type by an <strong>escape sequence</strong> consisting of several other characters.</p>
 <pre><code>&quot;\x9a&quot;            -- Hexadecimal encoding of a byte
@@ -250,7 +164,7 @@ function (x,y) return &#39;foo&#39; end    -- `function`, `end` are delimiters</
 <h2 id="execute">Execute</h2>
 <p>Actually do some work. See <a href="#function">function</a>.</p>
 <h2 id="expression">Expression</h2>
-<p>An expression is a piece of Lua code, shorter than a statement, that specifies how a value should be calculated.</p>
+<p>A piece of Lua code, shorter than a statement, that specifies how a value should be calculated. <a href="http://www.lua.org/manual/5.3/manual.html#3.4">Manual §3.4</a></p>
 <pre><code>(2+2)^5                         -- arithmetic expression
 age &lt;= 65                       -- boolean expression
 &#39;--&#39; .. &quot; this is&quot;              -- string expression
@@ -258,7 +172,7 @@ age &lt;= 65                       -- boolean expression
       -- first value is used, and you need the parentheses for that)</code></pre>
 <h2 id="file">File</h2>
 <p>Data stored outside one's program, usually on a disk, under the control of the operating system.</p>
-<p>A file may contain <a href="#text">text</a>, in which case it is a text file. Otherwise it is a <a href="#binary">binary</a> file.</p>
+<p>A file may contain <a href="#text">text</a>, in which case it is a text file. Otherwise it is a <a href="#binary">binary</a> file. <a href="http://www.lua.org/manual/5.3/manual.html#6.8">Manual §6.8</a></p>
 <h2 id="first-class-value">First-class value</h2>
 <p>A <a href="#value">value</a> that can be:</p>
 <ul>
@@ -270,24 +184,36 @@ age &lt;= 65                       -- boolean expression
 <p>There are minor exceptions: <a href="#nil">nil</a> and <a href="#nan">NaN</a> may not be used as a key.</p>
 <h2 id="floating-point">Floating-point</h2>
 <p>A subtype of <a href="#number">number</a> that represents a number as a <strong>mantissa</strong> (i.e. a number between 0.5 and 1) multiplied by a positive or negative power of 2. Integers up to about 9e15 can be represented exactly.</p>
+<h2 id="free">Free</h2>
+<p>To inform the memory manager that an <a href="#allocate">allocate</a>d block of <a href="#memory">memory</a> is no longer required.</p>
 <h2 id="function">Function</h2>
 <ol style="list-style-type: decimal">
 <li>A self-contained part of a program that performs a particular task.</li>
 <li>One of the eight types of Lua. Lua is unusual in that a function is a <a href="#first-class-value">first-class value</a>.</li>
 </ol>
-<p>See <a href="#declaration">Declaration</a>, <a href="#parameter">Parameter</a>, <a href="#argument">Argument</a>, <a href="#scope">Scope</a>, <a href="#closure">Closure</a>.</p>
+<p>See <a href="#declaration">Declaration</a>, <a href="#parameter">Parameter</a>, <a href="#argument">Argument</a>, <a href="#scope">Scope</a>, <a href="#closure">Closure</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.3.6">Manual §3.3.6</a>, <a href="http://www.lua.org/manual/5.3/manual.html#3.4.10">§3.4.10</a>.</p>
 <h2 id="g">_G</h2>
 <p>On startup, _G is a <a href="#global">global</a> variable equal to <a href="#env">_ENV</a>. There are no rules for _G. The name might be an abbreviation for &quot;global&quot;, but Lua does not actually use it for any purpose.</p>
+<h2 id="garbage">Garbage</h2>
+<p><a href="#memory">Memory</a> which is allocated but no longer needed.</p>
+<p>Lua has an internal function called a <strong>garbage collector</strong> which regularly frees such memory for reuse.</p>
 <h2 id="global">Global</h2>
-<p>Strictly: having unlimited <a href="#scope">scope</a>. In practice the term refers to perhaps the most idiosyncratic feature of Lua.</p>
+<p>Strictly: having unlimited <a href="#scope">scope</a>. In practice the term refers to perhaps the most idiosyncratic feature of Lua. <a href="http://www.lua.org/manual/5.3/manual.html#2.2">Manual §2.2</a></p>
 <p><em>When a name is not in any local scope, not even as an upvalue, Lua looks for a key of that name in a table called <a href="#env">_ENV</a></em> which is guaranteed always to be in scope. The entry in _ENV with the given name is the <strong>global variable</strong> of that name.</p>
 <pre><code>string          -- these two notations are 
 _ENV.string     -- equivalent</code></pre>
 <p>There is nothing pervasive about global variables. All their values may be switched at the drop of a hat by simply assigning a different table to _ENV. If that table is empty, all global variables are instantly reset to <code>nil</code>.</p>
 <h2 id="identifier">Identifier</h2>
-<p>A synonym for <a href="#name">name</a>. The term also has a special meaning in the API.</p>
+<ol style="list-style-type: decimal">
+<li><p>A word in Lua code that starts with a letter or an underscore, after which only letters, underscores and digits are allowed.</p>
+<pre><code>Catch_22  -- But not &#39;Catch-22&#39;: hyphens not allowed
+_ENV      -- Global names used by the system look like this.
+_VERSION  -- Users should avoid the underscore-capitals pattern.</code></pre></li>
+<li><p>The term has a different special meaning in the <a href="#api">API</a> and <a href="#debug">debug</a> library.</p></li>
+</ol>
 <h2 id="implementation">Implementation</h2>
-<p>The way the details of Lua are handled on a specific computer. You are not supposed to know what they are, and if you do know, you are not allowed to rely on that knowledge. So I will not even try to explain <strong>implementation details</strong> like <em>endianness</em>, <em>word size</em>, <em>array part</em>, <em>hash part</em>, etc.</p>
+<p>The way the details of Lua are handled on a specific computer.</p>
+<p>You are not supposed to know what they are, and if you do know, you are not allowed to rely on that knowledge. So I will not even try to explain <strong>implementation details</strong> like <em>endianness</em>, <em>word size</em>, <em>array part</em>, <em>hash part</em>, etc. But see <a href="#internalize">Internalize</a> and <a href="#memoize">Memoize</a>.</p>
 <h2 id="index">Index</h2>
 <ol style="list-style-type: decimal">
 <li>The position of a specific <a href="#byte">byte</a> in a <a href="#string">string</a>.</li>
@@ -310,6 +236,9 @@ math.type(Inf)    -- float</code></pre>
 <p>To assign a <a href="#value">value</a> to a <a href="#name">name</a> simultaneously with its <a href="#declare">declaration</a>. Uninitialized names are treated as having value <a href="#nil">nil</a>.</p>
 <h2 id="integer">Integer</h2>
 <p>A subtype of <a href="#number">number</a> that can represent integers up to about 9e18 exactly. The three extra digits come at the expense of not being able to represent anything except integers.</p>
+<h2 id="internalize">Internalize</h2>
+<p>To store in a hidden special-purpose table.</p>
+<p>An <a href="#implementation">implementation</a> detail of Lua, used for efficient storage and comparison of strings.</p>
 <h2 id="interpret">Interpret</h2>
 <p>To compile code and execute it in one go, especially inside a <a href="#repl">REPL</a>. An <em>interpreter</em> is a program that does this. <em>The interpreter</em> is the program <code>lua</code> bundled with the Lua distribution.</p>
 <h2 id="invoke">Invoke</h2>
@@ -321,34 +250,51 @@ math.type(Inf)    -- float</code></pre>
 <p>Examples: Ada, APL, Basic, C, Fortran, Go, Guile, Java, Lisp, Lua, Pascal, Python, Ruby, Scheme.</p>
 <h2 id="library">Library</h2>
 <p>A <a href="#table">table</a> of <a href="#function">function</a>s that serve a common purpose.</p>
-<p>Libraries extend the power of Lua. Apart from the <a href="#global">global</a> library, a number of standard libraries are automatically <a href="#load">load</a>ed when Lua starts up.</p>
+<p>Libraries extend the power of Lua. Apart from the <a href="#global">global</a> library, a number of standard libraries are automatically <a href="#load">load</a>ed when Lua starts up. <a href="http://www.lua.org/manual/5.3/manual.html#6">Manual §6</a></p>
 <p>Custom libraries can also be returned by a <a href="#module">module</a>.</p>
 <h2 id="literal">Literal</h2>
-<p>An expression that defines a <a href="#constant">constant</a> of type <a href="#string">string</a>, <a href="#number">number</a> or <a href="#table">table</a>.</p>
+<p>An <a href="#expression">expression</a> that defines a <a href="#constant">constant</a> of type <a href="#string">string</a>, <a href="#number">number</a> or <a href="#table">table</a>.</p>
 <pre><code>1.3475e4                          -- floating-point literal
 12346                             -- integer literal
 &quot;the quick brown fox&quot;             -- string literal
 {&#39;Jock&#39;,&#39;Bill&#39;,name=&#39;Friends&#39;}    -- table literal</code></pre>
 <h2 id="load">Load</h2>
-<p>To make a function, or a table of functions, available to Lua. There are several ways to do this. All are considered too advanced for further explanation in this Glossary.</p>
+<p>To make a function, or a table of functions, available to Lua. There are several ways to do this. <a href="http://www.lua.org/manual/5.3/manual.html#6.1">Manual §6.1</a></p>
 <pre><code>fct = load &quot;return &#39;Hello, World&#39;&quot;   -- load a string
 fct = loadfile &quot;myfunc.lua&quot;          -- load a file
 fct = require &quot;mylib&quot;                -- load a library</code></pre>
 <h2 id="local">Local</h2>
-<p>Having limited <a href="#scope">scope</a>.</p>
+<p>Having limited <a href="#scope">scope</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.3.7">Manual §3.3.7</a></p>
 <h2 id="logical">Logical</h2>
-<p>The <a href="#operation">operation</a>s <code>and</code>, <code>or</code> and <code>not</code> are known as <strong>logical operations</strong>. They operate on all values, not only on <a href="#boolean">boolean</a>s. The result of <code>not</code> is boolean, but the result of the other operations is to select one of the operands.</p>
+<p>The <a href="#operation">operation</a>s <code>and</code>, <code>or</code> and <code>not</code> are known as <strong>logical operations</strong>. They operate on all values, not only on <a href="#boolean">boolean</a>s. The result of <code>not</code> is boolean, but the result of the other operations is to select one of the operands. <a href="http://www.lua.org/manual/5.3/manual.html#3.4.5">Manual §3.4.5</a></p>
 <p>Their action is determined by the <a href="#truth">truth</a> of the first value.</p>
 <pre><code>a and b   -- if a is false, then a (and don&#39;t evaluate b); else b
 a or b    -- if a is true, then a (and don&#39;t evaluate b); else b</code></pre>
 <p>The point about evaluation is important. It can be used to avoid illegal operations.</p>
 <pre><code>v = a.k          -- an error if a is nil
-v = a and a.k    -- nil if a is nil
-  </code></pre>
+v = a and a.k    -- nil if a is nil</code></pre>
+<h2 id="memoize">Memoize</h2>
+<p>To store the result of a function call in a table <a href="#upvalue">upvalue</a> so that, next time, it can be looked up rather than re-calculated.</p>
+<pre><code>do
+  local cache = {}
+  function myfunc(arg)
+    local result = cache[arg]
+    if result == nil then
+      -- calculate &#39;result&#39;, read it from a database on your
+      -- computer, query the Internet, whatever.
+    end
+    return result
+  end
+end
+   </code></pre>
+<h2 id="memory">Memory</h2>
+<p>The part of a computer in which data is stored only while your program is running.</p>
+<p>Memory is thought of as <a href="#byte">byte</a>s numbered from 1 upwards to several trillions and beyond. Those numbers are known as <strong>addresses</strong>.</p>
+<p>Memory is <a href="#allocate">allocate</a>d by a <strong>memory manager</strong>, which at the lowest level is the system itself. See also <a href="#free">Free</a>.</p>
 <h2 id="metamethod">Metamethod</h2>
-<p>A user-supplied function that is called to perform an <a href="#operation">operation</a>, bypassing the default action, usually because the operation would otherwise be undefined, but also when a <a href="#raw">raw</a> operation is to be supplanted by a customized one.</p>
+<p>A user-supplied function that is called to perform an <a href="#operation">operation</a>, bypassing the default action, usually because the operation would otherwise be undefined, but also when a <a href="#raw">raw</a> operation is to be supplanted by a customized one. <a href="http://www.lua.org/manual/5.3/manual.html#2.4">Manual §2.4</a></p>
 <p>Metamethods are kept in a <strong>metatable</strong>.</p>
-<p>Metamethods can be used (abused?) to customize Lua almost beyond recognition. The subject is too advanced for further explanation in this Glossary.</p>
+<p>Metamethods can be used (abused?) to customize Lua almost beyond recognition.</p>
 <h2 id="method">Method</h2>
 <p>A <a href="#function">function</a> in a <a href="#class">class</a> whose first <a href="#parameter">parameter</a> is an <a href="#object">object</a> of that class.</p>
 <p>A special notation, known as an <a href="#object">object-oriented</a> call, may be used to call a method.</p>
@@ -365,17 +311,17 @@ class.fct = function(self,x,y)
   -- code comes here
 end</code></pre>
 <h2 id="module">Module</h2>
-<p>A function that <a href="#load">load</a>s a library. The subject is too advanced for this Glossary.</p>
+<p>A function that <a href="#load">load</a>s a library. <a href="http://www.lua.org/manual/5.3/manual.html#6.3">Manual §6.3</a></p>
 <h2 id="mutable">Mutable</h2>
 <p>Capable of being changed during the running of a program.</p>
 <p><a href="#value">Value</a>s of type <a href="#nil">nil</a>, <a href="#boolean">boolean</a>, <a href="#number">number</a> and <a href="#string">string</a> are <strong>immutable</strong>. Values of type <a href="#coroutine">coroutine</a>, <a href="#table">table</a> and <a href="#userdata">userdata</a> are mutable. Values of type <a href="#function">function</a> are immutable except via the <a href="#debug">debug</a> library.</p>
 <h2 id="name">Name</h2>
 <p>A word in a Lua program that can be associated with a value.</p>
 <pre><code>x = 1.23    -- &#39;x&#39; is a name, 1.23 is a constant number value</code></pre>
-<p>Lua syntax demands that a name satisfy the rules for an <a href="#identifier">identifier</a>.</p>
+<p>Lua syntax demands that a name satisfy the rules for an <a href="#identifier">identifier</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.1">Manual §3.1</a></p>
 <h2 id="nan">NaN</h2>
 <p>Acronym for &quot;Not A Number&quot;. An exceptional value of type <a href="#number">number</a> (also written 'NAN' and 'nan'), which arises as the result of an undefinable arithmetic <a href="#operation">operation</a>. NaN is not a Lua keyword, but appears in output (in some implementations, even the nonsensical '-nan' may be printed). If you need the notation NaN, assign such a value to the name.</p>
-<p>NaN is not a legal <a href="#key">key</a> in a table.</p>
+<p>NaN is not a legal <a href="#key">key</a> in a table, but counts as <a href="truth">tue</a>.</p>
 <pre><code>NaN = 0/0
 NaN + 1        -- NaN. All arithmetic operations involving NaN have
                -- result NaN.
@@ -383,9 +329,14 @@ NaN &lt;= NaN     -- false. All comparison operations involving NaN have
                -- result false except the following.
 NaN ~= NaN     -- true. The only Lua value with this property.</code></pre>
 <h2 id="nil">Nil</h2>
-<p>One of the eight types of Lua. There is only one value of that type, also called <code>nil</code>. Its purpose is to act as a placeholder where a value is needed, but no proper value is available.</p>
+<p>One of the eight types of Lua. There is only one value of this type, also called <code>nil</code>. Its purpose is to act as a placeholder where a value is needed, but no proper value is available.</p>
 <pre><code>tbl = {1,4,nil,nil,10}         -- tbl[5] is 10
 fct = load(code,nil,nil,data)  -- the data table must be the 4th argument</code></pre>
+<h2 id="none">None</h2>
+<ol style="list-style-type: decimal">
+<li>The absence of any value whatsoever, not even <code>nil</code>. Can only be tested for in a <a href="#vararg">vararg</a> or in the <a href="#api">API</a>.</li>
+<li>A user-defined <a href="#sentinel">sentinel</a> used instead of <a href="#nil">nil</a> as a value in a table so that the key is not deleted. In some other languages, a predefined value is supplied for that purpose.</li>
+</ol>
 <h2 id="number">Number</h2>
 <p>One of the eight types of Lua. The possible values can be integers, floating-point numbers, Inf, -Inf, and NaN.</p>
 <pre><code>n = 1        -- integer
@@ -416,9 +367,12 @@ s = name .. id     -- &#39;..&#39; is the concatenation operator</code></pre>
 <p>See <a href="#argument">Argument</a>.</p>
 <h2 id="pattern">Pattern</h2>
 <p>A <a href="#string">string</a> that describes properties and substrings that another string might have. Most patterns are instantly recognizable by the many percent signs in them.</p>
-<p>The <a href="#string">string</a> library contains several functions that exploit patterns.</p>
+<p>The <a href="#string">string</a> library contains several functions that exploit patterns. <a href="http://www.lua.org/manual/5.3/manual.html#6.4.1">Manual §6.4.1</a></p>
+<h2 id="pointer">Pointer</h2>
+<p>The actual address in <a href="#memory">memory</a> where something is stored. Usually displayed in hexadecimal notation.</p>
+<pre><code>math    --&gt; table: 0x22a8aa0</code></pre>
 <h2 id="precedence">Precedence</h2>
-<p>A pecking order of Lua <a href="#operation">operators</a>.</p>
+<p>A pecking order of Lua <a href="#operation">operators</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.4.8">Manual §3.4.8</a></p>
 <h2 id="priority">Priority</h2>
 <p>The position of an <a href="#operation">operator</a> in the <a href="#precedence">precedence</a> table. Operators with higher priority are performed first.</p>
 <h2 id="procedure">Procedure</h2>
@@ -436,13 +390,22 @@ s = name .. id     -- &#39;..&#39; is the concatenation operator</code></pre>
 <p>A short message or symbol &gt; -- the usual Lua prompt &gt;&gt; -- the prompt when wat you typed was not enough name? -- a typical prompt issued by an appplication</p>
 <h2 id="raw">Raw</h2>
 <p>As originally defined, i.e. ignoring metamethods.</p>
+<h2 id="reference">Reference</h2>
+<p>A <a href="#pointer">pointer</a> that looks like a <a href="#variable">variable</a> to the programmer.</p>
+<p>In Lua, the types <a href="#function">function</a>, <a href="#table">table</a>, <a href="#coroutine">coroutine</a> and <a href="#userdata">userdata</a> are accessed by reference.</p>
+<pre><code>a = {name=&quot;Jack&quot;}   -- the variable &#39;a&#39; has a reference
+a                   --&gt; table: 0x22c8810
+b = a               -- &#39;b&#39; now also has that reference
+b                   --&gt; table: 0x22c8810
+c = {name=&quot;Jack&quot;}   -- &#39;c&#39; has a reference to a different table
+c                   --&gt; table: 0x22c9ba0</code></pre>
 <h2 id="release">Release</h2>
 <p>A version of a software package that is officially made available by its developers.</p>
 <p>Lua releases have three-part numbers, e.g. <strong>Lua 5.3.4</strong>. These are called <strong>minor releases</strong>; if the third part is dropped, it is called a <strong>major release</strong>, e.g. <strong>Lua 5.3</strong>. Each minor release is considered to be merely a bugfix of the previous one: no features are added or changed, and the <a href="#virtual-machine">virtual machine</a> is the same.</p>
 <h2 id="repl">REPL</h2>
 <p>Acronym for Read-Evaluate-Print Loop. Basically what the Lua <a href="#interpret">interpret</a>er does.</p>
 <h2 id="scope">Scope</h2>
-<p>The part of a program inside which a local variable is <strong>visible</strong>, i.e. recognized by the compiler. The scope starts when the variable is declared and goes to just before an unmatched <code>end</code>, or up to and including an unmatched <code>until</code>. The <code>end</code> can be matched by a previous <code>begin</code>, <code>if</code>, <code>while</code> or <code>function</code>.</p>
+<p>The part of a program inside which a local variable is <strong>visible</strong>, i.e. recognized by the compiler. The scope starts when the variable is declared and goes to just before an unmatched <code>end</code>, or up to and including an unmatched <code>until</code>. The <code>end</code> can be matched by a previous <code>begin</code>, <code>if</code>, <code>while</code> or <code>function</code>. <a href="http://www.lua.org/manual/5.3/manual.html#3.5">Manual §3.5</a></p>
 <pre><code>local a,b    -- a and b are now visible
 begin
   local a    -- the previous variable called `a` is now shadowed
@@ -463,7 +426,7 @@ until i&gt;10   -- the scope of i ends here </code></pre>
 <ol style="list-style-type: decimal">
 <li>(Loosely) some items coming one after the other.</li>
 <li>An <a href="#escape">escape</a> sequence.</li>
-<li><p>A table with exactly one <a href="#border">border</a>.</p>
+<li><p>A table with exactly one <a href="#border">border</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.4.7">Manual §3.4.7</a></p>
 <p>{1,2,3,4} -- a sequence: border at index 4 {1,2,nil,4} -- not a sequence: borders at index 2 and 4</p></li>
 </ol>
 <h2 id="shadow">Shadow</h2>
@@ -471,7 +434,7 @@ until i&gt;10   -- the scope of i ends here </code></pre>
 <h2 id="shell">Shell</h2>
 <p>A program that executes operating system commands. If it does so by responding to what a user types in, it is an <strong>interactive shell</strong> or <strong>command window</strong>.</p>
 <h2 id="statement">Statement</h2>
-<p>A part of a chunk that cannot be split any further into smaller chunks. (This definition is a loose one: for a precise definition, one needs to study the syntax of Lua). Lua is unusual in that the statement separator ';' is almost entirely optional.</p>
+<p>A part of a <a href="#chunk">chunk</a> that cannot be split any further into smaller chunks. (This definition is a loose one: for a precise definition, one needs to study the syntax of Lua). Lua is unusual in that the statement separator ';' is almost entirely optional.</p>
 <pre><code>a = b; func(1,2,4)    -- two statements, separated by a semicolon
 a = b func(1,2,4)     -- still two statements</code></pre>
 <h2 id="string">String</h2>
@@ -491,10 +454,14 @@ math.type(1)    --&gt; integer
 math.type(1.0)  --&gt; float</code></pre>
 <h2 id="table">Table</h2>
 <ol style="list-style-type: decimal">
-<li><p>A collection of (<a href="#key">key</a>,<a href="#value">value</a>) pairs, called <strong>entries</strong>. One of the eight types of Lua. The keys in a table are distinct. If the value is <a href="#nil">nil</a>, the entry is not actually stored, and the key is lost. See also <a href="#array">array</a>, <a href="#sequence">sequence</a>.</p>
-<pre><code>a.r = nil    -- delete the entry with key &quot;r&quot;</code></pre></li>
-<li><p><code>table</code> is a standard library containing functions that involve <a href="#sequence">sequence</a>s. Those functions <em>cannot</em> be called using <a href="#method">object-oriented</a> syntax straight off, but you can do it with <a href="metamethod">metatables</a>.</p></li>
+<li>A collection of (<a href="#key">key</a>,<a href="#value">value</a>) pairs, called <strong>entries</strong>. One of the eight types of Lua.</li>
 </ol>
+<p>The keys in a table are <a href="#distinct">distinct</a>. If the value is <a href="#nil">nil</a>, the entry may not actually be stored, and the key is lost. See also <a href="#array">Array</a>, <a href="#sequence">Sequence</a>, <a href="#none">None</a>.</p>
+<pre><code>    a.r = nil    -- delete the entry with key &quot;r&quot;</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li><code>table</code> is a standard library containing functions that involve <a href="#sequence">sequence</a>s. <a href="http://www.lua.org/manual/5.3/manual.html#6.6">Manual §6.6</a></li>
+</ol>
+<p>Those functions <em>cannot</em> be called using <a href="#method">object-oriented</a> syntax straight off, but you can do it with <a href="metamethod">metatables</a>.</p>
 <h2 id="text">Text</h2>
 <p>A <a href="#string">string</a> or <a href="#file">file</a> that is designed to be readable by a human.</p>
 <p>Text files typically contain only characters that have an understandable appearance on the screen, and <a href="#whitespace">whitespace</a>.</p>
@@ -504,17 +471,17 @@ math.type(1.0)  --&gt; float</code></pre>
 <li>(In Lua) An <strong>opaque</strong> (can't be looked into) <a href="#data-structure">data structure</a> that holds all the information needed to support the running of a <a href="#virtual-machine">virtual machine</a>.</li>
 </ol>
 <h2 id="truth">Truth</h2>
-<p>The property whether a value counts as true or false in an <code>if</code> statement or a <a href="#operation">logical</a>.</p>
+<p>The property whether a value counts as true or false in an <code>if</code> statement or a <a href="#operation">logical</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.4.5">Manual §3.4.5</a></p>
 <p><code>nil</code> and <code>false</code> count as false, all other values (including 0 and NaN) count as true.</p>
 <h2 id="tuple">Tuple</h2>
 <p>The bare contents of an array, without delimiters.</p>
 <pre><code>{1,2,nil,4}   -- an array
 1,2,nil,4     -- a tuple</code></pre>
-<p>May appear in as a <a href="#parameter">parameter</a> list, an <a href="#argument">argument</a> list, a return list, the right-hand side of an assignment, or inside a table <a href="#constructor">constructor</a>.</p>
+<p>May appear in as a <a href="#parameter">parameter</a> list, an <a href="#argument">argument</a> list, a return list, the right-hand side of an assignment, or inside a table <a href="#constructor">constructor</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.4.11">Manual §3.4.11</a></p>
 <p>A tuple is not a <a href="#first-class-value">first-class value</a>: it is several values, not thought of as comprising a whole.</p>
 <h2 id="type">Type</h2>
 <p>A classification of <a href="#value">value</a>s as one of <a href="#nil">nil</a>, <a href="#boolean">boolean</a>, <a href="#number">number</a>, <a href="#string">string</a>, <a href="#function">function</a>, <a href="#table">table</a>, <a href="#coroutine">coroutine</a> or <a href="#userdata">userdata</a>.</p>
-<p>The type of a value determines how it is stored in the computer, what <a href="#operation">operation</a>s on it are allowed, and how it is represented when printed.</p>
+<p>The type of a value determines how it is stored in the computer, what <a href="#operation">operation</a>s on it are allowed, and how it is represented when printed. <a href="http://www.lua.org/manual/5.3/manual.html#2.1">Manual §2.1</a></p>
 <h2 id="unary">Unary</h2>
 <p>(of an <a href="#operation">operation</a>) Involving only one value.</p>
 <h2 id="upvalue">Upvalue</h2>
@@ -529,8 +496,7 @@ end   -- end the block
           </code></pre>
 <h2 id="userdata">Userdata</h2>
 <p>A block of memory that can only be <a href="#access">access</a>ed via its own <a href="#method">method</a>s. One of the eight types of Lua.</p>
-<p>The definition of a userdata and the basic methods for accessing it need to be written in the API. A userdata can be <strong>full</strong> (i.e. it can be manipulated from Lua) or <strong>light</strong> (i.e. all Lua can do with it is to determine whether two values are raw equal). These are not true <a href="#subtype">subtype</a>s since they are treated as one type inside Lua and as two types inside the <a href="#api">API</a>.</p>
-<p>The topic is too advanced to explain any further in this Glossary.</p>
+<p>The definition of a userdata and the basic methods for accessing it need to be written in the <a href="#api">API</a>. A userdata can be <strong>full</strong> (i.e. it can be manipulated from Lua) or <strong>light</strong> (i.e. all Lua can do with it is to determine whether two values are raw equal). These are not true <a href="#subtype">subtype</a>s since they are treated as one type inside Lua and as two types inside the API.</p>
 <h2 id="value">Value</h2>
 <p>A block of memory organized as one of Lua's eight types.</p>
 <p>Values can be <a href="#mutable">mutable</a> or immutable. All values in Lua are <a href="#first-class-value">first-class value</a>s, unlike some other commonly used <a href="#language">language</a>s.</p>
@@ -558,14 +524,12 @@ end</code></pre>
 <h2 id="whitespace">Whitespace</h2>
 <p>A character such as a blank, tab, line feed or carriage return that may be present in a text file but is not visible. In Lua any sequence of whitespace characters outside comments and strings is treated as being equivalent to one blank.</p>
 <h2 id="zero">Zero</h2>
-<p>Zero is a unique number, having three different representations that are all equal.</p>
+<p>Zero is a unique number, having three representations that are all different, but equal.</p>
 <pre><code>0          -- integer zero
 0.         -- floating-point zero
 -0.        -- negative zero</code></pre>
-<p>They can be distinguished by programming tricks, but only the integer zero can be a table <a href="#key">key</a>. Either of the others will be silently coerced to an integer.</p>
+<p>They can be distinguished by programming tricks, but only the integer zero can be a table <a href="#key">key</a>. Either of the others will be silently <a href="coercion">coerced</a> to an integer.</p>
 <pre><code>c = {[-0.]=true}
 next(c)    --&gt; 0   true</code></pre>
-<script src="prismjs.js">
-</script>
 </body>
 </html>
