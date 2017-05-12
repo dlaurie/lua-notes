@@ -7,11 +7,9 @@
   <meta name="author" content="Dirk Laurie" />
   <title>Brief introduction to LPEG</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="pandoc.css" type="text/css" />
-     <link rel="stylesheet" href="prismjs.css" type="text/css" />
-     <link rel="stylesheet" href="local.css" type="text/css" />
+  <link rel="stylesheet" href="lua-notes.css" type="text/css" />
 </head>
-<body class="language-lua">
+<body>
 <div id="header">
 <h1 class="title">Brief introduction to LPEG</h1>
 <h2 class="author">Dirk Laurie</h2>
@@ -289,24 +287,24 @@ end</code></pre>
 <thead>
 <tr class="header">
 <th align="center">This...</th>
-<th></th>
+<th align="left"></th>
 <th align="left">matches...</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="center"><code>-1</code></td>
-<td></td>
+<td align="left"></td>
 <td align="left">the end of the subject.</td>
 </tr>
 <tr class="even">
 <td align="center"><code>#p*q</code></td>
-<td></td>
+<td align="left"></td>
 <td align="left">what <code>q</code> matches, provided that <code>p</code> would succeed.</td>
 </tr>
 <tr class="odd">
 <td align="center"><code>(1-p)^0</code></td>
-<td></td>
+<td align="left"></td>
 <td align="left">everything up to where <code>p</code> would succeed.</td>
 </tr>
 </tbody>
@@ -454,7 +452,5 @@ local operator = space^0*Cmt(name,lookup(ops))*space^0
 local varname = space^0*C(first*later^0+utf-funcname-operator)*space^0</code></pre>
 <hr />
 <p>&lt;! <em>About this document:</em> Dirk Laurie wrote it in order to teach himself LPEG. All errors in it can be blamed on his inexperience. The original is <code>lpeg-brief.txt</code>, which is written in Pandoc Markdown. The other versions were made using Pandoc <a href="http://www.johnmacfarlane.com/pandoc" class="uri">http://www.johnmacfarlane.com/pandoc</a>. /&gt;</p>
-<script src="prismjs.js">
-</script>
 </body>
 </html>

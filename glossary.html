@@ -13,126 +13,137 @@
 <div id="header">
 <h1 class="title">A glossary of some essential Lua terms</h1>
 <h2 class="author">Dirk Laurie</h2>
-<h3 class="date">28 April 2017, revised 9 May 2017</h3>
+<h3 class="date">28 April 2017, revised 12 May 2017</h3>
 </div>
-<div id="TOC">
-<ul>
-<li><a href="#access">Access</a></li>
-<li><a href="#allocate">Allocate</a></li>
-<li><a href="#api">API</a></li>
-<li><a href="#application">Application</a></li>
-<li><a href="#argument">Argument</a></li>
-<li><a href="#array">Array</a></li>
-<li><a href="#binary">Binary</a></li>
-<li><a href="#block">Block</a></li>
-<li><a href="#boolean">Boolean</a></li>
-<li><a href="#border">Border</a></li>
-<li><a href="#bug">Bug</a></li>
-<li><a href="#byte">Byte</a></li>
-<li><a href="#bytecode">Bytecode</a></li>
-<li><a href="#call">Call</a></li>
-<li><a href="#chunk">Chunk</a></li>
-<li><a href="#class">Class</a></li>
-<li><a href="#closure">Closure</a></li>
-<li><a href="#code">Code</a></li>
-<li><a href="#coercion">Coercion</a></li>
-<li><a href="#compare">Compare</a></li>
-<li><a href="#compile">Compile</a></li>
-<li><a href="#constant">Constant</a></li>
-<li><a href="#constructor">Constructor</a></li>
-<li><a href="#coroutine">Coroutine</a></li>
-<li><a href="#data-structure">Data structure</a></li>
-<li><a href="#debug">Debug</a></li>
-<li><a href="#declaration">Declaration</a></li>
-<li><a href="#definition">Definition</a></li>
-<li><a href="#delimit">Delimit</a></li>
-<li><a href="#distinct">Distinct</a></li>
-<li><a href="#dummy">Dummy</a></li>
-<li><a href="#element">Element</a></li>
-<li><a href="#env">_ENV</a></li>
-<li><a href="#equal">Equal</a></li>
-<li><a href="#escape">Escape</a></li>
-<li><a href="#execute">Execute</a></li>
-<li><a href="#expression">Expression</a></li>
-<li><a href="#file">File</a></li>
-<li><a href="#first-class-value">First-class value</a></li>
-<li><a href="#floating-point">Floating-point</a></li>
-<li><a href="#free">Free</a></li>
-<li><a href="#function">Function</a></li>
-<li><a href="#g">_G</a></li>
-<li><a href="#garbage">Garbage</a></li>
-<li><a href="#global">Global</a></li>
-<li><a href="#identifier">Identifier</a></li>
-<li><a href="#implementation">Implementation</a></li>
-<li><a href="#index">Index</a></li>
-<li><a href="#inf">Inf</a></li>
-<li><a href="#initialize">Initialize</a></li>
-<li><a href="#integer">Integer</a></li>
-<li><a href="#internalize">Internalize</a></li>
-<li><a href="#interpret">Interpret</a></li>
-<li><a href="#invoke">Invoke</a></li>
-<li><a href="#key">Key</a></li>
-<li><a href="#language">Language</a></li>
-<li><a href="#library">Library</a></li>
-<li><a href="#literal">Literal</a></li>
-<li><a href="#load">Load</a></li>
-<li><a href="#local">Local</a></li>
-<li><a href="#logical">Logical</a></li>
-<li><a href="#memoize">Memoize</a></li>
-<li><a href="#memory">Memory</a></li>
-<li><a href="#metamethod">Metamethod</a></li>
-<li><a href="#method">Method</a></li>
-<li><a href="#module">Module</a></li>
-<li><a href="#mutable">Mutable</a></li>
-<li><a href="#name">Name</a></li>
-<li><a href="#nan">NaN</a></li>
-<li><a href="#nil">Nil</a></li>
-<li><a href="#none">None</a></li>
-<li><a href="#number">Number</a></li>
-<li><a href="#object">Object</a></li>
-<li><a href="#operation">Operation</a></li>
-<li><a href="#pair">Pair</a></li>
-<li><a href="#parameter">Parameter</a></li>
-<li><a href="#parentheses">Parentheses</a></li>
-<li><a href="#pass-to">Pass to</a></li>
-<li><a href="#pattern">Pattern</a></li>
-<li><a href="#pointer">Pointer</a></li>
-<li><a href="#precedence">Precedence</a></li>
-<li><a href="#priority">Priority</a></li>
-<li><a href="#procedure">Procedure</a></li>
-<li><a href="#program">Program</a></li>
-<li><a href="#prompt">Prompt</a></li>
-<li><a href="#raw">Raw</a></li>
-<li><a href="#reference">Reference</a></li>
-<li><a href="#release">Release</a></li>
-<li><a href="#repl">REPL</a></li>
-<li><a href="#scope">Scope</a></li>
-<li><a href="#semi-global">Semi-global</a></li>
-<li><a href="#sentinel">Sentinel</a></li>
-<li><a href="#sequence">Sequence</a></li>
-<li><a href="#shadow">Shadow</a></li>
-<li><a href="#shell">Shell</a></li>
-<li><a href="#statement">Statement</a></li>
-<li><a href="#string">String</a></li>
-<li><a href="#subtype">Subtype</a></li>
-<li><a href="#table">Table</a></li>
-<li><a href="#text">Text</a></li>
-<li><a href="#thread">Thread</a></li>
-<li><a href="#truth">Truth</a></li>
-<li><a href="#tuple">Tuple</a></li>
-<li><a href="#type">Type</a></li>
-<li><a href="#unary">Unary</a></li>
-<li><a href="#upvalue">Upvalue</a></li>
-<li><a href="#userdata">Userdata</a></li>
-<li><a href="#value">Value</a></li>
-<li><a href="#vararg">Vararg</a></li>
-<li><a href="#variable">Variable</a></li>
-<li><a href="#virtual-machine">Virtual machine</a></li>
-<li><a href="#visible">Visible</a></li>
-<li><a href="#whitespace">Whitespace</a></li>
-<li><a href="#zero">Zero</a></li>
-</ul>
-</div>
+<table class="menubar" width="100%">
+<tr>
+<td>
+<a href="#access">Access</a><br>
+<a href="#allocate">Allocate</a><br>
+<a href="#api">API</a><br>
+<a href="#application">Application</a><br>
+<a href="#argument">Argument</a><br>
+<a href="#array">Array</a><br>
+<a href="#binary">Binary</a><br>
+<a href="#block">Block</a><br>
+<a href="#boolean">Boolean</a><br>
+<a href="#border">Border</a><br>
+<a href="#bug">Bug</a><br>
+<a href="#byte">Byte</a><br>
+<a href="#bytecode">Bytecode</a><br>
+<a href="#call">Call</a><br>
+<a href="#chunk">Chunk</a><br>
+<a href="#class">Class</a><br>
+<a href="#closure">Closure</a><br>
+<a href="#code">Code</a><br>
+<a href="#coercion">Coercion</a><br>
+</td>
+<td>
+<a href="#compare">Compare</a><br>
+<a href="#compile">Compile</a><br>
+<a href="#constant">Constant</a><br>
+<a href="#constructor">Constructor</a><br>
+<a href="#coroutine">Coroutine</a><br>
+<a href="#data-structure">Data structure</a><br>
+<a href="#debug">Debug</a><br>
+<a href="#declaration">Declaration</a><br>
+<a href="#definition">Definition</a><br>
+<a href="#delimit">Delimit</a><br>
+<a href="#distinct">Distinct</a><br>
+<a href="#dummy">Dummy</a><br>
+<a href="#element">Element</a><br>
+<a href="#env">_ENV</a><br>
+<a href="#equal">Equal</a><br>
+<a href="#escape">Escape</a><br>
+<a href="#execute">Execute</a><br>
+<a href="#expression">Expression</a><br>
+<a href="#file">File</a><br>
+</td>
+<td>
+<a href="#first-class-value">First-class value</a><br>
+<a href="#floating-point">Floating-point</a><br>
+<a href="#free">Free</a><br>
+<a href="#function">Function</a><br>
+<a href="#g">_G</a><br>
+<a href="#garbage">Garbage</a><br>
+<a href="#global">Global</a><br>
+<a href="#identifier">Identifier</a><br>
+<a href="#implementation">Implementation</a><br>
+<a href="#index">Index</a><br>
+<a href="#inf">Inf</a><br>
+<a href="#initialize">Initialize</a><br>
+<a href="#integer">Integer</a><br>
+<a href="#internalize">Internalize</a><br>
+<a href="#interpret">Interpret</a><br>
+<a href="#invoke">Invoke</a><br>
+<a href="#key">Key</a><br>
+<a href="#language">Language</a><br>
+<a href="#library">Library</a><br>
+</td>
+<td>
+<a href="#literal">Literal</a><br>
+<a href="#load">Load</a><br>
+<a href="#local">Local</a><br>
+<a href="#logical">Logical</a><br>
+<a href="#memoize">Memoize</a><br>
+<a href="#memory">Memory</a><br>
+<a href="#metamethod">Metamethod</a><br>
+<a href="#method">Method</a><br>
+<a href="#module">Module</a><br>
+<a href="#mutable">Mutable</a><br>
+<a href="#name">Name</a><br>
+<a href="#nan">NaN</a><br>
+<a href="#nil">Nil</a><br>
+<a href="#none">None</a><br>
+<a href="#number">Number</a><br>
+<a href="#object">Object</a><br>
+<a href="#operation">Operation</a><br>
+<a href="#pair">Pair</a><br>
+<a href="#parameter">Parameter</a><br>
+</td>
+<td>
+<a href="#parentheses">Parentheses</a><br>
+<a href="#pass-to">Pass to</a><br>
+<a href="#pattern">Pattern</a><br>
+<a href="#pointer">Pointer</a><br>
+<a href="#precedence">Precedence</a><br>
+<a href="#priority">Priority</a><br>
+<a href="#procedure">Procedure</a><br>
+<a href="#program">Program</a><br>
+<a href="#prompt">Prompt</a><br>
+<a href="#raw">Raw</a><br>
+<a href="#reference">Reference</a><br>
+<a href="#release">Release</a><br>
+<a href="#repl">REPL</a><br>
+<a href="#scope">Scope</a><br>
+<a href="#semi-global">Semi-global</a><br>
+<a href="#sentinel">Sentinel</a><br>
+<a href="#sequence">Sequence</a><br>
+<a href="#shadow">Shadow</a><br>
+<a href="#shell">Shell</a><br>
+</td>
+<td>
+<a href="#statement">Statement</a><br>
+<a href="#string">String</a><br>
+<a href="#subtype">Subtype</a><br>
+<a href="#table">Table</a><br>
+<a href="#text">Text</a><br>
+<a href="#thread">Thread</a><br>
+<a href="#truth">Truth</a><br>
+<a href="#tuple">Tuple</a><br>
+<a href="#type">Type</a><br>
+<a href="#unary">Unary</a><br>
+<a href="#upvalue">Upvalue</a><br>
+<a href="#userdata">Userdata</a><br>
+<a href="#value">Value</a><br>
+<a href="#vararg">Vararg</a><br>
+<a href="#variable">Variable</a><br>
+<a href="#virtual-machine">Virtual machine</a><br>
+<a href="#visible">Visible</a><br>
+<a href="#whitespace">Whitespace</a><br>
+<a href="#zero">Zero</a><br>
+</td>
+</tr></table>
 <p>This Glossary covers those terms in <a href="http://www.lua.org/about.html">Lua</a> 5.3 that are necessary to refer to when reading the <a href="http://www.lua.org/manual/5.3">User's Manual</a>. It also contains a few terms that, while not actually used in the manual, often are used in posts on Lua-L, the Lua mailing list <code>&lt;lua-l-lists.lua.org&gt;</code></p>
 <p>The selection of topics is based on one posted on Lua-L by &quot;Adel&quot; on 24 April 2017. It does not cover advanced concepts. You must grok those from the Manual.</p>
 <p>Many of these terms occur in other computer <a href="#language">language</a>s too. Prior knowledge of how the term is used elsewhere may help you to understand how it is used in Lua; on the other hand, it may put preconceptions in your mind that are not applicable to Lua.</p>
@@ -546,7 +557,8 @@ until i&gt;10   -- the scope of i ends here </code></pre>
 <li>(Loosely) some items coming one after the other.</li>
 <li>An <a href="#escape">escape</a> sequence.</li>
 <li><p>A table with exactly one <a href="#border">border</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.4.7">Manual §3.4.7</a></p>
-<p>{1,2,3,4} -- a sequence: border at index 4 {1,2,nil,4} -- not a sequence: borders at index 2 and 4</p></li>
+<pre><code>{1,2,3,4}    -- a sequence: border at index 4
+{1,2,nil,4}  -- not a sequence: borders at index 2 and 4</code></pre></li>
 </ol>
 <h2 id="shadow">Shadow</h2>
 <p>To make a <a href="#variable">variable</a> that is currently <a href="#visible">visible</a> invisible by declaring a <a href="#local">local</a> variable of the same <a href="#name">name</a>. See <a href="#scope">scope</a>.</p>
@@ -647,7 +659,7 @@ end</code></pre>
 <pre><code>0          -- integer zero
 0.         -- floating-point zero
 -0.        -- negative zero</code></pre>
-<p>They can be distinguished by programming tricks, but only the integer zero can be a table <a href="#key">key</a>. Either of the others will be silently <a href="coercion">coerced</a> to an integer.</p>
+<p>They can be distinguished by programming tricks, but only the integer zero can be a table <a href="#key">key</a>. Either of the others will be silently <a href="#coercion">coerced</a> to an integer.</p>
 <pre><code>c = {[-0.]=true}
 next(c)    --&gt; 0   true</code></pre>
 </body>

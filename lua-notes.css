@@ -3,9 +3,9 @@ html {
 }
 
 body {
-	background-color: #FFF7D0 ;
+	background-color: #FFFFFF ;
 	color: #000000 ;
-	font-family: "Bitstream Charter", serif;
+	font-family: "Freefont Serif", serif;
 	text-align: justify ;
 	line-height: 1.25 ;
 	margin: 16px auto ;
@@ -17,6 +17,9 @@ body {
 }
 
 code {
+/*  display: block; */
+  background-color: #FFF7D0;
+  max-width: 80%;
   color: #004000;
   font-family: Courier;
   font-size: 14pt;

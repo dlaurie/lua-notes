@@ -1,6 +1,6 @@
 % A glossary of some essential Lua terms
 % Dirk Laurie 
-% 28 April 2017, revised 9 May 2017
+% 28 April 2017, revised 12 May 2017
 
 This Glossary covers those terms in [Lua](http://www.lua.org/about.html) 
 5.3 that are necessary to refer to when reading 
@@ -939,8 +939,8 @@ Sequence
 3. A table with exactly one [border].
 [Manual §3.4.7](http://www.lua.org/manual/5.3/manual.html#3.4.7)
 
-    {1,2,3,4}    -- a sequence: border at index 4
-    {1,2,nil,4}  -- not a sequence: borders at index 2 and 4
+        {1,2,3,4}    -- a sequence: border at index 4
+        {1,2,nil,4}  -- not a sequence: borders at index 2 and 4
 
 Shadow
 ------
@@ -1168,7 +1168,7 @@ are all different, but equal.
 
 They can be distinguished by programming tricks, but only the integer
 zero can be a table [key]. Either of the others will be silently 
-[coerced](coercion) to an integer.
+[coerced](#coercion) to an integer.
 
     c = {[-0.]=true}
     next(c)    --> 0   true

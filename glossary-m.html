@@ -12,7 +12,7 @@
 <div id="header">
 <h1 class="title">A glossary of some essential Lua terms</h1>
 <h2 class="author">Dirk Laurie</h2>
-<h3 class="date">28 April 2017, revised 9 May 2017</h3>
+<h3 class="date">28 April 2017, revised 12 May 2017</h3>
 </div>
 <p>This Glossary covers those terms in <a href="http://www.lua.org/about.html">Lua</a> 5.3 that are necessary to refer to when reading the <a href="http://www.lua.org/manual/5.3">User's Manual</a>. It also contains a few terms that, while not actually used in the manual, often are used in posts on Lua-L, the Lua mailing list <code>&lt;lua-l-lists.lua.org&gt;</code></p>
 <p>The selection of topics is based on one posted on Lua-L by &quot;Adel&quot; on 24 April 2017. It does not cover advanced concepts. You must grok those from the Manual.</p>
@@ -427,7 +427,8 @@ until i&gt;10   -- the scope of i ends here </code></pre>
 <li>(Loosely) some items coming one after the other.</li>
 <li>An <a href="#escape">escape</a> sequence.</li>
 <li><p>A table with exactly one <a href="#border">border</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.4.7">Manual §3.4.7</a></p>
-<p>{1,2,3,4} -- a sequence: border at index 4 {1,2,nil,4} -- not a sequence: borders at index 2 and 4</p></li>
+<pre><code>{1,2,3,4}    -- a sequence: border at index 4
+{1,2,nil,4}  -- not a sequence: borders at index 2 and 4</code></pre></li>
 </ol>
 <h2 id="shadow">Shadow</h2>
 <p>To make a <a href="#variable">variable</a> that is currently <a href="#visible">visible</a> invisible by declaring a <a href="#local">local</a> variable of the same <a href="#name">name</a>. See <a href="#scope">scope</a>.</p>
@@ -528,7 +529,7 @@ end</code></pre>
 <pre><code>0          -- integer zero
 0.         -- floating-point zero
 -0.        -- negative zero</code></pre>
-<p>They can be distinguished by programming tricks, but only the integer zero can be a table <a href="#key">key</a>. Either of the others will be silently <a href="coercion">coerced</a> to an integer.</p>
+<p>They can be distinguished by programming tricks, but only the integer zero can be a table <a href="#key">key</a>. Either of the others will be silently <a href="#coercion">coerced</a> to an integer.</p>
 <pre><code>c = {[-0.]=true}
 next(c)    --&gt; 0   true</code></pre>
 </body>
