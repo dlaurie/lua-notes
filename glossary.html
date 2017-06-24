@@ -451,7 +451,7 @@ end</code></pre>
 <p>Lua syntax demands that a name satisfy the rules for an <a href="#identifier">identifier</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.1">Manual §3.1</a></p>
 <h2 id="nan">NaN</h2>
 <p>Acronym for &quot;Not A Number&quot;. An exceptional value of type <a href="#number">number</a> (also written 'NAN' and 'nan'), which arises as the result of an undefinable arithmetic <a href="#operation">operation</a>. NaN is not a Lua keyword, but appears in output (in some implementations, even the nonsensical '-nan' may be printed). If you need the notation NaN, assign such a value to the name.</p>
-<p>NaN is not a legal <a href="#key">key</a> in a table, but counts as <a href="truth">tue</a>.</p>
+<p>NaN is not a legal <a href="#key">key</a> in a table, but counts as <a href="truth">true</a>.</p>
 <pre><code>NaN = 0/0
 NaN + 1        -- NaN. All arithmetic operations involving NaN have
                -- result NaN.

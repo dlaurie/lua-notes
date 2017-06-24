@@ -716,7 +716,7 @@ output (in some implementations, even the nonsensical '-nan' may
 be printed). If you need the notation NaN, assign such 
 a value to the name. 
 
-NaN is not a legal [key] in a table, but counts as [tue](truth).
+NaN is not a legal [key] in a table, but counts as [true](truth).
 
     NaN = 0/0
     NaN + 1        -- NaN. All arithmetic operations involving NaN have
