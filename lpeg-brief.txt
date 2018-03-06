@@ -489,7 +489,7 @@ one gets to recognize them at a glance.
 
   This...             matches...
 ---------------- --   ----------------------------------------------------
-  `-1`                the end of the subject.
+  `-1`                the end of the subject.           
  `#p*q`               what `q` matches, provided that `p` would succeed.
 `(1-p)^0`             everything up to where `p` would succeed.
 ---------------- --  -----------------------------------------------------
