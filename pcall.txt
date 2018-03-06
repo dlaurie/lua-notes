@@ -1,0 +1,149 @@
+% Protected calls
+% Dirk Laurie
+% 2018-03-05
+
+A protected call is one in which an exception is not forwarded immediately 
+to the exception handler, but instead an almost normal return to the calling 
+routine is made, which can then decide what to do. We shall refer to the
+calling routine as the *master*, and the function being called as the *servant*.
+
+### Protected calls in Lua
+
+In Lua, there is no syntax for protected calls (unlike some other languages,
+which have constructs called something like `try`-`except`, `throw`-`catch`
+etc.). Instead, there is the standard library function `pcall`.
+
+    math.sin(_G)  -- (raises an exception)
+    result, answer = pcall(math.sin,_G)  -- (no error)
+    print(result) --> false 
+    print(answer) --> bad argument #1 to 'sin' (number expected, got table)
+    pcall(math.sin,1.9)  --> true	0.8414709848079
+
+After the call, we need to check the first return value, and then discard it. 
+What remains is either the full tuple of return values of the function (if 
+`result` is true) or only the error object (if `result` is false).
+
+### Protected calls in C
+
+In the C API, the difference is less obtrusive.
+
+    lua_getglobal(L,"math");
+    lua_getfield(L,"sin");
+    lua_getglobal(L,"_G");
+    lua_call(L,1,1);
+
+This will raise a runtime error.
+
+Instead of that last line, we could have had
+
+    result = lua_pcall(L,1,1,0);
+
+when there would be no exception.
+
+For `lua_call` as well as `lua_pcall`, if there is no error, the full 
+tuple of return values of the function will be on the stack. If there is 
+an error, `lua_call` will raise an exception but `lua_pcall` will return 
+`false` and the error object will be on the stack.
+
+In all cases under the API, there is no stack value that indicates an 
+exception. The error object is usually just a string, and it is not possible
+to determine whether it is an error object or a normal return value.
+
+`lua_pcall` takes four arguments: the ubiquitous Lua state pointer, the 
+number of arguments loaded, the number of return values expected (all these
+exactly as for `lua_call`), and the stack index where the error handler is 
+stored (0 means "use the standard error handler").
+
+The servant takes only one argument, a  Lua state pointer. It has only one 
+return value: the actual number of values returned on the stack. 
+
+### Communication between master and servant
+
+Call-specific communication occurs only via the stack. (There may also be
+upvalues visible to master and servant, and globals, but that is off-topic
+for this note.)
+
+There are four quantities associated with the number of values being 
+passed between servant and master. Let us call them `nparam`,
+`narg`, `nret` and `nval`. Not the master, nor the servant, nor 
+`lua_call` (or `lua_pcall`) knows all of them. 
+
+`nparam`
+:   The number of parameters passed by the master.
+
+`narg`
+:   The number of arguments that the servant is equipped to handle,
+
+`nret`
+:   The number of values that the servant actually returns.
+
+`nval`
+:   The number of values that the master expects. This may be `LUA_MULTRET`,
+    indicating that the master expects anything, and will take whatever is
+    offered.
+
+The master issues 
+
+    result = lua_pcall(L,nparam,nval,msghandler);
+
+The servant does not know what `nval` is, but can retrieve `nparam` by:
+
+    nparam = lua_gettop(L);
+
+Only the servant knows what `narg` is. If `nparam < narg`, the servant 
+may supply default arguments; if `nparam > narg`, it may ignore or utilize 
+any extra arguments. In either case, the servant may raise an exception.
+
+The servant eventually issues
+
+    return nret;
+
+This need not be the same number in all `return` statements of the servant; it
+must not exceed, but need not equal, the stack top at the point of return.
+
+If `nval` is `LUA_MULTRET`, the master can retrieve `nret` by
+
+    nret = lua_gettop(L);
+
+Otherwise `lua_call` (or `lua_pcall`) will supply nil values for the missing 
+return values if `nret < nval`, or discard the extra values if `nret > nval`.
+The master will receive the expected number of values and does not know
+whether such an adjustment was made.
+
+The return value of a `lua_pcall` is `LUA_OK` (which equals 0) if there
+is no error, and any of a variety of nonzero values if there is an error.
+Note that this return value has nothing to do with the value returned by
+the servant.
+
+### How the servant must behave
+
+The servant should bear in mind that a simple return will indicate to the
+master that there is no error. This should not be used to cover up 
+malpractice.
+
+Any errors during unprotected calls made by the servant, or even some
+raised by C code in the servant itself, will cause `lua_pcall` to return
+a nonzero value. That is perfectly acceptable.
+
+However, the servant itself often makes protected calls. Some of these it can
+handle by itself; in that case, a simple return is good enough. Others need 
+to be propagated as an error to the master.
+
+It cannot propagate that error by a simple return, but it is an idiom to
+make it look that way:
+
+    return lua_error(L);
+
+Actually the call to `lua_error` never returns, so that the return is never
+executed, but by that `return` the reader is warned that the servant is done.
+
+The call to `lua_error` promises that the top stack value is an error object.
+This may be the object was returned by a protected call, or some modification
+thereof.
+
+If some error is diagnosed by the servant itself, an error object 
+should be pushed before the error idiom.
+
+    lua_pushstring(L,'Napoleon has escaped from Elba');
+
+
