@@ -233,7 +233,7 @@ Coroutine
 stop running) and **resume** (continue where it left off), rather 
 like a train, dropping off some values and taking aboard new ones. 
 One of the eight types of Lua. 
-2. One of the standard [libraries](library) of Lua. Coroutines can only 
+2. One of the standard [libraries](#library) of Lua. Coroutines can only 
 be created and used via routines in this library. 
 [Manual §2.6](http://www.lua.org/manual/5.3/manual.html#2.6)
 
@@ -245,7 +245,7 @@ to as a whole, but the values in it can also be referred to individually.
 
 In Lua, the only data structure is a [table], but it is also possible 
 to code one's own data structure in C and make it visible to Lua as 
-a [userdata](#userdata).
+a [userdata].
 
 Debug
 -----
@@ -263,13 +263,13 @@ and optionally [initialize]s them.
 
     local x, y = 1  -- x gets the value 1, y gets the value nil.
 
-Names that have [global](#global) scope are declared implicitly, i.e.
+Names that have [global] scope are declared implicitly, i.e.
 they count as declared, with value `nil`, the moment you use them.
 
 Definition
 ----------
 
-A [chunk](#chunk) that fully specifies what a function does. 
+A [chunk] that fully specifies what a function does. 
 
 The definition starts with the keyword `function` and stops at the 
 matching keyword `end`.
@@ -716,7 +716,7 @@ output (in some implementations, even the nonsensical '-nan' may
 be printed). If you need the notation NaN, assign such 
 a value to the name. 
 
-NaN is not a legal [key] in a table, but counts as [true](truth).
+NaN is not a legal [key] in a table, but counts as [true](#truth).
 
     NaN = 0/0
     NaN + 1        -- NaN. All arithmetic operations involving NaN have
@@ -729,7 +729,7 @@ Nil
 ---
 
 One of the eight types of Lua. There is only one value of this type,
-also called `nil`. Its purpose is to act as a placeholder where a value
+likewise called `nil`. Its purpose is to act as a placeholder where a value
 is needed, but no proper value is available.
 
     tbl = {1,4,nil,nil,10}         -- tbl[5] is 10
@@ -783,11 +783,11 @@ Two related values, especially a key in a table and its associated value.
 Parameter
 ---------
 
-A [local](#local) [name](#name) used in the definition of a [function] 
-for the [value](#value) that will later be [passed](#pass) as an argument.
+A [local](#local) [name] used in the definition of a [function] 
+for the [value] that will later be [passed](#pass) as an argument.
 
         function fct (a,b,c)   -- a,b,c are parameters
-        fct(1,2,3)             -- 1,2,3 arearguments
+        fct(1,2,3)             -- 1,2,3 are arguments
 
 Parentheses
 -----------
@@ -801,7 +801,7 @@ A pair of delimiters with several uses.
 Pass to
 -------
 
-See [Argument](#argument).
+See [Argument].
 
 Pattern
 -------
@@ -850,8 +850,7 @@ Prompt
 
 1. To give a hint that a terminal user should type something.
 2. A character string used for that purpose.
-
-A short message or symbol 
+ 
     >                    -- the usual Lua prompt
     >>                   -- the prompt when wat you typed was not enough
     name?                -- a typical prompt issued by an appplication
@@ -866,8 +865,8 @@ Reference
 
 A [pointer] that looks like a [variable] to the programmer.
 
-In Lua, the types [function], [table], [coroutine] and [userdata]
-are accessed by reference.
+In Lua, the mutable types [function], [table], [coroutine] and [userdata]
+are accessed by reference.  
 
     a = {name="Jack"}   -- the variable 'a' has a reference
     a                   --> table: 0x22c8810
@@ -936,8 +935,7 @@ Sequence
 
 1. (Loosely) some items coming one after the other.
 2. An [escape] sequence.
-3. A table with exactly one [border].
-[Manual §3.4.7](http://www.lua.org/manual/5.3/manual.html#3.4.7)
+3. A table with exactly one [border]. [Manual §3.4.7](http://www.lua.org/manual/5.3/manual.html#3.4.7)
 
         {1,2,3,4}    -- a sequence: border at index 4
         {1,2,nil,4}  -- not a sequence: borders at index 2 and 4
@@ -1047,7 +1045,7 @@ The bare contents of an array, without delimiters.
     {1,2,nil,4}   -- an array
     1,2,nil,4     -- a tuple
 
-May appear in as a [parameter] list, an [argument] list, a return list, 
+May appear as a [parameter] list, an [argument] list, a return list, 
 the right-hand side of an assignment, or inside a table [constructor].
 [Manual §3.4.11](http://www.lua.org/manual/5.3/manual.html#3.4.11)
 

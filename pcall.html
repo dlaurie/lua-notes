@@ -22,6 +22,8 @@
 <li><a href="#protected-calls-in-c">Protected calls in C</a></li>
 <li><a href="#communication-between-master-and-servant">Communication between master and servant</a></li>
 <li><a href="#how-the-servant-must-behave">How the servant must behave</a></li>
+<li><a href="#things-that-the-message-handler-might-do">Things that the message handler might do</a></li>
+<li><a href="#acknowledgment">Acknowledgment</a></li>
 </ul>
 </div>
 <p>A protected call is one in which an exception is not forwarded immediately to the exception handler, but instead an almost normal return to the calling routine is made, which can then decide what to do. We shall refer to the calling routine as the <em>master</em>, and the function being called as the <em>servant</em>.</p>
@@ -34,18 +36,19 @@ print(answer) --&gt; bad argument #1 to &#39;sin&#39; (number expected, got tabl
 pcall(math.sin,1.9)  --&gt; true   0.8414709848079</code></pre>
 <p>After the call, we need to check the first return value, and then discard it. What remains is either the full tuple of return values of the function (if <code>result</code> is true) or only the error object (if <code>result</code> is false).</p>
 <h3 id="protected-calls-in-c">Protected calls in C</h3>
-<p>In the C API, the difference is less obtrusive.</p>
-<pre><code>lua_getglobal(L,&quot;math&quot;);
-lua_getfield(L,&quot;sin&quot;);
-lua_getglobal(L,&quot;_G&quot;);
-lua_call(L,1,1);</code></pre>
-<p>This will raise a runtime error.</p>
-<p>Instead of that last line, we could have had</p>
-<pre><code>result = lua_pcall(L,1,1,0);</code></pre>
-<p>when there would be no exception.</p>
-<p>For <code>lua_call</code> as well as <code>lua_pcall</code>, if there is no error, the full tuple of return values of the function will be on the stack. If there is an error, <code>lua_call</code> will raise an exception but <code>lua_pcall</code> will return <code>false</code> and the error object will be on the stack.</p>
+<p>In the C API, the difference is less obtrusive: no value needs to be discarded if there was no error. The protected call returns a C value instead, and has an extra argument, which usually is just 0.</p>
+<p>A protected call with all bells and whistles might for example be:</p>
+<pre><code>msghandler = lua_gettop(L);           /* remember this slot */
+lua_getglobal(L,&quot;message_handler&quot;);   /* custom message handler */
+lua_getglobal(L,&quot;math&quot;);              /* table containing servant */
+lua_getfield(L,&quot;sin&quot;);                /* servant is `math.sin` */
+lua_getglobal(L,&quot;_G&quot;);                /* argument is `_G` */
+result = lua_pcall(L,1,1,msghandler); /* make the call */</code></pre>
+<p>You don't need those first two lines if you are satisfied with doing nothing to the default error message. An unprotected call never has them. The loading of the servant and arguments is exactly the same, but the last line would be</p>
+<pre><code>lua_call(L,1,1);</code></pre>
+<p>For <code>lua_call</code> as well as <code>lua_pcall</code>, if there is no error, the full tuple of return values of the function will be on the stack. If there is an error (as in the above example), <code>lua_call</code> will raise an exception but <code>lua_pcall</code> will return a nonzero value and the error object will be on the stack.</p>
 <p>In all cases under the API, there is no stack value that indicates an exception. The error object is usually just a string, and it is not possible to determine whether it is an error object or a normal return value.</p>
-<p><code>lua_pcall</code> takes four arguments: the ubiquitous Lua state pointer, the number of arguments loaded, the number of return values expected (all these exactly as for <code>lua_call</code>), and the stack index where the error handler is stored (0 means &quot;use the standard error handler&quot;).</p>
+<p><code>lua_pcall</code> takes four arguments: the ubiquitous Lua state pointer, the number of arguments loaded, the number of return values expected (all these exactly as for <code>lua_call</code>), and the stack index where a message handler is stored (0 means &quot;return the message as-is&quot;).</p>
 <p>The servant takes only one argument, a Lua state pointer. It has only one return value: the actual number of values returned on the stack.</p>
 <h3 id="communication-between-master-and-servant">Communication between master and servant</h3>
 <p>Call-specific communication occurs only via the stack. (There may also be upvalues visible to master and servant, and globals, but that is off-topic for this note.)</p>
@@ -69,12 +72,17 @@ lua_call(L,1,1);</code></pre>
 <p>The servant does not know what <code>nval</code> is, but can retrieve <code>nparam</code> by:</p>
 <pre><code>nparam = lua_gettop(L);</code></pre>
 <p>Only the servant knows what <code>narg</code> is. If <code>nparam &lt; narg</code>, the servant may supply default arguments; if <code>nparam &gt; narg</code>, it may ignore or utilize any extra arguments. In either case, the servant may raise an exception.</p>
+<p>The most common method is that of Procrustes.</p>
+<pre><code>lua_settop(L,narg);</code></pre>
+<p>This discards unwanted values and supplies nils for those not supplied, so that parameters 1 to <code>narg</code> are in stack slots 1 to <code>narg</code>.</p>
 <p>The servant eventually issues</p>
 <pre><code>return nret;</code></pre>
-<p>This need not be the same number in all <code>return</code> statements of the servant; it must not exceed, but need not equal, the stack top at the point of return.</p>
-<p>If <code>nval</code> is <code>LUA_MULTRET</code>, the master can retrieve <code>nret</code> by</p>
-<pre><code>nret = lua_gettop(L);</code></pre>
-<p>Otherwise <code>lua_call</code> (or <code>lua_pcall</code>) will supply nil values for the missing return values if <code>nret &lt; nval</code>, or discard the extra values if <code>nret &gt; nval</code>. The master will receive the expected number of values and does not know whether such an adjustment was made.</p>
+<p>This does not need to be the same number in all <code>return</code> statements of the servant; it must not exceed, but need not equal, the stack top at the point of return.</p>
+<p>If <code>nval</code> is <code>LUA_MULTRET</code>, the master can retrieve <code>nret</code> if the stack top was saved before the call by</p>
+<pre><code>oldtop = lua_gettop(L);</code></pre>
+<p>The actual number of values returned is then</p>
+<pre><code>nret = lua_gettop(L) - oldtop;</code></pre>
+<p>If <code>nval &gt;= 0</code>, then <code>lua_call</code> (or <code>lua_pcall</code>) will supply nil values for the missing return values if <code>nret &lt; nval</code>, or discard the extra values if <code>nret &gt; nval</code>. The master will receive the expected number of values and does not know whether such an adjustment was made.</p>
 <p>The return value of a <code>lua_pcall</code> is <code>LUA_OK</code> (which equals 0) if there is no error, and any of a variety of nonzero values if there is an error. Note that this return value has nothing to do with the value returned by the servant.</p>
 <h3 id="how-the-servant-must-behave">How the servant must behave</h3>
 <p>The servant should bear in mind that a simple return will indicate to the master that there is no error. This should not be used to cover up malpractice.</p>
@@ -86,5 +94,14 @@ lua_call(L,1,1);</code></pre>
 <p>The call to <code>lua_error</code> promises that the top stack value is an error object. This may be the object was returned by a protected call, or some modification thereof.</p>
 <p>If some error is diagnosed by the servant itself, an error object should be pushed before the error idiom.</p>
 <pre><code>lua_pushstring(L,&#39;Napoleon has escaped from Elba&#39;);</code></pre>
+<h3 id="things-that-the-message-handler-might-do">Things that the message handler might do</h3>
+<p>The message handler gets, and must leave, on the stack an <em>error object</em>, i.e. a Lua value that either is a string, or has a <code>__tostring</code> metamethod.</p>
+<p>The standard message handler of Lua's standalone executable first turns the error object into a string if necessary, and then appends the traceback to it. If your code was called directly or indirectly from a standard <code>lua</code>, this will be the last thing done to it. If that is all you need, you can safely specify the fourth parameter <code>msghandler</code> to <code>lua_pcall</code> as 0.</p>
+<p>Otherwise, you have an opportunity to replace the error object. A function to that purpose must have been supplied in the stack slot <code>msghandler</code> before the <code>lua_pcall</code>.</p>
+<p>Of course, you can just leave the error object intact, but seize the chance to write debugging information to a file, etc.</p>
+<p>The subtle point involved here is that at this stage, even though the message handler gets only one argument, and you can't see deeper than that into the stack, some information about what was in the stack is still accessible as local variables. That information will be gone when <code>lua_pcall</code> eventually returns, so this is your last chance.</p>
+<p>Some of those tasks are easier in Lua, by taking advantage of the <code>debug</code> library, and there is absolutely no reason why your <code>msghandler</code> may not be a Lua function, as long as it takes one argument and returns one value.</p>
+<h3 id="acknowledgment">Acknowledgment</h3>
+<p>This essay has been improved by helpful comments from Sean Conner and Andrew Gierth. Any remaining defects are the author's sole responsibility.</p>
 </body>
 </html>

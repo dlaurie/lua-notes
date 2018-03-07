@@ -25,25 +25,31 @@ What remains is either the full tuple of return values of the function (if
 
 ### Protected calls in C
 
-In the C API, the difference is less obtrusive.
+In the C API, the difference is less obtrusive: no value needs to be discarded
+if there was no error. The protected call returns a C value instead, and
+has an extra argument, which usually is just 0. 
 
-    lua_getglobal(L,"math");
-    lua_getfield(L,"sin");
-    lua_getglobal(L,"_G");
+A protected call with all bells and whistles might for example be:
+
+    msghandler = lua_gettop(L);           /* remember this slot */
+    lua_getglobal(L,"message_handler");   /* custom message handler */
+    lua_getglobal(L,"math");              /* table containing servant */
+    lua_getfield(L,"sin");                /* servant is `math.sin` */
+    lua_getglobal(L,"_G");                /* argument is `_G` */
+    result = lua_pcall(L,1,1,msghandler); /* make the call */
+
+You don't need those first two lines if you are satisfied with doing nothing
+to the default error message. An unprotected call never has them. The 
+loading of the servant and arguments is exactly the same, but the last
+line would be
+
     lua_call(L,1,1);
-
-This will raise a runtime error.
-
-Instead of that last line, we could have had
-
-    result = lua_pcall(L,1,1,0);
-
-when there would be no exception.
 
 For `lua_call` as well as `lua_pcall`, if there is no error, the full 
 tuple of return values of the function will be on the stack. If there is 
-an error, `lua_call` will raise an exception but `lua_pcall` will return 
-`false` and the error object will be on the stack.
+an error (as in the above example), `lua_call` will raise an exception 
+but `lua_pcall` will return a nonzero value and the error object will 
+be on the stack.
 
 In all cases under the API, there is no stack value that indicates an 
 exception. The error object is usually just a string, and it is not possible
@@ -51,8 +57,8 @@ to determine whether it is an error object or a normal return value.
 
 `lua_pcall` takes four arguments: the ubiquitous Lua state pointer, the 
 number of arguments loaded, the number of return values expected (all these
-exactly as for `lua_call`), and the stack index where the error handler is 
-stored (0 means "use the standard error handler").
+exactly as for `lua_call`), and the stack index where a message handler is 
+stored (0 means "return the message as-is").
 
 The servant takes only one argument, a  Lua state pointer. It has only one 
 return value: the actual number of values returned on the stack. 
@@ -94,21 +100,33 @@ Only the servant knows what `narg` is. If `nparam < narg`, the servant
 may supply default arguments; if `nparam > narg`, it may ignore or utilize 
 any extra arguments. In either case, the servant may raise an exception.
 
+The most common method is that of Procrustes.
+
+    lua_settop(L,narg);
+
+This discards unwanted values and supplies nils for those not supplied, so
+that parameters 1 to `narg` are in stack slots 1 to `narg`.
+
 The servant eventually issues
 
     return nret;
 
-This need not be the same number in all `return` statements of the servant; it
-must not exceed, but need not equal, the stack top at the point of return.
+This does not need to be the same number in all `return` statements of the 
+servant; it must not exceed, but need not equal, the stack top at the point of return.
 
-If `nval` is `LUA_MULTRET`, the master can retrieve `nret` by
+If `nval` is `LUA_MULTRET`, the master can retrieve `nret` if the stack
+top was saved before the call by 
 
-    nret = lua_gettop(L);
+    oldtop = lua_gettop(L);
 
-Otherwise `lua_call` (or `lua_pcall`) will supply nil values for the missing 
-return values if `nret < nval`, or discard the extra values if `nret > nval`.
-The master will receive the expected number of values and does not know
-whether such an adjustment was made.
+The actual number of values returned is then
+
+    nret = lua_gettop(L) - oldtop;
+
+If `nval >= 0`, then `lua_call` (or `lua_pcall`) will supply nil values for 
+the missing return values if `nret < nval`, or discard the extra values if 
+`nret > nval`. The master will receive the expected number of values and 
+does not know whether such an adjustment was made.
 
 The return value of a `lua_pcall` is `LUA_OK` (which equals 0) if there
 is no error, and any of a variety of nonzero values if there is an error.
@@ -146,4 +164,35 @@ should be pushed before the error idiom.
 
     lua_pushstring(L,'Napoleon has escaped from Elba');
 
+### Things that the message handler might do
 
+The message handler gets, and must leave, on the stack an _error object_, 
+i.e. a Lua value that either is a string, or has a `__tostring` metamethod.
+
+The standard message handler of Lua's standalone executable first turns the
+error object into a string if necessary, and then appends the traceback to it. 
+If your code was called directly or indirectly from a standard `lua`, this 
+will be the last thing done to it. If that is all you need, you can safely 
+specify the fourth parameter `msghandler` to `lua_pcall` as 0.
+
+Otherwise, you have an opportunity to replace the error object. A function
+to that purpose must have been supplied in the stack slot `msghandler` before
+the `lua_pcall`.
+
+Of course, you can just leave the error object intact, but seize the chance
+to write debugging information to a file, etc.
+
+The subtle point involved here is that at this stage, even though the
+message handler gets only one argument, and you can't see deeper than that
+into the stack, some information about what was in the stack is still 
+accessible as local variables. That information will be gone when 
+`lua_pcall` eventually returns, so this is your last chance.
+
+Some of those tasks are easier in Lua, by taking advantage of the `debug` 
+library, and there is absolutely no reason why your `msghandler` may not 
+be a Lua function, as long as it takes one argument and returns one value.
+
+### Acknowledgment
+
+This essay has been improved by helpful comments from Sean Conner and Andrew
+Gierth. Any remaining defects are the author's sole responsibility.

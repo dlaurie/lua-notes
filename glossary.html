@@ -236,7 +236,7 @@ tbl = {[3.0]=true}  -- the float will be coerced to integer</code></pre>
 <h2 id="coroutine">Coroutine</h2>
 <ol style="list-style-type: decimal">
 <li>A <a href="#thread">thread</a> containing a <a href="#function">function</a> that can <strong>yield</strong> (temporarily stop running) and <strong>resume</strong> (continue where it left off), rather like a train, dropping off some values and taking aboard new ones. One of the eight types of Lua.</li>
-<li>One of the standard <a href="library">libraries</a> of Lua. Coroutines can only be created and used via routines in this library. <a href="http://www.lua.org/manual/5.3/manual.html#2.6">Manual §2.6</a></li>
+<li>One of the standard <a href="#library">libraries</a> of Lua. Coroutines can only be created and used via routines in this library. <a href="http://www.lua.org/manual/5.3/manual.html#2.6">Manual §2.6</a></li>
 </ol>
 <h2 id="data-structure">Data structure</h2>
 <p>A collection of <a href="#value">Values</a> such that the collection can be referred to as a whole, but the values in it can also be referred to individually.</p>
@@ -451,7 +451,7 @@ end</code></pre>
 <p>Lua syntax demands that a name satisfy the rules for an <a href="#identifier">identifier</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.1">Manual §3.1</a></p>
 <h2 id="nan">NaN</h2>
 <p>Acronym for &quot;Not A Number&quot;. An exceptional value of type <a href="#number">number</a> (also written 'NAN' and 'nan'), which arises as the result of an undefinable arithmetic <a href="#operation">operation</a>. NaN is not a Lua keyword, but appears in output (in some implementations, even the nonsensical '-nan' may be printed). If you need the notation NaN, assign such a value to the name.</p>
-<p>NaN is not a legal <a href="#key">key</a> in a table, but counts as <a href="truth">true</a>.</p>
+<p>NaN is not a legal <a href="#key">key</a> in a table, but counts as <a href="#truth">true</a>.</p>
 <pre><code>NaN = 0/0
 NaN + 1        -- NaN. All arithmetic operations involving NaN have
                -- result NaN.
@@ -459,7 +459,7 @@ NaN &lt;= NaN     -- false. All comparison operations involving NaN have
                -- result false except the following.
 NaN ~= NaN     -- true. The only Lua value with this property.</code></pre>
 <h2 id="nil">Nil</h2>
-<p>One of the eight types of Lua. There is only one value of this type, also called <code>nil</code>. Its purpose is to act as a placeholder where a value is needed, but no proper value is available.</p>
+<p>One of the eight types of Lua. There is only one value of this type, likewise called <code>nil</code>. Its purpose is to act as a placeholder where a value is needed, but no proper value is available.</p>
 <pre><code>tbl = {1,4,nil,nil,10}         -- tbl[5] is 10
 fct = load(code,nil,nil,data)  -- the data table must be the 4th argument</code></pre>
 <h2 id="none">None</h2>
@@ -485,7 +485,7 @@ s = name .. id     -- &#39;..&#39; is the concatenation operator</code></pre>
 <h2 id="parameter">Parameter</h2>
 <p>A <a href="#local">local</a> <a href="#name">name</a> used in the definition of a <a href="#function">function</a> for the <a href="#value">value</a> that will later be <a href="#pass">passed</a> as an argument.</p>
 <pre><code>    function fct (a,b,c)   -- a,b,c are parameters
-    fct(1,2,3)             -- 1,2,3 arearguments</code></pre>
+    fct(1,2,3)             -- 1,2,3 are arguments</code></pre>
 <h2 id="parentheses">Parentheses</h2>
 <p>A pair of delimiters with several uses.</p>
 <ol style="list-style-type: decimal">
@@ -515,14 +515,20 @@ s = name .. id     -- &#39;..&#39; is the concatenation operator</code></pre>
 <h2 id="prompt">Prompt</h2>
 <ol style="list-style-type: decimal">
 <li>To give a hint that a terminal user should type something.</li>
-<li>A character string used for that purpose.</li>
+<li><p>A character string used for that purpose.</p>
+<blockquote>
+<pre><code>               -- the usual Lua prompt</code></pre>
+<blockquote>
+<pre><code>              -- the prompt when wat you typed was not enough</code></pre>
+<p>name? -- a typical prompt issued by an appplication</p>
+</blockquote>
+</blockquote></li>
 </ol>
-<p>A short message or symbol &gt; -- the usual Lua prompt &gt;&gt; -- the prompt when wat you typed was not enough name? -- a typical prompt issued by an appplication</p>
 <h2 id="raw">Raw</h2>
 <p>As originally defined, i.e. ignoring metamethods.</p>
 <h2 id="reference">Reference</h2>
 <p>A <a href="#pointer">pointer</a> that looks like a <a href="#variable">variable</a> to the programmer.</p>
-<p>In Lua, the types <a href="#function">function</a>, <a href="#table">table</a>, <a href="#coroutine">coroutine</a> and <a href="#userdata">userdata</a> are accessed by reference.</p>
+<p>In Lua, the mutable types <a href="#function">function</a>, <a href="#table">table</a>, <a href="#coroutine">coroutine</a> and <a href="#userdata">userdata</a> are accessed by reference.</p>
 <pre><code>a = {name=&quot;Jack&quot;}   -- the variable &#39;a&#39; has a reference
 a                   --&gt; table: 0x22c8810
 b = a               -- &#39;b&#39; now also has that reference
@@ -608,7 +614,7 @@ math.type(1.0)  --&gt; float</code></pre>
 <p>The bare contents of an array, without delimiters.</p>
 <pre><code>{1,2,nil,4}   -- an array
 1,2,nil,4     -- a tuple</code></pre>
-<p>May appear in as a <a href="#parameter">parameter</a> list, an <a href="#argument">argument</a> list, a return list, the right-hand side of an assignment, or inside a table <a href="#constructor">constructor</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.4.11">Manual §3.4.11</a></p>
+<p>May appear as a <a href="#parameter">parameter</a> list, an <a href="#argument">argument</a> list, a return list, the right-hand side of an assignment, or inside a table <a href="#constructor">constructor</a>. <a href="http://www.lua.org/manual/5.3/manual.html#3.4.11">Manual §3.4.11</a></p>
 <p>A tuple is not a <a href="#first-class-value">first-class value</a>: it is several values, not thought of as comprising a whole.</p>
 <h2 id="type">Type</h2>
 <p>A classification of <a href="#value">value</a>s as one of <a href="#nil">nil</a>, <a href="#boolean">boolean</a>, <a href="#number">number</a>, <a href="#string">string</a>, <a href="#function">function</a>, <a href="#table">table</a>, <a href="#coroutine">coroutine</a> or <a href="#userdata">userdata</a>.</p>
