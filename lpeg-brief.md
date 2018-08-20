@@ -296,12 +296,11 @@ Idioms
 
 Certain subexpressions occur so often in pattern expressions that one gets to recognize them at a glance.
 
-|   This...   |     | matches...                                         |
-|:-----------:|-----|:---------------------------------------------------|
-|     `-1`    |     | the end of the subject.                            |
-|    `#p*q`   |     | what `q` matches, provided that `p` would succeed. |
-|  `(1-p)^0`  |     | everything up to where `p` would succeed.          |
-| `P(-1)+1^0` |     | the remainder of the subject, even if empty        |
+|  This...  |     | matches...                                         |
+|:---------:|-----|:---------------------------------------------------|
+|    `-1`   |     | the end of the subject.                            |
+|   `#p*q`  |     | what `q` matches, provided that `p` would succeed. |
+| `(1-p)^0` |     | everything up to where `p` would succeed.          |
 
 1AQ: Once-asked questions
 -------------------------

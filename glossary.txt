@@ -81,7 +81,7 @@ sometimes referred to as **items**.
     A['name']  -- refers to a single item with key 'name'
     A.name     -- a synonym for A['name']
 
-The notation `A.name` is only available when `name` is an identifier.
+The notation `A.name` is only available when `name` is an [identifier].
 
 Both kinds of array are special cases of a [table]. A [sequence] is an
 even more special case of an array.
@@ -982,7 +982,7 @@ Subtype
 -------
 
 A further classification of [value]s of a specific type. The type
-[number] has subtypes [integer] and [float](floating-point). See also
+[number] has subtypes [integer] and [float](#floating-point). See also
 [userdata].
 
     type(1)         --> number

@@ -170,7 +170,7 @@ A[1]       -- refers to a single element with key 1</code></pre>
 <p>Arrays in which other keys than numbers are used are called <strong>associative arrays</strong>. The elements of associative arrays are sometimes referred to as <strong>items</strong>.</p>
 <pre><code>A[&#39;name&#39;]  -- refers to a single item with key &#39;name&#39;
 A.name     -- a synonym for A[&#39;name&#39;]</code></pre>
-<p>The notation <code>A.name</code> is only available when <code>name</code> is an identifier.</p>
+<p>The notation <code>A.name</code> is only available when <code>name</code> is an <a href="#identifier">identifier</a>.</p>
 <p>Both kinds of array are special cases of a <a href="#table">table</a>. A <a href="#sequence">sequence</a> is an even more special case of an array.</p>
 <h2 id="binary">Binary</h2>
 <ol style="list-style-type: decimal">
@@ -584,7 +584,7 @@ surname, name = string.match(data, pattern)  -- these two calls
 surname, name = data:match(pattern)          -- are equivalent</code></pre></li>
 </ol>
 <h2 id="subtype">Subtype</h2>
-<p>A further classification of <a href="#value">value</a>s of a specific type. The type <a href="#number">number</a> has subtypes <a href="#integer">integer</a> and <a href="floating-point">float</a>. See also <a href="#userdata">userdata</a>.</p>
+<p>A further classification of <a href="#value">value</a>s of a specific type. The type <a href="#number">number</a> has subtypes <a href="#integer">integer</a> and <a href="#floating-point">float</a>. See also <a href="#userdata">userdata</a>.</p>
 <pre><code>type(1)         --&gt; number
 type(1.0)       --&gt; number
 math.type(1)    --&gt; integer

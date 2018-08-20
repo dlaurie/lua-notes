@@ -6,7 +6,7 @@ body {
 	line-height: 1.25 ;
 	margin: 16px auto ;
 	padding: 32px ;
-	max-width: 60em ;
+	max-width: 40em ;
 }
 
 code {
@@ -14,8 +14,8 @@ code {
   background-color: #FFF7D0;
   max-width: 80%;
   color: #004000;
-  font-family: Courier;
-  font-size: 14pt;
+  font-family: FreeMono;
+/*  font-size: 14pt; */
 }
 
 h1, h2, h3, h4 {
