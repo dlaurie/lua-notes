@@ -287,24 +287,24 @@ end</code></pre>
 <thead>
 <tr class="header">
 <th align="center">This...</th>
-<th align="left"></th>
+<th></th>
 <th align="left">matches...</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="center"><code>-1</code></td>
-<td align="left"></td>
+<td></td>
 <td align="left">the end of the subject.</td>
 </tr>
 <tr class="even">
 <td align="center"><code>#p*q</code></td>
-<td align="left"></td>
+<td></td>
 <td align="left">what <code>q</code> matches, provided that <code>p</code> would succeed.</td>
 </tr>
 <tr class="odd">
 <td align="center"><code>(1-p)^0</code></td>
-<td align="left"></td>
+<td></td>
 <td align="left">everything up to where <code>p</code> would succeed.</td>
 </tr>
 </tbody>
@@ -315,8 +315,8 @@ end</code></pre>
 <li><p><em>How do you match anywhere, as the Lua string library does?</em></p>
 <p>The easiest way is to use an idiom to skip over the non-matching part: <code>(1-p)^0*Cp()*p*Cp()</code> is a pattern that returns the first position where <code>p</code> succeeds and the position after the match.</p></li>
 <li><p><em>Can one do a <code>sed</code>-style <code>gsub</code>?</em></p>
-<p>The point of the question is that <code>string.gsub</code>, if given a greedy pattern that can match the empty string, produces an empty match after every nonempty match except right at the end, and in some situations this is not what one wants.</p>
-<p>For example, <code>(string.gsub(&quot;;a;&quot;,&quot;a*&quot;,&quot;ITEM&quot;))</code> returns <code>&quot;ITEM;ITEMITEM;ITEM&quot;</code> whereas <code>&quot;ITEM;ITEM;ITEM&quot;</code> as returned by the <code>sed</code> command <code>s/a*/ITEM/</code> is more convenient in applications like string splitting.</p>
+<p>The point of the question is that in earlier versions of Lua, <code>string.gsub</code> and <code>string.gmatch</code>, if given a greedy pattern that can match the empty string, produces an empty match after every nonempty match except right at the end, and in some situations this is not what one wants. Currently Lua no longer does that, but it still is an interesting LPEG question.</p>
+<p>For example, up to Lua 5.3.2, <code>(string.gsub(&quot;;a;&quot;,&quot;a*&quot;,&quot;ITEM&quot;))</code> returns <code>&quot;ITEM;ITEMITEM;ITEM&quot;</code> whereas <code>&quot;ITEM;ITEM;ITEM&quot;</code> as returned by the <code>sed</code> command <code>s/a*/ITEM/</code> or Lua 5.3.3 and later, is more convenient in applications like string splitting.</p>
 <p><code>p^0</code> (where <code>p=P&quot;a&quot;</code>) acts like the Lua pattern <code>&quot;a*&quot;</code>, but one cannot use it by itself in a loop because it matches the empty string. The trick here is to do the possibly empty first match outside the loop, and let the loop include the non-match in between, which must be non-empty. Let <code>q=p^0/&quot;ITEM&quot;</code>, then matching by <code>Cs(q*((1-p)*q)^0)</code> does the job: the outer <code>Cs</code> substitutes the captures instead of returning them.</p>
 <p>In general, suppose that the straightforward <code>q=s/r</code>, where <code>s</code> is a non-capture pattern and <code>r</code> the replacement, is not good enough. We need a <code>p</code> so that the pattern <code>Cs(q*((1-p)*q)^0)</code> works instead. The critical property that <code>p</code> must have is to succeed only when the given <code>s</code> produces a non-empty match. You can construct it this way:</p>
 <pre><code>nonempty=function(str,pos,cap) 

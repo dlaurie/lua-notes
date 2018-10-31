@@ -506,15 +506,16 @@ one gets to recognize them at a glance.
 
 2.  *Can one do a `sed`-style `gsub`?*
 
-    The point of the question is that `string.gsub`, if given a greedy
-    pattern that can match the empty string, produces an empty match
-    after every nonempty match except right at the end, and in some
-    situations this is not what one wants.
+    The point of the question is that in earlier versions of Lua, `string.gsub`
+    and `string.gmatch`, if given a greedy pattern that can match the empty 
+    string, produces an empty match after every nonempty match except right 
+    at the end, and in some situations this is not what one wants. Currently 
+    Lua no longer does that, but it still is an interesting LPEG question.
 
-    For example, `(string.gsub(";a;","a*","ITEM"))` returns
+    For example, up to Lua 5.3.2, `(string.gsub(";a;","a*","ITEM"))` returns
     `"ITEM;ITEMITEM;ITEM"` whereas `"ITEM;ITEM;ITEM"` as returned by the
-    `sed` command `s/a*/ITEM/` is more convenient in applications like
-    string splitting.
+    `sed` command `s/a*/ITEM/` or Lua 5.3.3 and later, is more convenient 
+    in applications like string splitting.
 
     `p^0` (where `p=P"a"`) acts like the Lua pattern `"a*"`, but one
     cannot use it by itself in a loop because it matches the empty
