@@ -6,9 +6,9 @@ This Glossary covers those terms in [Lua](http://www.lua.org/about.html)
 5.3 that are necessary to refer to when reading 
 the [User's Manual](http://www.lua.org/manual/5.3). It also contains 
 a few terms that, while not actually used in the manual, often are used 
-in posts on Lua-L, the Lua mailing list `<lua-l-lists.lua.org>`
+in posts on [Lua-L].
 
-The selection of topics is based on one posted on Lua-L by "Adel" on 
+The selection of topics is based on one posted on [Lua-L] by "Adel" on 
 24 April 2017. It does not cover advanced concepts. You must grok those 
 from the Manual. 
 
@@ -610,6 +610,12 @@ operations.
     v = a.k          -- an error if a is nil
     v = a and a.k    -- nil if a is nil
 
+Lua-L
+-----
+
+A mailing list for asking help on, and in general discussing every aspect
+of, Lua. One can subscribe [via a webpage](http://listmaster.pepperfish.net/cgi-bin/mailman/listinfo/lua-l-lists.lua.org) or [via e-mail](mailto:lua-l-request@lists.lua.org?subject=subscribe).
+
 Memoize
 -------
 
@@ -631,14 +637,17 @@ next time, it can be looked up rather than re-calculated.
 Memory
 ------
 
-The part of a computer in which data is stored only while your 
+1. The part of a computer in which data is stored only while your 
 program is running. 
 
-Memory is thought of as [byte]s numbered from 1 upwards to several
-trillions and beyond. Those numbers are known as **addresses**.
+    Memory is thought of as [byte]s numbered from 1 upwards to several
+    trillions and beyond. Those numbers are known as **addresses**.
 
-Memory is [allocate]d by a **memory manager**, which at the lowest
-level is the system itself. See also [Free].
+    Memory is [allocate]d by a **memory manager**, which at the lowest
+    level is the system itself. See also [Free].
+
+2. The faculty by which a [Lua-L] member remains aware of past own 
+contributions.
       
 Metamethod
 ----------

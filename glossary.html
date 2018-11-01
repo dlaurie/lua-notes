@@ -37,9 +37,9 @@
 <a href="#closure">Closure</a><br>
 <a href="#code">Code</a><br>
 <a href="#coercion">Coercion</a><br>
+<a href="#compare">Compare</a><br>
 </td>
 <td>
-<a href="#compare">Compare</a><br>
 <a href="#compile">Compile</a><br>
 <a href="#constant">Constant</a><br>
 <a href="#constructor">Constructor</a><br>
@@ -58,10 +58,10 @@
 <a href="#execute">Execute</a><br>
 <a href="#expression">Expression</a><br>
 <a href="#file">File</a><br>
-</td>
-<td>
 <a href="#first-class-value">First-class value</a><br>
 <a href="#floating-point">Floating-point</a><br>
+</td>
+<td>
 <a href="#free">Free</a><br>
 <a href="#function">Function</a><br>
 <a href="#g">_G</a><br>
@@ -79,12 +79,13 @@
 <a href="#key">Key</a><br>
 <a href="#language">Language</a><br>
 <a href="#library">Library</a><br>
-</td>
-<td>
 <a href="#literal">Literal</a><br>
 <a href="#load">Load</a><br>
 <a href="#local">Local</a><br>
+</td>
+<td>
 <a href="#logical">Logical</a><br>
+<a href="#lua-l">Lua-L</a><br>
 <a href="#memoize">Memoize</a><br>
 <a href="#memory">Memory</a><br>
 <a href="#metamethod">Metamethod</a><br>
@@ -100,11 +101,11 @@
 <a href="#operation">Operation</a><br>
 <a href="#pair">Pair</a><br>
 <a href="#parameter">Parameter</a><br>
-</td>
-<td>
 <a href="#parentheses">Parentheses</a><br>
 <a href="#pass-to">Pass to</a><br>
 <a href="#pattern">Pattern</a><br>
+</td>
+<td>
 <a href="#pointer">Pointer</a><br>
 <a href="#precedence">Precedence</a><br>
 <a href="#priority">Priority</a><br>
@@ -121,12 +122,12 @@
 <a href="#sequence">Sequence</a><br>
 <a href="#shadow">Shadow</a><br>
 <a href="#shell">Shell</a><br>
-</td>
-<td>
 <a href="#statement">Statement</a><br>
 <a href="#string">String</a><br>
 <a href="#subtype">Subtype</a><br>
 <a href="#table">Table</a><br>
+</td>
+<td>
 <a href="#text">Text</a><br>
 <a href="#thread">Thread</a><br>
 <a href="#truth">Truth</a><br>
@@ -144,8 +145,8 @@
 <a href="#zero">Zero</a><br>
 </td>
 </tr></table>
-<p>This Glossary covers those terms in <a href="http://www.lua.org/about.html">Lua</a> 5.3 that are necessary to refer to when reading the <a href="http://www.lua.org/manual/5.3">User's Manual</a>. It also contains a few terms that, while not actually used in the manual, often are used in posts on Lua-L, the Lua mailing list <code>&lt;lua-l-lists.lua.org&gt;</code></p>
-<p>The selection of topics is based on one posted on Lua-L by &quot;Adel&quot; on 24 April 2017. It does not cover advanced concepts. You must grok those from the Manual.</p>
+<p>This Glossary covers those terms in <a href="http://www.lua.org/about.html">Lua</a> 5.3 that are necessary to refer to when reading the <a href="http://www.lua.org/manual/5.3">User's Manual</a>. It also contains a few terms that, while not actually used in the manual, often are used in posts on <a href="#lua-l">Lua-L</a>.</p>
+<p>The selection of topics is based on one posted on <a href="#lua-l">Lua-L</a> by &quot;Adel&quot; on 24 April 2017. It does not cover advanced concepts. You must grok those from the Manual.</p>
 <p>Many of these terms occur in other computer <a href="#language">language</a>s too. Prior knowledge of how the term is used elsewhere may help you to understand how it is used in Lua; on the other hand, it may put preconceptions in your mind that are not applicable to Lua.</p>
 <p>I mainly explain how the term is used in Lua, not in general. <em>This Glossary may put preconceptions in your mind that are not applicable elsewhere.</em></p>
 <p>Just keep an open mind, that's all.</p>
@@ -403,6 +404,8 @@ a or b    -- if a is true, then a (and don&#39;t evaluate b); else b</code></pre
 <p>The point about evaluation is important. It can be used to avoid illegal operations.</p>
 <pre><code>v = a.k          -- an error if a is nil
 v = a and a.k    -- nil if a is nil</code></pre>
+<h2 id="lua-l">Lua-L</h2>
+<p>A mailing list for asking help on, and in general discussing every aspect of, Lua. One can subscribe <a href="http://listmaster.pepperfish.net/cgi-bin/mailman/listinfo/lua-l-lists.lua.org">via a webpage</a> or <a href="mailto:lua-l-request@lists.lua.org?subject=subscribe">via e-mail</a>.</p>
 <h2 id="memoize">Memoize</h2>
 <p>To store the result of a function call in a table <a href="#upvalue">upvalue</a> so that, next time, it can be looked up rather than re-calculated.</p>
 <pre><code>do
@@ -418,9 +421,12 @@ v = a and a.k    -- nil if a is nil</code></pre>
 end
    </code></pre>
 <h2 id="memory">Memory</h2>
-<p>The part of a computer in which data is stored only while your program is running.</p>
+<ol style="list-style-type: decimal">
+<li><p>The part of a computer in which data is stored only while your program is running.</p>
 <p>Memory is thought of as <a href="#byte">byte</a>s numbered from 1 upwards to several trillions and beyond. Those numbers are known as <strong>addresses</strong>.</p>
-<p>Memory is <a href="#allocate">allocate</a>d by a <strong>memory manager</strong>, which at the lowest level is the system itself. See also <a href="#free">Free</a>.</p>
+<p>Memory is <a href="#allocate">allocate</a>d by a <strong>memory manager</strong>, which at the lowest level is the system itself. See also <a href="#free">Free</a>.</p></li>
+<li><p>The faculty by which a <a href="#lua-l">Lua-L</a> member remains aware of past own contributions.</p></li>
+</ol>
 <h2 id="metamethod">Metamethod</h2>
 <p>A user-supplied function that is called to perform an <a href="#operation">operation</a>, bypassing the default action, usually because the operation would otherwise be undefined, but also when a <a href="#raw">raw</a> operation is to be supplanted by a customized one. <a href="http://www.lua.org/manual/5.3/manual.html#2.4">Manual §2.4</a></p>
 <p>Metamethods are kept in a <strong>metatable</strong>.</p>
